@@ -1,5 +1,8 @@
 using Core;
+using Core.Service;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Service;
 
 namespace RestauranteWeb
 {
@@ -15,6 +18,11 @@ namespace RestauranteWeb
             builder.Services.AddDbContext<RestauranteContext>(options =>
                 options.UseMySQL(builder.Configuration.GetConnectionString("RestauranteConnection") ?? throw new InvalidOperationException("Conexão com o banco de dados não foi possível. Favor entrar em contato com o Administrador.")));
 
+            //Serviços de aplicação
+            builder.Services.AddScoped<ITipoRestauranteService, TipoRestauranteService>();
+
+            // Configuração do Mapster
+            builder.Services.AddMapster();
 
             var app = builder.Build();
 

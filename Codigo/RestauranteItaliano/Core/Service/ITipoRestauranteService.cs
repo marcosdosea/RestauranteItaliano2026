@@ -2,10 +2,10 @@
 {
     public interface ITipoRestauranteService
     {
-        int Create(Tiporestaurante tipoRestaurante);
+        uint Create(Tiporestaurante tipoRestaurante);
         void Edit(Tiporestaurante tipoRestaurante);
-        void Delete(int id);
-        Tiporestaurante Get(int id);
+        void Delete(uint id);
+        Tiporestaurante? Get(uint id);
         IEnumerable<Tiporestaurante> GetAll();
     }
 }
