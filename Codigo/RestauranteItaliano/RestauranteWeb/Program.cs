@@ -17,9 +17,11 @@ namespace RestauranteWeb
             
             builder.Services.AddDbContext<RestauranteContext>(options =>
                 options.UseMySQL(builder.Configuration.GetConnectionString("RestauranteConnection") ?? throw new InvalidOperationException("Conexão com o banco de dados não foi possível. Favor entrar em contato com o Administrador.")));
-
+            
             //Serviços de aplicação
             builder.Services.AddScoped<ITipoRestauranteService, TipoRestauranteService>();
+
+            builder.Services.AddScoped<ITipoFuncionario, TipoFuncionarioService>();
 
             // Configuração do Mapster
             builder.Services.AddMapster();
