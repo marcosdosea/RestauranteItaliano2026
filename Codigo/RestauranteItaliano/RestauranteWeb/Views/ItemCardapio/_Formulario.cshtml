@@ -1,0 +1,42 @@
+@model RestauranteWeb.Models.ItemCardapioModel
+
+<div class="mb-3">
+    <label asp-for="Nome" class="form-label"></label>
+    <input asp-for="Nome" class="form-control" />
+    <span asp-validation-for="Nome" class="text-danger"></span>
+</div>
+<div class="mb-3">
+    <label asp-for="IdGrupoCardapio" class="form-label"></label>
+    <select asp-for="IdGrupoCardapio" asp-items="Model.GruposCardapio" class="form-select">
+        <option value="">Selecione...</option>
+    </select>
+    <span asp-validation-for="IdGrupoCardapio" class="text-danger"></span>
+</div>
+<div class="mb-3">
+    <label asp-for="IdRestaurante" class="form-label"></label>
+    <select asp-for="IdRestaurante" asp-items="Model.Restaurantes" class="form-select">
+        <option value="">Selecione...</option>
+    </select>
+    <span asp-validation-for="IdRestaurante" class="text-danger"></span>
+</div>
+<div class="mb-3">
+    <label asp-for="Preco" class="form-label"></label>
+    <div class="input-group">
+        <span class="input-group-text">R$</span>
+        <input asp-for="Preco" class="form-control" placeholder="0,00" />
+    </div>
+    <span asp-validation-for="Preco" class="text-danger"></span>
+</div>
+<div class="mb-3">
+    <label asp-for="Detalhes" class="form-label"></label>
+    <textarea asp-for="Detalhes" class="form-control" rows="3"></textarea>
+    <span asp-validation-for="Detalhes" class="text-danger"></span>
+</div>
+<div class="mb-3 form-check">
+    <input asp-for="Ativo" class="form-check-input" />
+    <label asp-for="Ativo" class="form-check-label"></label>
+</div>
+<div class="mb-3 form-check">
+    <input asp-for="Disponivel" class="form-check-input" />
+    <label asp-for="Disponivel" class="form-check-label"></label>
+</div>

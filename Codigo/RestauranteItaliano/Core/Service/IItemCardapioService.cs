@@ -4,8 +4,8 @@
     {
         uint Create(Itemcardapio itemCardapio);
         void Edit(Itemcardapio itemCardapio);
-        void Delete(int id);
-        Itemcardapio Get(int id);
+        void Delete(uint id);
+        Itemcardapio? Get(uint id);
         IEnumerable<Itemcardapio> GetAll();
     }
 }

@@ -1,7 +1,10 @@
+using System.Globalization;
 using Core;
 using Core.Service;
 using Mapster;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using RestauranteWeb.Mapper;
 using Service;
 
 namespace RestauranteWeb
@@ -27,8 +30,13 @@ namespace RestauranteWeb
 
             builder.Services.AddScoped<IFormaPagamentoService, FormaPagamentoService>();
 
+            builder.Services.AddScoped<IItemCardapioService, ItemCardapioService>();
+
+            builder.Services.AddScoped<IRestauranteService, RestauranteService>();
+
             // Configuração do Mapster
             builder.Services.AddMapster();
+            ItemCardapioMapper.Registrar(TypeAdapterConfig.GlobalSettings);
 
             var app = builder.Build();
 
@@ -41,6 +49,16 @@ namespace RestauranteWeb
             }
 
             app.UseHttpsRedirection();
+
+            // Cultura brasileira: preço com vírgula (29,90) e moeda em R$
+            var culturaBrasil = new CultureInfo("pt-BR");
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(culturaBrasil),
+                SupportedCultures = new List<CultureInfo> { culturaBrasil },
+                SupportedUICultures = new List<CultureInfo> { culturaBrasil }
+            });
+
             app.UseRouting();
 
             app.UseAuthorization();
