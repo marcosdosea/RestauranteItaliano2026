@@ -153,4 +153,4 @@ VALUES (LAST_INSERT_ID(), '00000000000000', 'Restaurante Italiano');
 
 ## 📄 Licença
 
-Distribuído sob a licença **MIT**. Veja o arquivo [`LICENSE`](LICENSE).<img width="1601" height="1162" alt="image" src="https://github.com/user-attachments/assets/729a1f27-96a2-4798-bcba-9392fad22750" />
+Distribuído sob a licença **MIT**. Veja o arquivo [`LICENSE`](LICENSE).
