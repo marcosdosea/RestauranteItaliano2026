@@ -1,0 +1,33 @@
+@model RestauranteWeb.Models.ItemCardapioModel
+
+@{
+    ViewData["Title"] = "Detalhes do Item do Cardápio";
+}
+
+<h1>Detalhes do Item do Cardápio</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nome)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Nome)</dd>
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NomeGrupoCardapio)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.NomeGrupoCardapio)</dd>
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NomeRestaurante)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.NomeRestaurante)</dd>
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Preco)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Preco)</dd>
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Detalhes)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Detalhes)</dd>
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Ativo)</dt>
+        <dd class="col-sm-9">@(Model.Ativo ? "Sim" : "Não")</dd>
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Disponivel)</dt>
+        <dd class="col-sm-9">@(Model.Disponivel ? "Sim" : "Não")</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</div>

@@ -1,0 +1,29 @@
+@model RestauranteWeb.Models.ItemCardapioModel
+
+@{
+    ViewData["Title"] = "Criar Item do Cardápio";
+}
+
+<h1>Criar Item do Cardápio</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <partial name="_Formulario" model="Model" />
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("_ScriptsDecimal");
+    }
+}

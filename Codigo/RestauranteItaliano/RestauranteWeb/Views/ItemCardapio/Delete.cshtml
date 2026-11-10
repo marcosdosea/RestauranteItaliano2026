@@ -1,0 +1,31 @@
+@model RestauranteWeb.Models.ItemCardapioModel
+
+@{
+    ViewData["Title"] = "Excluir Item do Cardápio";
+}
+
+<h1>Excluir Item do Cardápio</h1>
+
+<h3>Tem certeza que deseja excluir este item do cardápio?</h3>
+<div>
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nome)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Nome)</dd>
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NomeGrupoCardapio)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.NomeGrupoCardapio)</dd>
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Preco)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Preco)</dd>
+    </dl>
+    <form asp-action="Delete" asp-route-id="@Model.Id">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="Nome" />
+        <button type="submit" class="btn btn-danger">Excluir</button>
+        <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+    </form>
+</div>
