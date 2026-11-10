@@ -21,7 +21,8 @@ namespace RestauranteWeb.Controllers
         // GET: TipoRestauranteController
         public ActionResult Index()
         {
-            return View(_mapper.Map<List<TipoRestauranteModel>>(_service.GetAll()));
+            var tipos = _service.GetAll().ToList();
+            return View(_mapper.Map<List<TipoRestauranteModel>>(tipos));
         }
 
         // GET: TipoRestauranteController/Details/5

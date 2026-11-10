@@ -78,12 +78,22 @@ namespace Service
         }
 
         /// <summary>
-        /// Busca todos os tipos de restaurante cadastrados, ordenados pelo nome
+        /// Busca todos os tipos de restaurante cadastrados
         /// </summary>
         /// <returns></returns>
         public IEnumerable<Tiporestaurante> GetAll()
         {
-            return _context.Tiporestaurantes.AsNoTracking().OrderBy(t => t.Nome).ToList();
+            return _context.Tiporestaurantes.AsNoTracking();
+        }
+
+        /// <summary>
+        /// Busca todos os tipos de restaurante que começam com o nome informado
+        /// </summary>
+        /// <param name="nome"></param>
+        /// <returns></returns>
+        public IEnumerable<Tiporestaurante> GetbyNome(string nome)
+        {
+            return _context.Tiporestaurantes.Where(t => t.Nome.StartsWith(nome)).AsNoTracking();
         }
 
     }
