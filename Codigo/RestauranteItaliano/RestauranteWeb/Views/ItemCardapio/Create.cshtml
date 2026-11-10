@@ -1,25 +1,41 @@
 @model RestauranteWeb.Models.ItemCardapioModel
 
 @{
-    ViewData["Title"] = "Criar Item do Cardápio";
+    ViewData["Title"] = "Novo item";
 }
 
-<h1>Criar Item do Cardápio</h1>
+<header class="titulo-pagina titulo-pagina--empilhado">
+    <a class="link-voltar" asp-action="Index">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 12H5M11 6l-6 6 6 6" />
+        </svg>
+        Voltar para a lista
+    </a>
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">Novo item<span class="u-acento">.</span></h1>
+        <p class="titulo-pagina__resumo">Os campos com asterisco são obrigatórios.</p>
+    </hgroup>
+</header>
 
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form class="edicao" asp-action="Create" method="post" data-travar-envio>
+    <section class="edicao__formulario" aria-label="Dados do item">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <partial name="_Formulario" model="Model" />
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Salvar</button>
-                <a asp-action="Index" class="btn btn-secondary">Voltar</a>
-            </div>
-        </form>
-    </div>
-</div>
+        <partial name="_Formulario" model="Model" />
+
+        <p class="grupo-botoes">
+            <button class="btn btn--tinta" type="submit">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12.5l4.5 4.5L19 7.5" />
+                </svg>
+                Salvar item
+            </button>
+            <a class="btn btn--contorno" asp-action="Index">Cancelar</a>
+        </p>
+    </section>
+
+    <partial name="_Previa" model="Model" />
+</form>
 
 @section Scripts {
     @{

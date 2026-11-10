@@ -1,0 +1,39 @@
+@model RestauranteWeb.Models.ItemCardapioModel
+
+@{
+    var emFalta = Model.Ativo && !Model.Disponivel;
+}
+
+<article class="ficha" aria-labelledby="ficha-nome">
+    <header class="ficha__cabeca">
+        <span class="ficha__grupo">@Model.NomeGrupoCardapio</span>
+        <span class="ficha__codigo">código @Model.Id</span>
+    </header>
+    <p class="prato @(emFalta ? "prato--em-falta" : (!Model.Ativo ? "prato--inativo" : null))">
+        <span class="prato__link">
+            <span class="prato__texto">
+                <span class="prato__nome" id="ficha-nome">@Model.Nome</span>
+                @if (!string.IsNullOrWhiteSpace(Model.Detalhes))
+                {
+                    <span class="prato__detalhe">@Model.Detalhes</span>
+                }
+            </span>
+            <span class="u-pontos" aria-hidden="true"></span>
+            <span class="prato__preco">@if (Model.Preco.HasValue) { @Html.DisplayFor(m => m.Preco) } else { <text>—</text> }</span>
+        </span>
+    </p>
+    <dl class="ficha__dados">
+        <div class="ficha__dado">
+            <dt class="ficha__termo">@Html.DisplayNameFor(m => m.NomeRestaurante)</dt>
+            <dd class="ficha__valor">@Model.NomeRestaurante</dd>
+        </div>
+        <div class="ficha__dado">
+            <dt class="ficha__termo">@Html.DisplayNameFor(m => m.Ativo)</dt>
+            <dd class="ficha__valor">@(Model.Ativo ? "Sim" : "Não")</dd>
+        </div>
+        <div class="ficha__dado">
+            <dt class="ficha__termo">@Html.DisplayNameFor(m => m.Disponivel)</dt>
+            <dd class="ficha__valor">@(Model.Disponivel ? "Sim" : "Não, em falta")</dd>
+        </div>
+    </dl>
+</article>

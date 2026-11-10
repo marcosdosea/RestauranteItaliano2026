@@ -83,7 +83,7 @@ namespace Service
         /// <returns>Uma coleção de formas de pagamento</returns>
         public IEnumerable<Formapagamento> GetAll()
         {
-            return _context.Formapagamentos.AsNoTracking().OrderBy(f => f.Nome).ToList();
+            return _context.Formapagamentos.AsNoTracking().OrderBy(f => f.Nome);
         }
     }
 }

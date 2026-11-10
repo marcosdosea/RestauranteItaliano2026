@@ -1,8 +1,164 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model RestauranteWeb.Models.HomeModel
+
+@{
+    ViewData["Title"] = "Início";
+    var cardapioVazio = Model.DadosDisponiveis && Model.ItensNoCardapio == 0;
+    var atraso = 0;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="abertura" aria-labelledby="saudacao">
+    <header class="abertura__texto u-surge">
+        <p class="u-rotulo">Benvenuti</p>
+        <h1 class="abertura__saudacao" id="saudacao">@Model.Saudacao<span class="u-acento">.</span></h1>
+        <p class="abertura__lead">@Model.DataLonga. Este é o índice da casa: cada capítulo reúne uma parte do restaurante, do salão às configurações.</p>
+
+        <nav class="atalhos" aria-labelledby="atalhos-titulo">
+            <h2 class="u-rotulo" id="atalhos-titulo">Começar por</h2>
+            <ul class="atalhos__lista u-lista-limpa">
+                <li><a class="atalho" asp-controller="ItemCardapio" asp-action="Create"><span class="atalho__mais" aria-hidden="true">+</span>Novo prato</a></li>
+                <li><a class="atalho" asp-controller="GrupoCardapio" asp-action="Create"><span class="atalho__mais" aria-hidden="true">+</span>Novo grupo</a></li>
+                <li><a class="atalho" asp-controller="FormaPagamento" asp-action="Create"><span class="atalho__mais" aria-hidden="true">+</span>Forma de pagamento</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <aside class="painel u-surge" style="--atraso: 2" aria-labelledby="painel-titulo">
+        <header class="painel__cabeca">
+            <h2 class="painel__titulo" id="painel-titulo">Na carta hoje</h2>
+            <time class="painel__hora" datetime="@DateTime.Now.ToString("HH:mm")">@Model.HoraAgora</time>
+        </header>
+
+        @if (!Model.DadosDisponiveis)
+        {
+            <p class="painel__vazio">Não foi possível consultar o cardápio agora. Verifique se o banco de dados está ligado.</p>
+        }
+        else if (cardapioVazio)
+        {
+            <p class="painel__vazio">
+                <svg width="72" height="44" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="32" cy="20" r="15" />
+                    <circle cx="32" cy="20" r="10" opacity=".55" />
+                    <path d="M8 6v8M5 6v6a3 3 0 0 0 6 0V6M8 15v19" />
+                    <path d="M56 6c-3.4 3.4-3.4 10 0 13.4V34" />
+                </svg>
+                O cardápio ainda está em branco. Cadastre o primeiro prato e ele aparece aqui.
+            </p>
+        }
+        else
+        {
+            <ul class="u-lista-limpa" aria-label="Itens por grupo do cardápio">
+                @foreach (var grupo in Model.Grupos)
+                {
+                    <li class="painel__grupo">
+                        <span class="painel__grupo-nome">@grupo.Nome</span>
+                        <span class="u-pontos" aria-hidden="true"></span>
+                        <span class="painel__grupo-qtd">@grupo.QuantidadeItens @(grupo.QuantidadeItens == 1 ? "item" : "itens")</span>
+                    </li>
+                }
+            </ul>
+        }
+
+        @* <div> dentro de <dl> é o jeito válido de agrupar cada termo com o seu valor *@
+        <dl class="numeros">
+            <div class="numeros__item">
+                <dt class="numeros__rotulo">Itens</dt>
+                <dd class="numeros__valor">@(Model.DadosDisponiveis ? Model.ItensNoCardapio.ToString() : "—")</dd>
+            </div>
+            <div class="numeros__item">
+                <dt class="numeros__rotulo numeros__rotulo--verde">Disponíveis</dt>
+                <dd class="numeros__valor">@(Model.DadosDisponiveis ? Model.ItensDisponiveis.ToString() : "—")</dd>
+            </div>
+            <div class="numeros__item">
+                <dt class="numeros__rotulo numeros__rotulo--ocra">Em falta</dt>
+                <dd class="numeros__valor">@(Model.DadosDisponiveis ? Model.ItensEmFalta.ToString() : "—")</dd>
+            </div>
+        </dl>
+
+        @if (Model.ItensNoCardapio > 0)
+        {
+            <p class="barra" style="--percentual: @(Model.PercentualDisponivel)%" role="img" aria-label="@Model.PercentualDisponivel% dos itens disponíveis para pedido"></p>
+        }
+
+        @if (cardapioVazio)
+        {
+            <a class="btn btn--tinta btn--seta" asp-controller="ItemCardapio" asp-action="Create">
+                Cadastrar o primeiro prato
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" />
+                </svg>
+            </a>
+        }
+        else
+        {
+            <a class="btn btn--tinta btn--seta" asp-controller="ItemCardapio" asp-action="Index">
+                Abrir o cardápio
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+            </a>
+        }
+    </aside>
+</section>
+
+<header class="titulo-secao">
+    <h2 class="titulo-secao__titulo">Índice</h2>
+    <p class="titulo-secao__resumo"><span class="u-acento">@Model.FuncoesProntas</span> funções prontas · @Model.FuncoesEmBreve a caminho</p>
+</header>
+
+<nav class="indice" aria-label="Índice do sistema">
+    @foreach (var capitulo in Model.Capitulos)
+    {
+        atraso++;
+        <section class="capitulo u-surge @(capitulo.TemFuncaoPronta ? null : "capitulo--em-breve")" id="@capitulo.Ancora" style="--atraso: @atraso" aria-labelledby="titulo-@capitulo.Ancora">
+            <h3 class="capitulo__titulo" id="titulo-@capitulo.Ancora">
+                <span class="capitulo__romano">@capitulo.Romano.ToUpper()</span>
+                <span class="capitulo__nome">@capitulo.Nome</span>
+            </h3>
+
+            @foreach (var entrada in capitulo.Entradas)
+            {
+                if (entrada.Pronta)
+                {
+                    <a class="entrada" asp-controller="@entrada.Controller" asp-action="Index" title="@entrada.CasoDeUso">
+                        <span class="entrada__texto">
+                            <span class="entrada__titulo">@entrada.Titulo</span>
+                            <span class="entrada__descricao">@entrada.Descricao</span>
+                        </span>
+                        <span class="u-pontos" aria-hidden="true"></span>
+                        <span class="entrada__resumo">@entrada.Resumo</span>
+                        <svg class="entrada__seta" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M5 12h14M13 6l6 6-6 6" />
+                        </svg>
+                    </a>
+                }
+                else
+                {
+                    <p class="entrada entrada--em-breve" title="@entrada.CasoDeUso · ainda não implementado">
+                        <span class="entrada__texto">
+                            <span class="entrada__titulo">@entrada.Titulo</span>
+                            <span class="entrada__descricao">@entrada.Descricao</span>
+                        </span>
+                        <span class="u-pontos" aria-hidden="true"></span>
+                        <span class="entrada__resumo">@entrada.Resumo</span>
+                        <span class="entrada__seta" aria-hidden="true"></span>
+                    </p>
+                }
+            }
+        </section>
+    }
+</nav>
+
+<section class="proverbio" aria-label="Provérbio">
+    <svg width="88" height="30" viewBox="0 0 88 30" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 15 C 26 14, 56 14, 80 12" />
+        <ellipse cx="19" cy="11" rx="6.4" ry="2.3" transform="rotate(-38 19 11)" />
+        <ellipse cx="29" cy="18.5" rx="6.1" ry="2.2" transform="rotate(35 29 18.5)" />
+        <ellipse cx="41" cy="10.5" rx="6.4" ry="2.3" transform="rotate(-38 41 10.5)" />
+        <ellipse cx="51" cy="17.6" rx="6.1" ry="2.2" transform="rotate(34 51 17.6)" />
+        <ellipse cx="62.5" cy="10" rx="6" ry="2.2" transform="rotate(-38 62.5 10)" />
+        <path d="M73 13 L75.5 15.5" />
+        <ellipse cx="77.5" cy="19" rx="3.4" ry="4.4" transform="rotate(-24 77.5 19)" fill="currentColor" stroke="none" />
+    </svg>
+    <p class="proverbio__frase" lang="it">«A tavola non s’invecchia.»</p>
+    <p class="u-rotulo">À mesa não se envelhece · provérbio italiano</p>
+</section>

@@ -1,31 +1,47 @@
 @model RestauranteWeb.Models.ItemCardapioModel
 
 @{
-    ViewData["Title"] = "Excluir Item do Cardápio";
+    ViewData["Title"] = "Excluir item";
 }
 
-<h1>Excluir Item do Cardápio</h1>
+<section class="confirmacao" aria-labelledby="titulo-excluir">
+    <hgroup class="titulo-pagina__texto">
+        <p class="u-rotulo titulo-pagina__sobretitulo--perigo">Excluir item</p>
+        <h1 class="titulo-pagina__titulo" id="titulo-excluir">Tirar este item do cardápio de vez?</h1>
+    </hgroup>
 
-<h3>Tem certeza que deseja excluir este item do cardápio?</h3>
-<div>
+    @* resumo de validação, como no padrão do professor; fica escondido enquanto não há erro *@
+    <div asp-validation-summary="All" class="alerta alerta--erro" role="alert"></div>
 
-    <div asp-validation-summary="All" class="text-danger"></div>
+    <partial name="_Ficha" model="Model" />
 
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nome)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Nome)</dd>
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NomeGrupoCardapio)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.NomeGrupoCardapio)</dd>
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Preco)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Preco)</dd>
-    </dl>
-    <form asp-action="Delete" asp-route-id="@Model.Id">
-        <input type="hidden" asp-for="Id" />
-        <input type="hidden" asp-for="Nome" />
-        <button type="submit" class="btn btn-danger">Excluir</button>
-        <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+    <p class="alerta">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 4l9 16H3z" />
+            <path d="M12 10v4.5M12 17.5v.5" />
+        </svg>
+        <span>
+            <strong>Excluir não tem volta.</strong> O item some da lista e do cardápio.
+            Se ele já apareceu em algum pedido, o sistema não deixa excluir; nesse caso,
+            edite o item e desligue “Ativo no cardápio”.
+        </span>
+    </p>
+
+    <form class="grupo-botoes" asp-action="Delete" asp-route-id="@Model.Id" method="post">
+        <input type="hidden" asp-for="Id">
+        <input type="hidden" asp-for="Nome">
+        <a class="btn btn--tinta btn--voltar" asp-action="Index">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M19 12H5M11 6l-6 6 6 6" />
+            </svg>
+            Manter o item
+        </a>
+        <button class="btn btn--perigo" type="submit">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 7h16M9 7V4h6v3M6.5 7l1 13h9l1-13" />
+            </svg>
+            Excluir definitivamente
+        </button>
+        <a class="u-link-simples" asp-action="Edit" asp-route-id="@Model.Id">Editar em vez de excluir</a>
     </form>
-</div>
+</section>

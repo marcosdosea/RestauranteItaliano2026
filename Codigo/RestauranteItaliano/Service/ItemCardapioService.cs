@@ -63,6 +63,21 @@ namespace Service
         }
 
         /// <summary>
+        /// Marca um item do cardápio como disponível ou em falta, sem alterar os demais dados
+        /// </summary>
+        /// <param name="id">O id do item</param>
+        /// <param name="disponivel">Verdadeiro para disponível, falso para em falta</param>
+        /// <exception cref="ServiceException"></exception>
+        public void AlterarDisponibilidade(uint id, bool disponivel)
+        {
+            var item = _context.Itemcardapios.Find(id)
+                ?? throw new ServiceException("Item do cardápio não encontrado.");
+
+            item.Disponivel = disponivel ? "1" : "0";
+            _context.SaveChanges();
+        }
+
+        /// <summary>
         /// Busca um item do cardápio pelo id, junto com o grupo e o restaurante, caso exista
         /// </summary>
         /// <param name="id">O id do item</param>
@@ -77,7 +92,7 @@ namespace Service
         }
 
         /// <summary>
-        /// Busca todos os itens do cardápio, ordenados pelo grupo e depois pelo nome
+        /// Busca todos os itens do cardápio, na ordem em que os grupos foram cadastrados e depois pelo nome
         /// </summary>
         /// <returns>Uma coleção de itens do cardápio</returns>
         public IEnumerable<Itemcardapio> GetAll()
@@ -86,9 +101,8 @@ namespace Service
                 .Include(i => i.IdGrupoCardapioNavigation)
                 .Include(i => i.IdRestauranteNavigation)
                 .AsNoTracking()
-                .OrderBy(i => i.IdGrupoCardapioNavigation.Nome)
-                .ThenBy(i => i.Nome)
-                .ToList();
+                .OrderBy(i => i.IdGrupoCardapio)
+                .ThenBy(i => i.Nome);
         }
 
         /// <summary>

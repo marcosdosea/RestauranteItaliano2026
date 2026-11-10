@@ -1,33 +1,28 @@
 @model RestauranteWeb.Models.ItemCardapioModel
 
 @{
-    ViewData["Title"] = "Detalhes do Item do Cardápio";
+    ViewData["Title"] = Model.Nome;
 }
 
-<h1>Detalhes do Item do Cardápio</h1>
+<section class="confirmacao" aria-labelledby="titulo-detalhes">
+    <header class="titulo-pagina titulo-pagina--empilhado">
+        <a class="link-voltar" asp-action="Index">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M19 12H5M11 6l-6 6 6 6" />
+            </svg>
+            Voltar para a lista
+        </a>
+        <hgroup class="titulo-pagina__texto">
+            <p class="u-rotulo">Item do cardápio</p>
+            <h1 class="titulo-pagina__titulo" id="titulo-detalhes">@Model.Nome<span class="u-acento">.</span></h1>
+        </hgroup>
+    </header>
 
-<div>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nome)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Nome)</dd>
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NomeGrupoCardapio)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.NomeGrupoCardapio)</dd>
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NomeRestaurante)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.NomeRestaurante)</dd>
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Preco)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Preco)</dd>
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Detalhes)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Detalhes)</dd>
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Ativo)</dt>
-        <dd class="col-sm-9">@(Model.Ativo ? "Sim" : "Não")</dd>
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Disponivel)</dt>
-        <dd class="col-sm-9">@(Model.Disponivel ? "Sim" : "Não")</dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
-    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
-</div>
+    <partial name="_Ficha" model="Model" />
+
+    <p class="grupo-botoes">
+        <a class="btn btn--tinta" asp-action="Edit" asp-route-id="@Model.Id">Editar item</a>
+        <a class="btn btn--contorno" asp-action="Index">Voltar</a>
+        <a class="btn btn--perigo" asp-action="Delete" asp-route-id="@Model.Id">Excluir</a>
+    </p>
+</section>

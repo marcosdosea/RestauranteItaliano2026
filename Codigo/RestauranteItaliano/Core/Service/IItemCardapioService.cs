@@ -5,6 +5,7 @@
         uint Create(Itemcardapio itemCardapio);
         void Edit(Itemcardapio itemCardapio);
         void Delete(uint id);
+        void AlterarDisponibilidade(uint id, bool disponivel);
         Itemcardapio? Get(uint id);
         IEnumerable<Itemcardapio> GetAll();
     }

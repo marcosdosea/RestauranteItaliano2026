@@ -50,7 +50,7 @@ namespace Service
         /// <returns>Uma coleção de restaurantes</returns>
         public IEnumerable<Restaurante> GetAll()
         {
-            return _context.Restaurantes.AsNoTracking().OrderBy(r => r.Nome).ToList();
+            return _context.Restaurantes.AsNoTracking().OrderBy(r => r.Nome);
         }
     }
 }

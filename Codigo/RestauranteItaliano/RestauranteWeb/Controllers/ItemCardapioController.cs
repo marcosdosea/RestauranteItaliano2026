@@ -59,8 +59,9 @@ namespace RestauranteWeb.Controllers
             }
             try
             {
-                _service.Create(_mapper.Map<Itemcardapio>(model));
-                return RedirectToAction(nameof(Index));
+                var id = _service.Create(_mapper.Map<Itemcardapio>(model));
+                TempData["Mensagem"] = $"{model.Nome} entrou no cardápio.";
+                return RedirectToAction(nameof(Index), null, $"item-{id}");
             }
             catch (ServiceException ex)
             {
@@ -94,7 +95,8 @@ namespace RestauranteWeb.Controllers
             {
                 model.Id = id;
                 _service.Edit(_mapper.Map<Itemcardapio>(model));
-                return RedirectToAction(nameof(Index));
+                TempData["Mensagem"] = $"Alterações em {model.Nome} salvas.";
+                return RedirectToAction(nameof(Index), null, $"item-{id}");
             }
             catch (ServiceException ex)
             {
@@ -119,7 +121,9 @@ namespace RestauranteWeb.Controllers
         {
             try
             {
+                var nome = _service.Get(id)?.Nome ?? model.Nome;
                 _service.Delete(id);
+                TempData["Mensagem"] = $"{nome} saiu do cardápio.";
                 return RedirectToAction(nameof(Index));
             }
             catch (ServiceException ex)
@@ -130,12 +134,40 @@ namespace RestauranteWeb.Controllers
             }
         }
 
+        // POST: ItemCardapioController/AlternarDisponivel/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AlternarDisponivel(uint id, bool disponivel)
+        {
+            try
+            {
+                _service.AlterarDisponibilidade(id, disponivel);
+                var nome = _service.Get(id)?.Nome ?? "O item";
+                TempData["Mensagem"] = disponivel
+                    ? $"{nome} está disponível de novo."
+                    : $"{nome} agora aparece como em falta.";
+            }
+            catch (ServiceException ex)
+            {
+                TempData["Mensagem"] = ex.Message;
+            }
+            return RedirectToAction(nameof(Index), null, $"item-{id}");
+        }
+
         /// <summary>
         /// Preenche as listas de restaurantes e de grupos do cardápio usadas nos formulários
         /// </summary>
         private void CarregarListas(ItemCardapioModel model)
         {
-            model.Restaurantes = new SelectList(_restauranteService.GetAll(), "Id", "Nome", model.IdRestaurante);
+            var restaurantes = _restauranteService.GetAll().ToList();
+
+            // com um restaurante só, ele já vem escolhido
+            if (model.IdRestaurante == null && restaurantes.Count == 1)
+            {
+                model.IdRestaurante = restaurantes[0].Id;
+            }
+
+            model.Restaurantes = new SelectList(restaurantes, "Id", "Nome", model.IdRestaurante);
             model.GruposCardapio = new SelectList(_grupoCardapioService.GetAll(), "Id", "Nome", model.IdGrupoCardapio);
         }
     }
