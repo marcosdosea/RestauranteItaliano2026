@@ -1,42 +1,61 @@
 @model RestauranteWeb.Models.ItemCardapioModel
 
-<div class="mb-3">
-    <label asp-for="Nome" class="form-label"></label>
-    <input asp-for="Nome" class="form-control" />
-    <span asp-validation-for="Nome" class="text-danger"></span>
-</div>
-<div class="mb-3">
-    <label asp-for="IdGrupoCardapio" class="form-label"></label>
-    <select asp-for="IdGrupoCardapio" asp-items="Model.GruposCardapio" class="form-select">
-        <option value="">Selecione...</option>
+<p class="campo campo--serifa">
+    <label class="campo__rotulo" asp-for="Nome">Nome *</label>
+    <input class="form-control" asp-for="Nome" placeholder="Ex.: Spaghetti alla carbonara" autocomplete="off" aria-describedby="Nome-ajuda">
+    <small class="campo__ajuda" id="Nome-ajuda">Como aparece no cardápio. Entre 3 e 100 caracteres.</small>
+    <span class="campo__erro text-danger" asp-validation-for="Nome"></span>
+</p>
+
+<p class="edicao__linha">
+    <span class="campo">
+        <label class="campo__rotulo" asp-for="IdGrupoCardapio">Grupo do cardápio *</label>
+        <select class="form-select" asp-for="IdGrupoCardapio" asp-items="Model.GruposCardapio" aria-describedby="IdGrupoCardapio-ajuda">
+            <option value="">Selecione…</option>
+        </select>
+        <small class="campo__ajuda" id="IdGrupoCardapio-ajuda">Define em que parte do cardápio o item entra.</small>
+        <span class="campo__erro text-danger" asp-validation-for="IdGrupoCardapio"></span>
+    </span>
+
+    <span class="campo campo--serifa">
+        <label class="campo__rotulo" asp-for="Preco">Preço</label>
+        <span class="input-group">
+            <span class="input-group-text" aria-hidden="true">R$</span>
+            <input class="form-control" asp-for="Preco" placeholder="0,00" inputmode="decimal" aria-describedby="Preco-ajuda">
+        </span>
+        <small class="campo__ajuda" id="Preco-ajuda">Use vírgula para os centavos: 29,90.</small>
+        <span class="campo__erro text-danger" asp-validation-for="Preco"></span>
+    </span>
+</p>
+
+<p class="campo">
+    <label class="campo__rotulo" asp-for="IdRestaurante">Restaurante *</label>
+    <select class="form-select" asp-for="IdRestaurante" asp-items="Model.Restaurantes">
+        <option value="">Selecione…</option>
     </select>
-    <span asp-validation-for="IdGrupoCardapio" class="text-danger"></span>
-</div>
-<div class="mb-3">
-    <label asp-for="IdRestaurante" class="form-label"></label>
-    <select asp-for="IdRestaurante" asp-items="Model.Restaurantes" class="form-select">
-        <option value="">Selecione...</option>
-    </select>
-    <span asp-validation-for="IdRestaurante" class="text-danger"></span>
-</div>
-<div class="mb-3">
-    <label asp-for="Preco" class="form-label"></label>
-    <div class="input-group">
-        <span class="input-group-text">R$</span>
-        <input asp-for="Preco" class="form-control" placeholder="0,00" />
-    </div>
-    <span asp-validation-for="Preco" class="text-danger"></span>
-</div>
-<div class="mb-3">
-    <label asp-for="Detalhes" class="form-label"></label>
-    <textarea asp-for="Detalhes" class="form-control" rows="3"></textarea>
-    <span asp-validation-for="Detalhes" class="text-danger"></span>
-</div>
-<div class="mb-3 form-check">
-    <input asp-for="Ativo" class="form-check-input" />
-    <label asp-for="Ativo" class="form-check-label"></label>
-</div>
-<div class="mb-3 form-check">
-    <input asp-for="Disponivel" class="form-check-input" />
-    <label asp-for="Disponivel" class="form-check-label"></label>
-</div>
+    <span class="campo__erro text-danger" asp-validation-for="IdRestaurante"></span>
+</p>
+
+<p class="campo campo--serifa">
+    <label class="campo__rotulo" asp-for="Detalhes">Detalhes <span class="campo__contador" data-contador></span></label>
+    <textarea class="form-control" asp-for="Detalhes" rows="3" maxlength="500" placeholder="Ingredientes ou uma descrição curta"></textarea>
+    <span class="campo__erro text-danger" asp-validation-for="Detalhes"></span>
+</p>
+
+<fieldset class="interruptores">
+    <legend class="visually-hidden">Situação do item</legend>
+    <p class="interruptor">
+        <label class="interruptor__rotulo" asp-for="Ativo">
+            Ativo no cardápio
+            <span class="interruptor__ajuda">Desligue para tirar o item do cardápio sem excluir.</span>
+        </label>
+        <input class="form-check-input" asp-for="Ativo" role="switch">
+    </p>
+    <p class="interruptor">
+        <label class="interruptor__rotulo" asp-for="Disponivel">
+            Disponível para pedido
+            <span class="interruptor__ajuda">Desligue quando o prato acabar na cozinha.</span>
+        </label>
+        <input class="form-check-input" asp-for="Disponivel" role="switch">
+    </p>
+</fieldset>

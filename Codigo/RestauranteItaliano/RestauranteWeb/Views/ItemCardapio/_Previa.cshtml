@@ -1,0 +1,19 @@
+@model RestauranteWeb.Models.ItemCardapioModel
+
+@* Prévia do item como ele aparece no cardápio; o js/site.js atualiza enquanto o usuário digita *@
+<aside class="previa" aria-labelledby="previa-titulo" data-previa>
+    <h2 class="previa__titulo" id="previa-titulo">Como vai aparecer</h2>
+    <p class="previa__grupo" data-previa-grupo>@(Model.NomeGrupoCardapio ?? "Grupo")</p>
+    <p class="prato" data-previa-item>
+        <span class="prato__link">
+            <span class="prato__texto">
+                <span class="prato__nome" data-previa-nome>@(string.IsNullOrWhiteSpace(Model.Nome) ? "Nome do item" : Model.Nome)</span>
+                <span class="prato__detalhe" data-previa-detalhes>@(string.IsNullOrWhiteSpace(Model.Detalhes) ? "detalhes do item" : Model.Detalhes)</span>
+            </span>
+            <span class="u-pontos" aria-hidden="true"></span>
+            <span class="prato__selo" data-previa-selo hidden>Em falta</span>
+            <span class="prato__preco" data-previa-preco>R$ —</span>
+        </span>
+    </p>
+    <p class="previa__nota" aria-live="polite" data-previa-nota>É assim que o item aparece na lista e no cardápio.</p>
+</aside>

@@ -1,81 +1,136 @@
 @model IEnumerable<RestauranteWeb.Models.ItemCardapioModel>
 
 @{
-    ViewData["Title"] = "Itens do Cardápio";
+    ViewData["Title"] = "Itens do cardápio";
+
+    var itens = Model.ToList();
+    var grupos = itens
+        .GroupBy(i => i.NomeGrupoCardapio ?? "Sem grupo")
+        .ToList();
+
+    var ativos = itens.Count(i => i.Ativo);
+    var disponiveis = itens.Count(i => i.Ativo && i.Disponivel);
+    var emFalta = ativos - disponiveis;
 }
 
-<h1>Itens do Cardápio</h1>
-
-<p>
-    <a asp-action="Create" class="btn btn-primary">Novo Item</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NomeGrupoCardapio)
-            </th>
-            <th class="text-end">
-                @Html.DisplayNameFor(model => model.Preco)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ativo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Disponivel)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<header class="titulo-pagina">
+    <hgroup class="titulo-pagina__texto">
+        <p class="u-rotulo">Capítulo · Cardápio</p>
+        <h1 class="titulo-pagina__titulo">Itens do cardápio<span class="u-acento">.</span></h1>
+        @if (itens.Any())
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Nome)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NomeGrupoCardapio)
-                </td>
-                <td class="text-end">
-                    @Html.DisplayFor(modelItem => item.Preco)
-                </td>
-                <td>
-                    @if (item.Ativo)
-                    {
-                        <span class="badge text-bg-success">Sim</span>
-                    }
-                    else
-                    {
-                        <span class="badge text-bg-secondary">Não</span>
-                    }
-                </td>
-                <td>
-                    @if (item.Disponivel)
-                    {
-                        <span class="badge text-bg-success">Sim</span>
-                    }
-                    else
-                    {
-                        <span class="badge text-bg-secondary">Não</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Excluir</a>
-                </td>
-            </tr>
+            <p class="titulo-pagina__resumo">@itens.Count @(itens.Count == 1 ? "item" : "itens") · @disponiveis @(disponiveis == 1 ? "disponível" : "disponíveis") · @emFalta em falta</p>
         }
-    </tbody>
-</table>
+    </hgroup>
+    <a class="btn btn--tinta" asp-action="Create">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+        </svg>
+        Novo item
+    </a>
+</header>
+
+@if (!itens.Any())
+{
+    <section class="vazio" aria-labelledby="vazio-titulo">
+        <svg width="132" height="84" viewBox="0 0 132 84" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="66" cy="42" r="32" />
+            <circle cx="66" cy="42" r="21" />
+            <path d="M16 12v16M10 12v12a6 6 0 0 0 12 0V12M16 30v42" />
+            <path d="M116 12c-7 7-7 21 0 28v32" />
+        </svg>
+        <h2 class="vazio__titulo" id="vazio-titulo">O cardápio ainda está em branco.</h2>
+        <p class="vazio__texto">Cadastre o primeiro prato e ele aparece aqui, já organizado por grupo, como num cardápio impresso.</p>
+        <p class="grupo-botoes">
+            <a class="btn btn--tinta" asp-action="Create">Cadastrar o primeiro prato</a>
+            <a class="btn btn--contorno" asp-controller="GrupoCardapio" asp-action="Create">Criar um grupo antes</a>
+        </p>
+    </section>
+}
+else
+{
+    <search class="ferramentas">
+        <label class="busca">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="6.5" />
+                <path d="M16 16l4.5 4.5" />
+            </svg>
+            <span class="visually-hidden">Buscar item pelo nome</span>
+            <input class="busca__campo" type="search" placeholder="Buscar prato ou bebida…" autocomplete="off" data-busca>
+        </label>
+
+        <p class="filtros" role="group" aria-label="Filtrar por grupo">
+            <button class="filtros__botao" type="button" aria-pressed="true" data-filtro="">Todos · @itens.Count</button>
+            @foreach (var grupo in grupos)
+            {
+                <button class="filtros__botao" type="button" aria-pressed="false" data-filtro="@grupo.Key">@grupo.Key · @grupo.Count()</button>
+            }
+        </p>
+    </search>
+
+    <section class="carta" aria-label="Itens agrupados por grupo do cardápio" data-carta>
+        @foreach (var grupo in grupos)
+        {
+            <section class="grupo" aria-labelledby="grupo-@grupo.First().IdGrupoCardapio" data-grupo="@grupo.Key">
+                <h2 class="grupo__titulo" id="grupo-@grupo.First().IdGrupoCardapio">
+                    <span class="grupo__nome">@grupo.Key</span>
+                    <span class="grupo__resumo">@grupo.Count() @(grupo.Count() == 1 ? "item" : "itens")</span>
+                </h2>
+
+                <ul class="u-lista-limpa">
+                    @foreach (var item in grupo)
+                    {
+                        var emFaltaItem = item.Ativo && !item.Disponivel;
+                        var classeEstado = !item.Ativo ? "prato--inativo" : (emFaltaItem ? "prato--em-falta" : null);
+
+                        <li class="prato @classeEstado" id="item-@item.Id" data-prato="@item.Nome">
+                            <a class="prato__link" asp-action="Details" asp-route-id="@item.Id">
+                                <span class="prato__texto">
+                                    <span class="prato__nome">@item.Nome</span>
+                                    @if (!string.IsNullOrWhiteSpace(item.Detalhes))
+                                    {
+                                        <span class="prato__detalhe">@item.Detalhes</span>
+                                    }
+                                </span>
+                                <span class="u-pontos" aria-hidden="true"></span>
+                                @if (!item.Ativo)
+                                {
+                                    <span class="prato__selo prato__selo--inativo">Fora do cardápio</span>
+                                }
+                                else if (emFaltaItem)
+                                {
+                                    <span class="prato__selo">Em falta</span>
+                                }
+                                <span class="prato__preco">@if (item.Preco.HasValue) { @Html.DisplayFor(m => item.Preco) } else { <text>—</text> }</span>
+                            </a>
+
+                            <ul class="prato__acoes u-lista-limpa">
+                                <li><a class="prato__acao" asp-action="Edit" asp-route-id="@item.Id" aria-label="Editar @item.Nome">Editar</a></li>
+                                @if (item.Ativo)
+                                {
+                                    <li>
+                                        <form class="prato__formulario" asp-action="AlternarDisponivel" asp-route-id="@item.Id" method="post">
+                                            <input type="hidden" name="disponivel" value="@(item.Disponivel ? "false" : "true")">
+                                            <button class="prato__acao" type="submit" aria-label="@(item.Disponivel ? "Marcar em falta" : "Marcar disponível"): @item.Nome">@(item.Disponivel ? "Marcar em falta" : "Marcar disponível")</button>
+                                        </form>
+                                    </li>
+                                }
+                                <li><a class="prato__acao prato__acao--perigo" asp-action="Delete" asp-route-id="@item.Id" aria-label="Excluir @item.Nome">Excluir</a></li>
+                            </ul>
+                        </li>
+                    }
+                </ul>
+            </section>
+        }
+    </section>
+
+    <section class="vazio vazio--busca" aria-live="polite" data-sem-resultado hidden>
+        <h2 class="vazio__titulo">Nenhum item encontrado.</h2>
+        <p class="vazio__texto">Confira a busca ou escolha outro grupo.</p>
+        <p class="grupo-botoes">
+            <button class="btn btn--contorno" type="button" data-limpar-filtros>Limpar busca e filtros</button>
+        </p>
+    </section>
+
+    <p class="u-rotulo" aria-live="polite" data-contagem>Mostrando @itens.Count de @itens.Count @(itens.Count == 1 ? "item" : "itens")</p>
+}

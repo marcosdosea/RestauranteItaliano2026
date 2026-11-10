@@ -1,62 +1,134 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - RestauranteWeb</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/RestauranteWeb.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">RestauranteWeb</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="TipoRestaurante" asp-action="Index">Tipos de Restaurante</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="GrupoCardapio" asp-action="Index">Grupos do Cardápio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="ItemCardapio" asp-action="Index">Itens do Cardápio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="FormaPagamento" asp-action="Index">Formas de Pagamento</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+﻿@using System.Globalization
+@{
+    var controllerAtual = ViewContext.RouteData.Values["controller"]?.ToString();
+    var acaoAtual = ViewContext.RouteData.Values["action"]?.ToString();
+    var paginaInicial = controllerAtual == "Home" && acaoAtual == "Index";
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - RestauranteWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
+    var capitulos = Navegacao.Capitulos();
+    var capituloAtual = Navegacao.CapituloDo(capitulos, controllerAtual);
+
+    var agora = DateTime.Now;
+    var dataBruta = agora.ToString("dddd, d 'de' MMMM 'de' yyyy", new CultureInfo("pt-BR"));
+    var dataLonga = char.ToUpper(dataBruta[0]) + dataBruta[1..];
+    var saudacao = agora.Hour < 12 ? "Buongiorno" : (agora.Hour < 18 ? "Buon pomeriggio" : "Buona sera");
+
+    var mensagem = TempData["Mensagem"] as string;
+}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"] — Restaurante Italiano</title>
+    <meta name="description" content="Sistema de gestão do Restaurante Italiano: cardápio, equipe, salão, pedidos e pagamentos.">
+    <meta name="theme-color" content="#f5efe6">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=Instrument+Serif:ital@0;1&amp;display=swap">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
+</head>
+
+<body>
+    <a class="u-pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+    <header class="cabecalho @(paginaInicial ? "cabecalho--inicial" : null)">
+        @if (paginaInicial)
+        {
+            <p class="cabecalho__topo">
+                <span>@dataLonga</span>
+                <span class="cabecalho__saudacao">@saudacao</span>
+                <a class="cabecalho__link-topo" asp-controller="Home" asp-action="Privacy">Privacidade</a>
+            </p>
+        }
+
+        <nav class="cabecalho__barra" aria-label="Menu principal">
+            <a class="cabecalho__marca" asp-controller="Home" asp-action="Index" aria-current="@(paginaInicial ? "page" : null)">
+                @if (paginaInicial)
+                {
+                    <span class="cabecalho__sobre-marca">Sistema de gestão</span>
+                }
+                <span class="cabecalho__nome">Restaurante <em class="cabecalho__nome-destaque">Italiano</em></span>
+            </a>
+
+            <ul class="capitulos u-lista-limpa">
+                @foreach (var capitulo in capitulos)
+                {
+                    var atual = capitulo == capituloAtual;
+                    <li>
+                        @if (capitulo.TemFuncaoPronta)
+                        {
+                            <a class="capitulos__link @(atual ? "capitulos__link--atual" : null)" asp-controller="@capitulo.ControllerInicial" asp-action="Index" aria-current="@(atual ? "true" : null)">
+                                <span class="capitulos__numero">@capitulo.Romano</span>@capitulo.Nome
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="capitulos__link capitulos__link--em-breve" asp-controller="Home" asp-action="Index" asp-fragment="@capitulo.Ancora" title="Ainda não implementado">
+                                <span class="capitulos__numero">@capitulo.Romano</span>@capitulo.Nome
+                            </a>
+                        }
+                    </li>
+                }
+            </ul>
+        </nav>
+
+        @if (capituloAtual != null || !string.IsNullOrEmpty(mensagem))
+        {
+            <section class="cabecalho__secoes" aria-label="Telas do capítulo">
+                @if (capituloAtual != null)
+                {
+                    <ul class="secoes u-lista-limpa">
+                        @foreach (var entrada in capituloAtual.Entradas)
+                        {
+                            var atual = string.Equals(entrada.Controller, controllerAtual, StringComparison.OrdinalIgnoreCase);
+                            <li>
+                                @if (entrada.Pronta)
+                                {
+                                    <a class="secoes__link @(atual ? "secoes__link--atual" : null)" asp-controller="@entrada.Controller" asp-action="Index" aria-current="@(atual ? "page" : null)">@entrada.Titulo</a>
+                                }
+                                else
+                                {
+                                    <span class="secoes__link secoes__link--em-breve">@entrada.Titulo <small>em breve</small></span>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+
+                @if (!string.IsNullOrEmpty(mensagem))
+                {
+                    <p class="aviso" role="status">
+                        <svg class="aviso__icone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M5 12.5l4.5 4.5L19 7.5" />
+                        </svg>
+                        <span class="aviso__texto">@mensagem</span>
+                        <button class="aviso__fechar" type="button" aria-label="Fechar aviso" data-fechar-aviso>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                                <path d="M6 6l12 12M18 6L6 18" />
+                            </svg>
+                        </button>
+                    </p>
+                }
+            </section>
+        }
+    </header>
+
+    <main id="conteudo" class="conteudo" tabindex="-1">
+        @RenderBody()
+    </main>
+
+    <footer class="rodape">
+        <p class="rodape__texto">&copy; @agora.Year Restaurante Italiano</p>
+        <p class="rodape__colofao">Composto em Instrument Serif e Instrument Sans</p>
+        <a class="rodape__link" asp-controller="Home" asp-action="Privacy">Privacidade</a>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
