@@ -23,6 +23,8 @@ namespace RestauranteWeb
 
             builder.Services.AddScoped<ITipoFuncionario, TipoFuncionarioService>();
 
+            builder.Services.AddScoped<IGrupoCardapioService, GrupoCardapioService>();
+
             // Configuração do Mapster
             builder.Services.AddMapster();
 
