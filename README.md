@@ -27,6 +27,21 @@ O sistema cobre o dia a dia de um restaurante: cadastros básicos (restaurantes,
 
 ---
 
+## 🎨 Interface
+
+O visual do sistema, chamado **La Carta**, imita um cardápio impresso de cantina italiana: fundo creme, títulos com serifa, linhas pontilhadas ligando o nome ao preço e detalhes em vermelho.
+
+- **Página inicial:** funciona como o índice de um livro. Mostra uma saudação conforme a hora do dia, atalhos para os cadastros mais usados, um resumo do cardápio (itens disponíveis e em falta e os grupos com mais itens) e todos os casos de uso organizados em capítulos, com a quantidade de registros de cada um.
+- **Navegação por capítulos:** o menu agrupa as telas em Cardápio, Equipe, Configurações, Salão, Pedidos e Pagamentos. Os casos de uso que ainda não foram implementados aparecem como "em breve".
+- **Avisos:** depois de salvar, editar ou excluir, aparece um aviso verde no canto da tela, que some sozinho. Erros aparecem em vermelho e ficam até serem fechados.
+- **Cardápio:** os itens são listados por grupo, com busca, filtro por grupo e marcação de item em falta direto na lista.
+- **Celular:** todas as telas se adaptam a telas pequenas, e as ações ficam sempre visíveis em telas de toque.
+- **Acessibilidade e validação:** HTML semântico, navegação por teclado, atributos `aria-*` e respeito à opção de reduzir animações. As páginas passam sem erros nos validadores de [HTML](https://validator.w3.org/nu/) e de [CSS](https://jigsaw.w3.org/css-validator/) do W3C.
+
+O estilo fica todo em `RestauranteWeb/wwwroot/css/site.css`, com variáveis de cor em português (`--cor-tinta`, `--cor-papel`…) e classes no padrão BEM (`prato__nome`, `aviso--erro`). O layout único das páginas é `Views/Shared/_Layout.cshtml`.
+
+---
+
 ## 🛠️ Tecnologias
 
 - [.NET 10](https://dotnet.microsoft.com/) e ASP.NET Core MVC
@@ -130,6 +145,27 @@ INSERT INTO restaurante.restaurante (idTipoRestaurante, cnpj, nome)
 VALUES (LAST_INSERT_ID(), '00000000000000', 'Restaurante Italiano');
 ```
 
+Para ver a página inicial e o cardápio com conteúdo, você pode incluir também alguns grupos, itens e formas de pagamento (rode depois do script acima):
+
+```sql
+SET @restaurante = (SELECT MAX(id) FROM restaurante.restaurante);
+
+INSERT INTO restaurante.GrupoCardapio (nome) VALUES ('Entradas');
+SET @entradas = LAST_INSERT_ID();
+INSERT INTO restaurante.GrupoCardapio (nome) VALUES ('Massas');
+SET @massas = LAST_INSERT_ID();
+INSERT INTO restaurante.GrupoCardapio (nome) VALUES ('Sobremesas');
+SET @sobremesas = LAST_INSERT_ID();
+
+INSERT INTO restaurante.itemcardapio (nome, preco, detalhes, ativo, disponivel, idRestaurante, idGrupoCardapio) VALUES
+  ('Bruschetta al pomodoro', 28.00, 'pão italiano, tomate e manjericão', 1, '1', @restaurante, @entradas),
+  ('Spaghetti alla carbonara', 62.00, 'guanciale, ovos e pecorino', 1, '1', @restaurante, @massas),
+  ('Gnocchi al pesto', 54.00, NULL, 1, '0', @restaurante, @massas),
+  ('Tiramisù', 26.00, 'mascarpone, café e cacau', 1, '1', @restaurante, @sobremesas);
+
+INSERT INTO restaurante.FormaPagamento (nome) VALUES ('Dinheiro'), ('Pix'), ('Cartão de crédito');
+```
+
 ---
 
 ## 🧪 Testes
@@ -142,6 +178,17 @@ A solução tem dois projetos de teste, no mesmo formato do projeto de referênc
 | `RestauranteWebTest` | Controllers | Serviços simulados com Moq |
 
 Os testes não usam o MySQL, então rodam mesmo sem o banco instalado.
+
+Situação atual: **75 testes, todos aprovados**.
+
+| Arquivo | Testes | O que cobre |
+|---|---|---|
+| `ServiceTest/FormaPagamentoServiceTests.cs` | 13 | Cadastro, edição, exclusão e consultas; nome repetido; exclusão bloqueada quando a forma já foi usada em um pagamento |
+| `ServiceTest/ItemCardapioServiceTests.cs` | 17 | Cadastro, edição, exclusão e consultas; grupo ou restaurante inexistente; nome repetido no mesmo restaurante; item já pedido; marcar em falta e disponível |
+| `ServiceTest/ResumoServiceTests.cs` | 4 | Números da página inicial: itens ativos, disponíveis e em falta, grupos com mais itens e quantidade de cada cadastro |
+| `RestauranteWebTest/Controllers/FormaPagamentoControllerTests.cs` | 17 | Todas as ações do controller, avisos de sucesso, erros do serviço e páginas inexistentes (404) |
+| `RestauranteWebTest/Controllers/ItemCardapioControllerTests.cs` | 21 | Todas as ações do controller, listas do formulário, aviso de erro ao marcar em falta e páginas inexistentes (404) |
+| `RestauranteWebTest/Controllers/HomeControllerTests.cs` | 3 | Resumo da página inicial e funcionamento com o banco fora do ar |
 
 **Visual Studio:** menu **Teste → Executar Todos os Testes** (ou `Ctrl+R, A`). O resultado aparece no **Gerenciador de Testes**.
 
@@ -168,8 +215,9 @@ Os métodos seguem o nome `Metodo_QuandoCondicao_DeveResultado` e são divididos
    - registro do serviço no `Program.cs` com `AddTransient` e entrada no mapa do sistema (`Models/Navegacao.cs`), que alimenta o menu e a página inicial;
    - testes do serviço em `ServiceTest` e do controller em `RestauranteWebTest`.
 4. Compile e rode os testes antes de enviar.
-5. Faça commits no padrão `feat: implementa CS05 - Manter Restaurante`.
-6. Envie a branch e abra um **Pull Request** para a `main`, descrevendo o que mudou.
+5. Antes do commit, confira na lista de alterações que não há arquivos das pastas `bin/` e `obj/`. Elas são geradas pela compilação e já estão no `.gitignore`.
+6. Faça commits no padrão `feat: implementa CS05 - Manter Restaurante`.
+7. Envie a branch e abra um **Pull Request** para a `main`, descrevendo o que mudou.
 
 ---
 
