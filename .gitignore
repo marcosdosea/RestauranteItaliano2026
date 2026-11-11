@@ -7,3 +7,10 @@
 /Codigo/RestauranteItaliano/Service/obj
 /Codigo/RestauranteItaliano/Util/bin
 /Codigo/RestauranteItaliano/Util/obj
+
+# Pastas geradas pela compilação e pelo Visual Studio, em qualquer projeto
+# (inclui os projetos de teste ServiceTest e RestauranteWebTest)
+[Bb]in/
+[Oo]bj/
+.vs/
+TestResults/
