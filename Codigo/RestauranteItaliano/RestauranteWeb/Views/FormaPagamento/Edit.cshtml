@@ -1,30 +1,45 @@
 @model RestauranteWeb.Models.FormaPagamentoModel
 
 @{
-    ViewData["Title"] = "Editar Forma de Pagamento";
+    ViewData["Title"] = "Editar forma de pagamento";
 }
 
-<h1>Editar Forma de Pagamento</h1>
+<header class="titulo-pagina titulo-pagina--empilhado">
+    <a class="link-voltar" asp-action="Index">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 12H5M11 6l-6 6 6 6" />
+        </svg>
+        Voltar para a lista
+    </a>
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">Editar forma de pagamento<span class="u-acento">.</span></h1>
+        <p class="titulo-pagina__resumo">@Html.DisplayFor(model => model.Nome)</p>
+    </hgroup>
+</header>
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" asp-route-id="@Model.Id">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+<form class="edicao" asp-action="Edit" asp-route-id="@Model.Id" method="post" data-travar-envio>
+    <input type="hidden" asp-for="Id">
+    <section class="edicao__formulario" aria-label="Dados da forma de pagamento">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="mb-3">
-                <label asp-for="Nome" class="form-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Salvar</button>
-                <a asp-action="Index" class="btn btn-secondary">Voltar</a>
-            </div>
-        </form>
-    </div>
-</div>
+        <p class="campo campo--serifa campo--obrigatorio">
+            <label class="campo__rotulo" asp-for="Nome"></label>
+            <input class="form-control" asp-for="Nome" placeholder="Ex.: Cartão de crédito" autocomplete="off" aria-describedby="Nome-ajuda">
+            <small class="campo__ajuda" id="Nome-ajuda">Como aparece na hora do pagamento. Entre 3 e 50 caracteres.</small>
+            <span class="campo__erro text-danger" asp-validation-for="Nome"></span>
+        </p>
+
+        <p class="grupo-botoes">
+            <button class="btn btn--tinta" type="submit">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12.5l4.5 4.5L19 7.5" />
+                </svg>
+                Salvar alterações
+            </button>
+            <a class="btn btn--contorno" asp-action="Index">Cancelar</a>
+        </p>
+    </section>
+</form>
 
 @section Scripts {
     @{

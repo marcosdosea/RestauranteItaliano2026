@@ -15,11 +15,9 @@ const normalizar = (texto) =>
     .toLowerCase()
     .trim();
 
-/* ---------- Aviso de sucesso ---------- */
+/* ---------- Avisos de sucesso e de erro ---------- */
 
-const aviso = document.querySelector(".aviso");
-
-if (aviso) {
+document.querySelectorAll(".aviso").forEach((aviso) => {
   const fecharAviso = () => {
     aviso.classList.add("aviso--saindo");
     setTimeout(() => aviso.remove(), 400);
@@ -27,14 +25,17 @@ if (aviso) {
 
   aviso.querySelector("[data-fechar-aviso]")?.addEventListener("click", fecharAviso);
 
-  // some sozinho, mas espera se o mouse ou o teclado estiver em cima dele
+  // o aviso de erro só sai quando a pessoa fecha
+  if (aviso.classList.contains("aviso--erro")) return;
+
+  // o de sucesso some sozinho, mas espera se o mouse ou o teclado estiver em cima dele
   let tempo = setTimeout(fecharAviso, 6000);
   aviso.addEventListener("mouseenter", () => clearTimeout(tempo));
   aviso.addEventListener("focusin", () => clearTimeout(tempo));
   aviso.addEventListener("mouseleave", () => {
     tempo = setTimeout(fecharAviso, 3000);
   });
-}
+});
 
 /* ---------- Cardápio: busca e filtro por grupo ---------- */
 

@@ -1,136 +1,135 @@
-using Core;
 using Core.Service;
-using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using RestauranteWeb.Mapper;
 using RestauranteWeb.Models;
 
 namespace RestauranteWeb.Controllers
 {
     public class ItemCardapioController : Controller
     {
-        private readonly IItemCardapioService _service;
-        private readonly IGrupoCardapioService _grupoCardapioService;
-        private readonly IRestauranteService _restauranteService;
-        private readonly IMapper _mapper;
+        private readonly IItemCardapioService itemCardapioService;
+        private readonly IGrupoCardapioService grupoCardapioService;
+        private readonly IRestauranteService restauranteService;
 
-        public ItemCardapioController(IItemCardapioService service,
+        public ItemCardapioController(IItemCardapioService itemCardapioService,
                                       IGrupoCardapioService grupoCardapioService,
-                                      IRestauranteService restauranteService,
-                                      IMapper mapper)
+                                      IRestauranteService restauranteService)
         {
-            _service = service;
-            _grupoCardapioService = grupoCardapioService;
-            _restauranteService = restauranteService;
-            _mapper = mapper;
+            this.itemCardapioService = itemCardapioService;
+            this.grupoCardapioService = grupoCardapioService;
+            this.restauranteService = restauranteService;
         }
 
         // GET: ItemCardapioController
         public ActionResult Index()
         {
-            return View(_mapper.Map<List<ItemCardapioModel>>(_service.GetAll()));
+            var itensCardapio = itemCardapioService.GetAll();
+            var itensCardapioModel = ItemCardapioMapper.ToViewModel(itensCardapio);
+            return View(itensCardapioModel);
         }
 
         // GET: ItemCardapioController/Details/5
         public ActionResult Details(uint id)
         {
-            var item = _service.Get(id);
-            if (item == null) return NotFound();
-            return View(_mapper.Map<ItemCardapioModel>(item));
+            var itemCardapio = itemCardapioService.Get(id);
+            if (itemCardapio == null) return NotFound();
+            var itemCardapioModel = ItemCardapioMapper.ToViewModel(itemCardapio);
+            return View(itemCardapioModel);
         }
 
         // GET: ItemCardapioController/Create
         public ActionResult Create()
         {
-            var model = new ItemCardapioModel { Ativo = true, Disponivel = true };
-            CarregarListas(model);
-            return View(model);
+            var itemCardapioModel = new ItemCardapioModel { Ativo = true, Disponivel = true };
+            CarregarListas(itemCardapioModel);
+            return View(itemCardapioModel);
         }
 
         // POST: ItemCardapioController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(ItemCardapioModel model)
+        public ActionResult Create(ItemCardapioModel itemCardapioModel)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                CarregarListas(model);
-                return View(model);
+                try
+                {
+                    var itemCardapio = ItemCardapioMapper.ToEntity(itemCardapioModel);
+                    var id = itemCardapioService.Create(itemCardapio);
+                    TempData["Mensagem"] = $"{itemCardapioModel.Nome} entrou no cardápio.";
+                    return RedirectToAction(nameof(Index), null, $"item-{id}");
+                }
+                catch (ServiceException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
-            try
-            {
-                var id = _service.Create(_mapper.Map<Itemcardapio>(model));
-                TempData["Mensagem"] = $"{model.Nome} entrou no cardápio.";
-                return RedirectToAction(nameof(Index), null, $"item-{id}");
-            }
-            catch (ServiceException ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-                CarregarListas(model);
-                return View(model);
-            }
+            CarregarListas(itemCardapioModel);
+            return View(itemCardapioModel);
         }
 
         // GET: ItemCardapioController/Edit/5
         public ActionResult Edit(uint id)
         {
-            var item = _service.Get(id);
-            if (item == null) return NotFound();
-            var model = _mapper.Map<ItemCardapioModel>(item);
-            CarregarListas(model);
-            return View(model);
+            var itemCardapio = itemCardapioService.Get(id);
+            if (itemCardapio == null) return NotFound();
+            var itemCardapioModel = ItemCardapioMapper.ToViewModel(itemCardapio);
+            CarregarListas(itemCardapioModel);
+            return View(itemCardapioModel);
         }
 
         // POST: ItemCardapioController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(uint id, ItemCardapioModel model)
+        public ActionResult Edit(uint id, ItemCardapioModel itemCardapioModel)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                CarregarListas(model);
-                return View(model);
+                try
+                {
+                    itemCardapioModel.Id = id;
+                    var itemCardapio = ItemCardapioMapper.ToEntity(itemCardapioModel);
+                    itemCardapioService.Edit(itemCardapio);
+                    TempData["Mensagem"] = $"Alterações em {itemCardapioModel.Nome} salvas.";
+                    return RedirectToAction(nameof(Index), null, $"item-{id}");
+                }
+                catch (ServiceException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
-            try
-            {
-                model.Id = id;
-                _service.Edit(_mapper.Map<Itemcardapio>(model));
-                TempData["Mensagem"] = $"Alterações em {model.Nome} salvas.";
-                return RedirectToAction(nameof(Index), null, $"item-{id}");
-            }
-            catch (ServiceException ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-                CarregarListas(model);
-                return View(model);
-            }
+            CarregarListas(itemCardapioModel);
+            return View(itemCardapioModel);
         }
 
         // GET: ItemCardapioController/Delete/5
         public ActionResult Delete(uint id)
         {
-            var item = _service.Get(id);
-            if (item == null) return NotFound();
-            return View(_mapper.Map<ItemCardapioModel>(item));
+            var itemCardapio = itemCardapioService.Get(id);
+            if (itemCardapio == null) return NotFound();
+            var itemCardapioModel = ItemCardapioMapper.ToViewModel(itemCardapio);
+            return View(itemCardapioModel);
         }
 
         // POST: ItemCardapioController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(uint id, ItemCardapioModel model)
+        public ActionResult Delete(uint id, ItemCardapioModel itemCardapioModel)
         {
             try
             {
-                var nome = _service.Get(id)?.Nome ?? model.Nome;
-                _service.Delete(id);
-                TempData["Mensagem"] = $"{nome} saiu do cardápio.";
+                itemCardapioService.Delete(id);
+                TempData["Mensagem"] = $"{itemCardapioModel.Nome} saiu do cardápio.";
                 return RedirectToAction(nameof(Index));
             }
             catch (ServiceException ex)
             {
                 ModelState.AddModelError("", ex.Message);
-                var item = _service.Get(id);
-                return View(item == null ? model : _mapper.Map<ItemCardapioModel>(item));
+
+                // recarrega o item para a tela mostrar grupo, preço e restaurante de novo
+                var itemCardapio = itemCardapioService.Get(id);
+                return View(itemCardapio == null ? itemCardapioModel : ItemCardapioMapper.ToViewModel(itemCardapio));
             }
         }
 
@@ -141,15 +140,15 @@ namespace RestauranteWeb.Controllers
         {
             try
             {
-                _service.AlterarDisponibilidade(id, disponivel);
-                var nome = _service.Get(id)?.Nome ?? "O item";
+                itemCardapioService.AlterarDisponibilidade(id, disponivel);
+                var nome = itemCardapioService.Get(id)?.Nome ?? "O item";
                 TempData["Mensagem"] = disponivel
                     ? $"{nome} está disponível de novo."
                     : $"{nome} agora aparece como em falta.";
             }
             catch (ServiceException ex)
             {
-                TempData["Mensagem"] = ex.Message;
+                TempData["Erro"] = ex.Message;
             }
             return RedirectToAction(nameof(Index), null, $"item-{id}");
         }
@@ -157,18 +156,18 @@ namespace RestauranteWeb.Controllers
         /// <summary>
         /// Preenche as listas de restaurantes e de grupos do cardápio usadas nos formulários
         /// </summary>
-        private void CarregarListas(ItemCardapioModel model)
+        private void CarregarListas(ItemCardapioModel itemCardapioModel)
         {
-            var restaurantes = _restauranteService.GetAll().ToList();
+            var restaurantes = restauranteService.GetAll().ToList();
 
             // com um restaurante só, ele já vem escolhido
-            if (model.IdRestaurante == null && restaurantes.Count == 1)
+            if (itemCardapioModel.IdRestaurante == null && restaurantes.Count == 1)
             {
-                model.IdRestaurante = restaurantes[0].Id;
+                itemCardapioModel.IdRestaurante = restaurantes[0].Id;
             }
 
-            model.Restaurantes = new SelectList(restaurantes, "Id", "Nome", model.IdRestaurante);
-            model.GruposCardapio = new SelectList(_grupoCardapioService.GetAll(), "Id", "Nome", model.IdGrupoCardapio);
+            itemCardapioModel.Restaurantes = new SelectList(restaurantes, "Id", "Nome", itemCardapioModel.IdRestaurante);
+            itemCardapioModel.GruposCardapio = new SelectList(grupoCardapioService.GetAll(), "Id", "Nome", itemCardapioModel.IdGrupoCardapio);
         }
     }
 }

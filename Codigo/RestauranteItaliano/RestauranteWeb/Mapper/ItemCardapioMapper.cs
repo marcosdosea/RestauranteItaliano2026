@@ -4,15 +4,16 @@ using RestauranteWeb.Models;
 
 namespace RestauranteWeb.Mapper
 {
-    /// <summary>
-    /// Regras de conversão entre Itemcardapio e ItemCardapioModel que o Mapster não faz sozinho:
-    /// no banco, "ativo" é TINYINT e "disponivel" é VARCHAR ('1' ou '0'); na tela, os dois são caixas de seleção.
-    /// </summary>
-    public static class ItemCardapioMapper
+    public class ItemCardapioMapper
     {
-        public static void Registrar(TypeAdapterConfig config)
+        /// <summary>
+        /// Regras de conversão que o Mapster não faz sozinho: no banco, "ativo" é TINYINT
+        /// e "disponivel" é VARCHAR ('1' ou '0'); na tela, os dois são caixas de seleção.
+        /// O construtor estático roda uma única vez, antes do primeiro uso da classe.
+        /// </summary>
+        static ItemCardapioMapper()
         {
-            config.NewConfig<Itemcardapio, ItemCardapioModel>()
+            TypeAdapterConfig<Itemcardapio, ItemCardapioModel>.NewConfig()
                 .Map(destino => destino.Ativo, origem => origem.Ativo == 1)
                 .Map(destino => destino.Disponivel, origem => origem.Disponivel == "1")
                 .Map(destino => destino.NomeRestaurante,
@@ -20,7 +21,7 @@ namespace RestauranteWeb.Mapper
                 .Map(destino => destino.NomeGrupoCardapio,
                      origem => origem.IdGrupoCardapioNavigation != null ? origem.IdGrupoCardapioNavigation.Nome : null);
 
-            config.NewConfig<ItemCardapioModel, Itemcardapio>()
+            TypeAdapterConfig<ItemCardapioModel, Itemcardapio>.NewConfig()
                 .Map(destino => destino.Id, origem => origem.Id ?? 0)
                 .Map(destino => destino.Ativo, origem => origem.Ativo ? (sbyte)1 : (sbyte)0)
                 .Map(destino => destino.Disponivel, origem => origem.Disponivel ? "1" : "0")
@@ -29,6 +30,26 @@ namespace RestauranteWeb.Mapper
                 .Ignore(destino => destino.IdRestauranteNavigation)
                 .Ignore(destino => destino.IdGrupoCardapioNavigation)
                 .Ignore(destino => destino.Pedidoitemcardapios);
+        }
+
+        public static ItemCardapioModel ToViewModel(Itemcardapio itemCardapio)
+        {
+            return itemCardapio.Adapt<ItemCardapioModel>();
+        }
+
+        public static Itemcardapio ToEntity(ItemCardapioModel itemCardapioModel)
+        {
+            return itemCardapioModel.Adapt<Itemcardapio>();
+        }
+
+        public static IEnumerable<ItemCardapioModel> ToViewModel(IEnumerable<Itemcardapio>? itensCardapio)
+        {
+            return itensCardapio?.Adapt<IEnumerable<ItemCardapioModel>>() ?? new List<ItemCardapioModel>();
+        }
+
+        public static IEnumerable<Itemcardapio> ToEntity(IEnumerable<ItemCardapioModel>? itensCardapioModel)
+        {
+            return itensCardapioModel?.Adapt<IEnumerable<Itemcardapio>>() ?? new List<Itemcardapio>();
         }
     }
 }

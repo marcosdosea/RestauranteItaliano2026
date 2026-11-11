@@ -1,0 +1,674 @@
+using Core;
+using Core.Service;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Moq;
+using RestauranteWeb.Models;
+
+namespace RestauranteWeb.Controllers.Tests;
+
+[TestClass]
+public class ItemCardapioControllerTests
+{
+    private Mock<IItemCardapioService> itemCardapioServiceMock = null!;
+    private Mock<IGrupoCardapioService> grupoCardapioServiceMock = null!;
+    private Mock<IRestauranteService> restauranteServiceMock = null!;
+    private ItemCardapioController controller = null!;
+
+    [TestInitialize]
+    public void Inicializar()
+    {
+        itemCardapioServiceMock = new Mock<IItemCardapioService>();
+        grupoCardapioServiceMock = new Mock<IGrupoCardapioService>();
+        restauranteServiceMock = new Mock<IRestauranteService>();
+
+        itemCardapioServiceMock
+            .Setup(service => service.GetAll())
+            .Returns(ObterItensDeTeste());
+
+        itemCardapioServiceMock
+            .Setup(service => service.Get(1))
+            .Returns(ObterItemAlvo());
+
+        itemCardapioServiceMock
+            .Setup(service => service.Get(999))
+            .Returns((Itemcardapio?)null);
+
+        grupoCardapioServiceMock
+            .Setup(service => service.GetAll())
+            .Returns(ObterGruposDeTeste());
+
+        restauranteServiceMock
+            .Setup(service => service.GetAll())
+            .Returns(ObterRestaurantesDeTeste());
+
+        controller = new ItemCardapioController(
+            itemCardapioServiceMock.Object,
+            grupoCardapioServiceMock.Object,
+            restauranteServiceMock.Object);
+
+        // os avisos de sucesso e de erro das telas são guardados no TempData
+        controller.TempData = new TempDataDictionary(
+            new DefaultHttpContext(),
+            Mock.Of<ITempDataProvider>());
+    }
+
+    [TestCleanup]
+    public void Finalizar()
+    {
+        controller.Dispose();
+    }
+
+    [TestMethod]
+    public void Index_QuandoChamado_DeveRetornarViewComTodosOsItens()
+    {
+        // Act
+        var resultado = controller.Index();
+
+        // Assert
+        var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
+        var itens = Assert.IsInstanceOfType<IEnumerable<ItemCardapioModel>>(
+            viewResult.ViewData.Model);
+
+        Assert.HasCount(3, itens);
+
+        var primeiroItem = itens.First();
+
+        Assert.AreEqual(1u, primeiroItem.Id);
+        Assert.AreEqual("Bruschetta", primeiroItem.Nome);
+        Assert.AreEqual(24.90m, primeiroItem.Preco);
+        Assert.IsTrue(primeiroItem.Ativo);
+        Assert.IsTrue(primeiroItem.Disponivel);
+        Assert.AreEqual("Entradas", primeiroItem.NomeGrupoCardapio);
+        Assert.AreEqual("Restaurante Italiano", primeiroItem.NomeRestaurante);
+
+        itemCardapioServiceMock.Verify(
+            service => service.GetAll(),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void Index_QuandoItemEstaEmFalta_DeveRetornarItemComoIndisponivel()
+    {
+        // Act
+        var resultado = controller.Index();
+
+        // Assert
+        var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
+        var itens = Assert.IsInstanceOfType<IEnumerable<ItemCardapioModel>>(
+            viewResult.ViewData.Model);
+
+        var itemEmFalta = itens.Single(item => item.Id == 3);
+
+        Assert.IsTrue(itemEmFalta.Ativo);
+        Assert.IsFalse(itemEmFalta.Disponivel);
+    }
+
+    [TestMethod]
+    public void Index_QuandoNaoExistemItens_DeveRetornarViewComColecaoVazia()
+    {
+        // Arrange
+        itemCardapioServiceMock
+            .Setup(service => service.GetAll())
+            .Returns(Array.Empty<Itemcardapio>());
+
+        // Act
+        var resultado = controller.Index();
+
+        // Assert
+        var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
+        var itens = Assert.IsInstanceOfType<IEnumerable<ItemCardapioModel>>(
+            viewResult.ViewData.Model);
+
+        Assert.IsEmpty(itens);
+
+        itemCardapioServiceMock.Verify(
+            service => service.GetAll(),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void Details_QuandoItemExiste_DeveRetornarViewComItem()
+    {
+        // Act
+        var resultado = controller.Details(1);
+
+        // Assert
+        var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
+        var item = Assert.IsInstanceOfType<ItemCardapioModel>(
+            viewResult.ViewData.Model);
+
+        Assert.AreEqual(1u, item.Id);
+        Assert.AreEqual("Lasagna", item.Nome);
+        Assert.AreEqual(49.90m, item.Preco);
+        Assert.AreEqual("Massas", item.NomeGrupoCardapio);
+
+        itemCardapioServiceMock.Verify(
+            service => service.Get(1),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void Details_QuandoItemNaoExiste_DeveRetornarNotFound()
+    {
+        // Act
+        var resultado = controller.Details(999);
+
+        // Assert
+        Assert.IsInstanceOfType<NotFoundResult>(resultado);
+
+        itemCardapioServiceMock.Verify(
+            service => service.Get(999),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void Create_QuandoRequisicaoGet_DeveRetornarViewComModeloInicial()
+    {
+        // Act
+        var resultado = controller.Create();
+
+        // Assert
+        var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
+        var item = Assert.IsInstanceOfType<ItemCardapioModel>(
+            viewResult.ViewData.Model);
+
+        Assert.IsNull(item.Id);
+        Assert.IsTrue(item.Ativo);
+        Assert.IsTrue(item.Disponivel);
+
+        // com um restaurante só cadastrado, ele já vem escolhido
+        Assert.AreEqual(1u, item.IdRestaurante);
+
+        Assert.IsNotNull(item.Restaurantes);
+        Assert.IsNotNull(item.GruposCardapio);
+        Assert.HasCount(1, item.Restaurantes.ToList());
+        Assert.HasCount(2, item.GruposCardapio.ToList());
+    }
+
+    [TestMethod]
+    public void Create_QuandoModeloValido_DeveCriarItemERedirecionarParaIndex()
+    {
+        // Arrange
+        var modelo = CriarModeloDeNovoItem();
+        Itemcardapio? itemCriado = null;
+
+        itemCardapioServiceMock
+            .Setup(service => service.Create(It.IsAny<Itemcardapio>()))
+            .Callback<Itemcardapio>(item => itemCriado = item)
+            .Returns(4u);
+
+        // Act
+        var resultado = controller.Create(modelo);
+
+        // Assert
+        var redirectResult = VerificarRedirecionamentoParaIndex(resultado);
+
+        Assert.AreEqual("item-4", redirectResult.Fragment);
+
+        Assert.IsNotNull(itemCriado);
+        Assert.AreEqual(modelo.Nome, itemCriado.Nome);
+        Assert.AreEqual(modelo.Preco, itemCriado.Preco);
+        Assert.AreEqual(modelo.Detalhes, itemCriado.Detalhes);
+        Assert.AreEqual((sbyte)1, itemCriado.Ativo);
+        Assert.AreEqual("0", itemCriado.Disponivel);
+        Assert.AreEqual(1u, itemCriado.IdRestaurante);
+        Assert.AreEqual(2u, itemCriado.IdGrupoCardapio);
+        Assert.AreEqual(
+            "Tiramisù entrou no cardápio.",
+            controller.TempData["Mensagem"]);
+
+        itemCardapioServiceMock.Verify(
+            service => service.Create(It.IsAny<Itemcardapio>()),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void Create_QuandoModeloInvalido_NaoDeveCriarItem()
+    {
+        // Arrange
+        var modelo = CriarModeloDeNovoItem();
+
+        controller.ModelState.AddModelError(
+            nameof(ItemCardapioModel.Nome),
+            "O campo Nome é de preenchimento obrigatório.");
+
+        // Act
+        var resultado = controller.Create(modelo);
+
+        // Assert
+        var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
+        var item = Assert.IsInstanceOfType<ItemCardapioModel>(
+            viewResult.ViewData.Model);
+
+        // as listas voltam preenchidas para o formulário ser mostrado de novo
+        Assert.IsNotNull(item.Restaurantes);
+        Assert.IsNotNull(item.GruposCardapio);
+
+        itemCardapioServiceMock.Verify(
+            service => service.Create(It.IsAny<Itemcardapio>()),
+            Times.Never);
+    }
+
+    [TestMethod]
+    public void Create_QuandoServicoRecusa_DeveRetornarViewComMensagemDeErro()
+    {
+        // Arrange
+        var modelo = CriarModeloDeNovoItem();
+
+        itemCardapioServiceMock
+            .Setup(service => service.Create(It.IsAny<Itemcardapio>()))
+            .Throws(new ServiceException("Já existe um item do cardápio com o mesmo nome neste restaurante."));
+
+        // Act
+        var resultado = controller.Create(modelo);
+
+        // Assert
+        var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
+
+        Assert.AreSame(modelo, viewResult.ViewData.Model);
+        VerificarMensagemDeErro("Já existe um item do cardápio com o mesmo nome neste restaurante.");
+        Assert.IsNull(controller.TempData["Mensagem"]);
+    }
+
+    [TestMethod]
+    public void Edit_QuandoRequisicaoGetEItemExiste_DeveRetornarViewComItem()
+    {
+        // Act
+        var resultado = controller.Edit(1);
+
+        // Assert
+        var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
+        var item = Assert.IsInstanceOfType<ItemCardapioModel>(
+            viewResult.ViewData.Model);
+
+        Assert.AreEqual(1u, item.Id);
+        Assert.AreEqual("Lasagna", item.Nome);
+        Assert.AreEqual(2u, item.IdGrupoCardapio);
+        Assert.IsNotNull(item.Restaurantes);
+        Assert.IsNotNull(item.GruposCardapio);
+
+        itemCardapioServiceMock.Verify(
+            service => service.Get(1),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void Edit_QuandoRequisicaoGetEItemNaoExiste_DeveRetornarNotFound()
+    {
+        // Act
+        var resultado = controller.Edit(999);
+
+        // Assert
+        Assert.IsInstanceOfType<NotFoundResult>(resultado);
+
+        itemCardapioServiceMock.Verify(
+            service => service.Get(999),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void Edit_QuandoModeloValido_DeveAtualizarItemERedirecionarParaIndex()
+    {
+        // Arrange
+        var modelo = CriarModeloDeItemExistente();
+        Itemcardapio? itemEditado = null;
+
+        itemCardapioServiceMock
+            .Setup(service => service.Edit(It.IsAny<Itemcardapio>()))
+            .Callback<Itemcardapio>(item => itemEditado = item);
+
+        // Act
+        var resultado = controller.Edit(2, modelo);
+
+        // Assert
+        var redirectResult = VerificarRedirecionamentoParaIndex(resultado);
+
+        Assert.AreEqual("item-2", redirectResult.Fragment);
+
+        Assert.IsNotNull(itemEditado);
+        Assert.AreEqual(2u, itemEditado.Id);
+        Assert.AreEqual(modelo.Nome, itemEditado.Nome);
+        Assert.AreEqual(modelo.Preco, itemEditado.Preco);
+        Assert.AreEqual((sbyte)0, itemEditado.Ativo);
+        Assert.AreEqual("1", itemEditado.Disponivel);
+        Assert.AreEqual(
+            "Alterações em Gnocchi salvas.",
+            controller.TempData["Mensagem"]);
+
+        itemCardapioServiceMock.Verify(
+            service => service.Edit(It.IsAny<Itemcardapio>()),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void Edit_QuandoModeloInvalido_NaoDeveAtualizarItem()
+    {
+        // Arrange
+        var modelo = CriarModeloDeItemExistente();
+
+        controller.ModelState.AddModelError(
+            nameof(ItemCardapioModel.Preco),
+            "O campo Preço deve ser maior que zero.");
+
+        // Act
+        var resultado = controller.Edit(2, modelo);
+
+        // Assert
+        var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
+        var item = Assert.IsInstanceOfType<ItemCardapioModel>(
+            viewResult.ViewData.Model);
+
+        Assert.IsNotNull(item.Restaurantes);
+        Assert.IsNotNull(item.GruposCardapio);
+
+        itemCardapioServiceMock.Verify(
+            service => service.Edit(It.IsAny<Itemcardapio>()),
+            Times.Never);
+    }
+
+    [TestMethod]
+    public void Edit_QuandoServicoRecusa_DeveRetornarViewComMensagemDeErro()
+    {
+        // Arrange
+        var modelo = CriarModeloDeItemExistente();
+
+        itemCardapioServiceMock
+            .Setup(service => service.Edit(It.IsAny<Itemcardapio>()))
+            .Throws(new ServiceException("O grupo do cardápio informado não existe."));
+
+        // Act
+        var resultado = controller.Edit(2, modelo);
+
+        // Assert
+        var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
+
+        Assert.AreSame(modelo, viewResult.ViewData.Model);
+        VerificarMensagemDeErro("O grupo do cardápio informado não existe.");
+    }
+
+    [TestMethod]
+    public void Delete_QuandoRequisicaoGetEItemExiste_DeveRetornarViewComItem()
+    {
+        // Act
+        var resultado = controller.Delete(1);
+
+        // Assert
+        var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
+        var item = Assert.IsInstanceOfType<ItemCardapioModel>(
+            viewResult.ViewData.Model);
+
+        Assert.AreEqual(1u, item.Id);
+        Assert.AreEqual("Lasagna", item.Nome);
+
+        itemCardapioServiceMock.Verify(
+            service => service.Get(1),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void Delete_QuandoRequisicaoGetEItemNaoExiste_DeveRetornarNotFound()
+    {
+        // Act
+        var resultado = controller.Delete(999);
+
+        // Assert
+        Assert.IsInstanceOfType<NotFoundResult>(resultado);
+
+        itemCardapioServiceMock.Verify(
+            service => service.Get(999),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void Delete_QuandoRequisicaoPost_DeveExcluirItemERedirecionarParaIndex()
+    {
+        // Arrange
+        var modelo = CriarModeloDeItemExistente();
+
+        // Act
+        var resultado = controller.Delete(2, modelo);
+
+        // Assert
+        VerificarRedirecionamentoParaIndex(resultado);
+
+        Assert.AreEqual(
+            "Gnocchi saiu do cardápio.",
+            controller.TempData["Mensagem"]);
+
+        itemCardapioServiceMock.Verify(
+            service => service.Delete(2),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void Delete_QuandoServicoRecusa_DeveRetornarViewComMensagemDeErro()
+    {
+        // Arrange
+        itemCardapioServiceMock
+            .Setup(service => service.Delete(1))
+            .Throws(new ServiceException("Não é possível excluir o item, pois ele já foi usado em pedidos."));
+
+        // Act
+        var resultado = controller.Delete(1, new ItemCardapioModel { Id = 1, Nome = "Lasagna" });
+
+        // Assert
+        var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
+        var item = Assert.IsInstanceOfType<ItemCardapioModel>(
+            viewResult.ViewData.Model);
+
+        // o item é buscado de novo para a tela mostrar grupo, preço e restaurante
+        Assert.AreEqual("Massas", item.NomeGrupoCardapio);
+        VerificarMensagemDeErro("Não é possível excluir o item, pois ele já foi usado em pedidos.");
+        Assert.IsNull(controller.TempData["Mensagem"]);
+    }
+
+    [TestMethod]
+    public void AlternarDisponivel_QuandoMarcaEmFalta_DeveAlterarERedirecionarParaIndex()
+    {
+        // Act
+        var resultado = controller.AlternarDisponivel(1, false);
+
+        // Assert
+        var redirectResult = VerificarRedirecionamentoParaIndex(resultado);
+
+        Assert.AreEqual("item-1", redirectResult.Fragment);
+        Assert.AreEqual(
+            "Lasagna agora aparece como em falta.",
+            controller.TempData["Mensagem"]);
+        Assert.IsNull(controller.TempData["Erro"]);
+
+        itemCardapioServiceMock.Verify(
+            service => service.AlterarDisponibilidade(1, false),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void AlternarDisponivel_QuandoMarcaDisponivel_DeveAlterarERedirecionarParaIndex()
+    {
+        // Act
+        var resultado = controller.AlternarDisponivel(1, true);
+
+        // Assert
+        VerificarRedirecionamentoParaIndex(resultado);
+
+        Assert.AreEqual(
+            "Lasagna está disponível de novo.",
+            controller.TempData["Mensagem"]);
+
+        itemCardapioServiceMock.Verify(
+            service => service.AlterarDisponibilidade(1, true),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void AlternarDisponivel_QuandoServicoRecusa_DeveGuardarMensagemDeErro()
+    {
+        // Arrange
+        itemCardapioServiceMock
+            .Setup(service => service.AlterarDisponibilidade(999, false))
+            .Throws(new ServiceException("Item do cardápio não encontrado."));
+
+        // Act
+        var resultado = controller.AlternarDisponivel(999, false);
+
+        // Assert
+        VerificarRedirecionamentoParaIndex(resultado);
+
+        // o erro vai para o aviso vermelho, e não para o aviso verde de sucesso
+        Assert.AreEqual(
+            "Item do cardápio não encontrado.",
+            controller.TempData["Erro"]);
+        Assert.IsNull(controller.TempData["Mensagem"]);
+    }
+
+    private void VerificarMensagemDeErro(string mensagemEsperada)
+    {
+        Assert.IsFalse(controller.ModelState.IsValid);
+
+        var mensagens = controller.ModelState.Values
+            .SelectMany(entrada => entrada.Errors)
+            .Select(erro => erro.ErrorMessage)
+            .ToList();
+
+        CollectionAssert.Contains(mensagens, mensagemEsperada);
+    }
+
+    private static RedirectToActionResult VerificarRedirecionamentoParaIndex(ActionResult resultado)
+    {
+        var redirectResult =
+            Assert.IsInstanceOfType<RedirectToActionResult>(resultado);
+
+        Assert.IsNull(redirectResult.ControllerName);
+        Assert.AreEqual(
+            nameof(ItemCardapioController.Index),
+            redirectResult.ActionName);
+
+        return redirectResult;
+    }
+
+    private static ItemCardapioModel CriarModeloDeNovoItem()
+    {
+        return new ItemCardapioModel
+        {
+            Nome = "Tiramisù",
+            Preco = 28.50m,
+            Detalhes = "Mascarpone, café e cacau",
+            Ativo = true,
+            Disponivel = false,
+            IdRestaurante = 1,
+            IdGrupoCardapio = 2
+        };
+    }
+
+    private static ItemCardapioModel CriarModeloDeItemExistente()
+    {
+        return new ItemCardapioModel
+        {
+            Id = 2,
+            Nome = "Gnocchi",
+            Preco = 42.00m,
+            Ativo = false,
+            Disponivel = true,
+            IdRestaurante = 1,
+            IdGrupoCardapio = 2
+        };
+    }
+
+    private static Itemcardapio ObterItemAlvo()
+    {
+        return new Itemcardapio
+        {
+            Id = 1,
+            Nome = "Lasagna",
+            Preco = 49.90m,
+            Ativo = 1,
+            Disponivel = "1",
+            IdRestaurante = 1,
+            IdGrupoCardapio = 2,
+            IdGrupoCardapioNavigation = new Grupocardapio { Id = 2, Nome = "Massas" },
+            IdRestauranteNavigation = ObterRestauranteDeTeste()
+        };
+    }
+
+    private static IEnumerable<Itemcardapio> ObterItensDeTeste()
+    {
+        return
+        [
+            new Itemcardapio
+            {
+                Id = 1,
+                Nome = "Bruschetta",
+                Preco = 24.90m,
+                Detalhes = "Pão italiano, tomate e manjericão",
+                Ativo = 1,
+                Disponivel = "1",
+                IdRestaurante = 1,
+                IdGrupoCardapio = 1,
+                IdGrupoCardapioNavigation = new Grupocardapio { Id = 1, Nome = "Entradas" },
+                IdRestauranteNavigation = ObterRestauranteDeTeste()
+            },
+            new Itemcardapio
+            {
+                Id = 2,
+                Nome = "Lasagna",
+                Preco = 49.90m,
+                Ativo = 1,
+                Disponivel = "1",
+                IdRestaurante = 1,
+                IdGrupoCardapio = 2,
+                IdGrupoCardapioNavigation = new Grupocardapio { Id = 2, Nome = "Massas" },
+                IdRestauranteNavigation = ObterRestauranteDeTeste()
+            },
+            new Itemcardapio
+            {
+                Id = 3,
+                Nome = "Gnocchi",
+                Preco = 42.00m,
+                Ativo = 1,
+                Disponivel = "0",
+                IdRestaurante = 1,
+                IdGrupoCardapio = 2,
+                IdGrupoCardapioNavigation = new Grupocardapio { Id = 2, Nome = "Massas" },
+                IdRestauranteNavigation = ObterRestauranteDeTeste()
+            }
+        ];
+    }
+
+    private static IEnumerable<Grupocardapio> ObterGruposDeTeste()
+    {
+        return
+        [
+            new Grupocardapio
+            {
+                Id = 1,
+                Nome = "Entradas"
+            },
+            new Grupocardapio
+            {
+                Id = 2,
+                Nome = "Massas"
+            }
+        ];
+    }
+
+    private static Restaurante ObterRestauranteDeTeste()
+    {
+        return new Restaurante
+        {
+            Id = 1,
+            IdTipoRestaurante = 1,
+            Cnpj = "00000000000000",
+            Nome = "Restaurante Italiano"
+        };
+    }
+
+    private static IEnumerable<Restaurante> ObterRestaurantesDeTeste()
+    {
+        return
+        [
+            ObterRestauranteDeTeste()
+        ];
+    }
+}

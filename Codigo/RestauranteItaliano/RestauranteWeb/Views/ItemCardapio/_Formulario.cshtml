@@ -1,15 +1,15 @@
 @model RestauranteWeb.Models.ItemCardapioModel
 
-<p class="campo campo--serifa">
-    <label class="campo__rotulo" asp-for="Nome">Nome *</label>
+<p class="campo campo--serifa campo--obrigatorio">
+    <label class="campo__rotulo" asp-for="Nome"></label>
     <input class="form-control" asp-for="Nome" placeholder="Ex.: Spaghetti alla carbonara" autocomplete="off" aria-describedby="Nome-ajuda">
     <small class="campo__ajuda" id="Nome-ajuda">Como aparece no cardápio. Entre 3 e 100 caracteres.</small>
     <span class="campo__erro text-danger" asp-validation-for="Nome"></span>
 </p>
 
 <p class="edicao__linha">
-    <span class="campo">
-        <label class="campo__rotulo" asp-for="IdGrupoCardapio">Grupo do cardápio *</label>
+    <span class="campo campo--obrigatorio">
+        <label class="campo__rotulo" asp-for="IdGrupoCardapio"></label>
         <select class="form-select" asp-for="IdGrupoCardapio" asp-items="Model.GruposCardapio" aria-describedby="IdGrupoCardapio-ajuda">
             <option value="">Selecione…</option>
         </select>
@@ -18,7 +18,7 @@
     </span>
 
     <span class="campo campo--serifa">
-        <label class="campo__rotulo" asp-for="Preco">Preço</label>
+        <label class="campo__rotulo" asp-for="Preco"></label>
         <span class="input-group">
             <span class="input-group-text" aria-hidden="true">R$</span>
             <input class="form-control" asp-for="Preco" placeholder="0,00" inputmode="decimal" aria-describedby="Preco-ajuda">
@@ -28,8 +28,8 @@
     </span>
 </p>
 
-<p class="campo">
-    <label class="campo__rotulo" asp-for="IdRestaurante">Restaurante *</label>
+<p class="campo campo--obrigatorio">
+    <label class="campo__rotulo" asp-for="IdRestaurante"></label>
     <select class="form-select" asp-for="IdRestaurante" asp-items="Model.Restaurantes">
         <option value="">Selecione…</option>
     </select>
@@ -37,7 +37,10 @@
 </p>
 
 <p class="campo campo--serifa">
-    <label class="campo__rotulo" asp-for="Detalhes">Detalhes <span class="campo__contador" data-contador></span></label>
+    <span class="campo__cabeca">
+        <label class="campo__rotulo" asp-for="Detalhes"></label>
+        <span class="campo__contador" data-contador></span>
+    </span>
     <textarea class="form-control" asp-for="Detalhes" rows="3" maxlength="500" placeholder="Ingredientes ou uma descrição curta"></textarea>
     <span class="campo__erro text-danger" asp-validation-for="Detalhes"></span>
 </p>
@@ -46,14 +49,14 @@
     <legend class="visually-hidden">Situação do item</legend>
     <p class="interruptor">
         <label class="interruptor__rotulo" asp-for="Ativo">
-            Ativo no cardápio
+            @Html.DisplayNameFor(model => model.Ativo)
             <span class="interruptor__ajuda">Desligue para tirar o item do cardápio sem excluir.</span>
         </label>
         <input class="form-check-input" asp-for="Ativo" role="switch">
     </p>
     <p class="interruptor">
         <label class="interruptor__rotulo" asp-for="Disponivel">
-            Disponível para pedido
+            @Html.DisplayNameFor(model => model.Disponivel)
             <span class="interruptor__ajuda">Desligue quando o prato acabar na cozinha.</span>
         </label>
         <input class="form-check-input" asp-for="Disponivel" role="switch">

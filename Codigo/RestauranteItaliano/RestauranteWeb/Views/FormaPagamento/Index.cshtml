@@ -1,43 +1,56 @@
 @model IEnumerable<RestauranteWeb.Models.FormaPagamentoModel>
 
 @{
-    ViewData["Title"] = "Formas de Pagamento";
+    ViewData["Title"] = "Formas de pagamento";
+    var formasPagamento = Model.ToList();
 }
 
-<h1>Formas de Pagamento</h1>
-
-<p>
-    <a asp-action="Create" class="btn btn-primary">Nova Forma de Pagamento</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<header class="titulo-pagina">
+    <hgroup class="titulo-pagina__texto">
+        <p class="u-rotulo">Capítulo · Configurações</p>
+        <h1 class="titulo-pagina__titulo">Formas de pagamento<span class="u-acento">.</span></h1>
+        @if (formasPagamento.Any())
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Nome)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Excluir</a>
-                </td>
-            </tr>
+            <p class="titulo-pagina__resumo">@formasPagamento.Count @(formasPagamento.Count == 1 ? "forma cadastrada" : "formas cadastradas")</p>
         }
-    </tbody>
-</table>
+    </hgroup>
+    <a class="btn btn--tinta" asp-action="Create">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+        </svg>
+        Nova forma
+    </a>
+</header>
+
+@if (!formasPagamento.Any())
+{
+    <section class="vazio" aria-labelledby="vazio-titulo">
+        <h2 class="vazio__titulo" id="vazio-titulo">Nenhuma forma de pagamento cadastrada.</h2>
+        <p class="vazio__texto">Cadastre as formas que o restaurante aceita, como dinheiro, Pix e cartão. Elas serão usadas no pagamento dos atendimentos.</p>
+        <p class="grupo-botoes">
+            <a class="btn btn--tinta" asp-action="Create">Cadastrar a primeira forma</a>
+        </p>
+    </section>
+}
+else
+{
+    <ul class="lista-simples u-lista-limpa" aria-label="Formas de pagamento cadastradas">
+        @foreach (var item in formasPagamento)
+        {
+            <li class="prato" id="forma-@item.Id">
+                <a class="prato__link" asp-action="Details" asp-route-id="@item.Id">
+                    <span class="prato__texto">
+                        <span class="prato__nome">@Html.DisplayFor(modelItem => item.Nome)</span>
+                    </span>
+                    <span class="u-pontos" aria-hidden="true"></span>
+                    <span class="prato__codigo">@Html.DisplayNameFor(model => model.Id) @Html.DisplayFor(modelItem => item.Id)</span>
+                </a>
+
+                <ul class="prato__acoes u-lista-limpa">
+                    <li><a class="prato__acao" asp-action="Edit" asp-route-id="@item.Id" aria-label="Editar @item.Nome">Editar</a></li>
+                    <li><a class="prato__acao prato__acao--perigo" asp-action="Delete" asp-route-id="@item.Id" aria-label="Excluir @item.Nome">Excluir</a></li>
+                </ul>
+            </li>
+        }
+    </ul>
+}

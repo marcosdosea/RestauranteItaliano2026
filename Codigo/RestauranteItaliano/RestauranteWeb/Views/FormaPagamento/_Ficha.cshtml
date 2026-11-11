@@ -1,0 +1,13 @@
+@model RestauranteWeb.Models.FormaPagamentoModel
+
+<article class="ficha" aria-labelledby="ficha-nome">
+    <p class="prato">
+        <span class="prato__link">
+            <span class="prato__texto">
+                <span class="prato__nome" id="ficha-nome">@Html.DisplayFor(model => model.Nome)</span>
+            </span>
+            <span class="u-pontos" aria-hidden="true"></span>
+            <span class="prato__codigo">@Html.DisplayNameFor(model => model.Id) @Html.DisplayFor(model => model.Id)</span>
+        </span>
+    </p>
+</article>
