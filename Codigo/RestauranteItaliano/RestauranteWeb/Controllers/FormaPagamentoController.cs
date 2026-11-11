@@ -1,109 +1,121 @@
-using Core;
 using Core.Service;
-using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
+using RestauranteWeb.Mapper;
 using RestauranteWeb.Models;
 
 namespace RestauranteWeb.Controllers
 {
     public class FormaPagamentoController : Controller
     {
-        private readonly IFormaPagamentoService _service;
-        private readonly IMapper _mapper;
+        private readonly IFormaPagamentoService formaPagamentoService;
 
-        public FormaPagamentoController(IFormaPagamentoService service, IMapper mapper)
+        public FormaPagamentoController(IFormaPagamentoService formaPagamentoService)
         {
-            _service = service;
-            _mapper = mapper;
+            this.formaPagamentoService = formaPagamentoService;
         }
 
         // GET: FormaPagamentoController
         public ActionResult Index()
         {
-            return View(_mapper.Map<List<FormaPagamentoModel>>(_service.GetAll()));
+            var formasPagamento = formaPagamentoService.GetAll();
+            var formasPagamentoModel = FormaPagamentoMapper.ToViewModel(formasPagamento);
+            return View(formasPagamentoModel);
         }
 
         // GET: FormaPagamentoController/Details/5
         public ActionResult Details(uint id)
         {
-            var formaPagamento = _service.Get(id);
+            var formaPagamento = formaPagamentoService.Get(id);
             if (formaPagamento == null) return NotFound();
-            return View(_mapper.Map<FormaPagamentoModel>(formaPagamento));
+            var formaPagamentoModel = FormaPagamentoMapper.ToViewModel(formaPagamento);
+            return View(formaPagamentoModel);
         }
 
         // GET: FormaPagamentoController/Create
         public ActionResult Create()
         {
-            return View();
+            var formaPagamentoModel = new FormaPagamentoModel();
+            return View(formaPagamentoModel);
         }
 
         // POST: FormaPagamentoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(FormaPagamentoModel model)
+        public ActionResult Create(FormaPagamentoModel formaPagamentoModel)
         {
-            if (!ModelState.IsValid) return View(model);
-            try
+            if (ModelState.IsValid)
             {
-                _service.Create(_mapper.Map<Formapagamento>(model));
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var formaPagamento = FormaPagamentoMapper.ToEntity(formaPagamentoModel);
+                    formaPagamentoService.Create(formaPagamento);
+                    TempData["Mensagem"] = $"{formaPagamentoModel.Nome} entrou nas formas de pagamento.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ServiceException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
-            catch (ServiceException ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-                return View(model);
-            }
+            return View(formaPagamentoModel);
         }
 
         // GET: FormaPagamentoController/Edit/5
         public ActionResult Edit(uint id)
         {
-            var formaPagamento = _service.Get(id);
+            var formaPagamento = formaPagamentoService.Get(id);
             if (formaPagamento == null) return NotFound();
-            return View(_mapper.Map<FormaPagamentoModel>(formaPagamento));
+            var formaPagamentoModel = FormaPagamentoMapper.ToViewModel(formaPagamento);
+            return View(formaPagamentoModel);
         }
 
         // POST: FormaPagamentoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(uint id, FormaPagamentoModel model)
+        public ActionResult Edit(uint id, FormaPagamentoModel formaPagamentoModel)
         {
-            if (!ModelState.IsValid) return View(model);
-            try
+            if (ModelState.IsValid)
             {
-                model.Id = id;
-                _service.Edit(_mapper.Map<Formapagamento>(model));
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    formaPagamentoModel.Id = id;
+                    var formaPagamento = FormaPagamentoMapper.ToEntity(formaPagamentoModel);
+                    formaPagamentoService.Edit(formaPagamento);
+                    TempData["Mensagem"] = $"Alterações em {formaPagamentoModel.Nome} salvas.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ServiceException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
-            catch (ServiceException ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-                return View(model);
-            }
+            return View(formaPagamentoModel);
         }
 
         // GET: FormaPagamentoController/Delete/5
         public ActionResult Delete(uint id)
         {
-            var formaPagamento = _service.Get(id);
+            var formaPagamento = formaPagamentoService.Get(id);
             if (formaPagamento == null) return NotFound();
-            return View(_mapper.Map<FormaPagamentoModel>(formaPagamento));
+            var formaPagamentoModel = FormaPagamentoMapper.ToViewModel(formaPagamento);
+            return View(formaPagamentoModel);
         }
 
         // POST: FormaPagamentoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(uint id, FormaPagamentoModel model)
+        public ActionResult Delete(uint id, FormaPagamentoModel formaPagamentoModel)
         {
             try
             {
-                _service.Delete(id);
+                formaPagamentoService.Delete(id);
+                TempData["Mensagem"] = $"{formaPagamentoModel.Nome} saiu das formas de pagamento.";
                 return RedirectToAction(nameof(Index));
             }
             catch (ServiceException ex)
             {
                 ModelState.AddModelError("", ex.Message);
-                return View(model);
+                return View(formaPagamentoModel);
             }
         }
     }

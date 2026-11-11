@@ -1,6 +1,8 @@
 <Solution>
   <Project Path="Core/Core.csproj" />
   <Project Path="RestauranteWeb/RestauranteWeb.csproj" />
+  <Project Path="RestauranteWebTest/RestauranteWebTest.csproj" />
   <Project Path="Service/Service.csproj" />
+  <Project Path="ServiceTest/ServiceTest.csproj" />
   <Project Path="Util/Util.csproj" />
 </Solution>

@@ -34,6 +34,7 @@ O sistema cobre o dia a dia de um restaurante: cadastros básicos (restaurantes,
 - [MySQL 8](https://dev.mysql.com/) e MySQL Workbench
 - [Mapster](https://github.com/MapsterMapper/Mapster) para converter entidades em modelos de tela
 - Bootstrap 5 e jQuery Validation (validação no navegador)
+- [MSTest](https://learn.microsoft.com/dotnet/core/testing/unit-testing-mstest-intro), [Moq](https://github.com/devlooped/moq) e o provedor **InMemory** do Entity Framework Core nos testes unitários
 
 ---
 
@@ -43,10 +44,12 @@ A solução `RestauranteItaliano.slnx` é dividida em camadas, seguindo o modelo
 
 ```
 Codigo/RestauranteItaliano
-├── Core            → entidades do banco (scaffold), RestauranteContext e interfaces dos serviços
-├── Service         → regras de negócio (implementação das interfaces do Core)
-├── Util            → atributos de validação reutilizáveis (CPF, CEP, telefones)
-└── RestauranteWeb  → aplicação MVC: Controllers, Models (ViewModels), Mapper e Views
+├── Core               → entidades do banco (scaffold), RestauranteContext, interfaces dos serviços e DTOs
+├── Service            → regras de negócio (implementação das interfaces do Core)
+├── ServiceTest        → testes unitários dos serviços (MSTest + banco em memória)
+├── Util               → atributos de validação reutilizáveis (CPF, CEP, telefones)
+├── RestauranteWeb     → aplicação MVC: Controllers, Models (ViewModels), Mapper e Views
+└── RestauranteWebTest → testes unitários dos controllers (MSTest + Moq)
 ```
 
 Como uma funcionalidade é organizada (exemplo do CS07):
@@ -55,12 +58,16 @@ Como uma funcionalidade é organizada (exemplo do CS07):
 |---|---|---|
 | Core | `Itemcardapio.cs`, `Service/IItemCardapioService.cs` | Entidade e contrato do serviço |
 | Service | `ItemCardapioService.cs` | Regras de negócio; lança `ServiceException` quando uma regra é violada |
+| ServiceTest | `ItemCardapioServiceTests.cs` | Testa as regras do serviço em um banco em memória |
 | RestauranteWeb | `Models/ItemCardapioModel.cs` | Campos da tela e validações (`[Required]`, `[StringLength]`…) |
-| RestauranteWeb | `Mapper/ItemCardapioMapper.cs` | Conversões que o Mapster não faz sozinho |
+| RestauranteWeb | `Mapper/ItemCardapioMapper.cs` | Converte entidade em modelo de tela e vice-versa (`ToViewModel` e `ToEntity`) |
 | RestauranteWeb | `Controllers/ItemCardapioController.cs` | Recebe as requisições e mostra os erros do serviço na tela |
 | RestauranteWeb | `Views/ItemCardapio/*.cshtml` | Index, Create, Edit, Details e Delete |
+| RestauranteWebTest | `Controllers/ItemCardapioControllerTests.cs` | Testa o controller com o serviço simulado (Moq) |
 
-Os serviços são registrados no `Program.cs` com `AddScoped`, e o sistema usa a cultura **pt-BR** (valores em R$ e decimais com vírgula).
+Os serviços são registrados no `Program.cs` com `AddTransient`, e o sistema usa a cultura **pt-BR** (valores em R$ e decimais com vírgula).
+
+Consultas que juntam dados de várias tabelas devolvem um **DTO** (pasta `Core/DTO`). É o caso do resumo da página inicial: o `ResumoService` faz as contagens no banco e devolve um `ResumoDTO`.
 
 ---
 
@@ -82,7 +89,7 @@ git clone https://github.com/marcosdosea/RestauranteItaliano2026.git
 
 No MySQL Workbench, abra e execute o script [`AnaliseProjeto/dump-criacao.sql`](AnaliseProjeto/dump-criacao.sql). Ele cria o banco `restaurante` com todas as tabelas.
 
-Em seguida, execute este ajuste: no script, o `id` da tabela `FormaPagamento` está sem `AUTO_INCREMENT`, e sem ele o cadastro de formas de pagamento não salva.
+Se você criou o banco com uma versão antiga do script, execute também este ajuste. Nela, o `id` da tabela `FormaPagamento` estava sem `AUTO_INCREMENT`, e sem ele o cadastro de formas de pagamento não salva. Quem cria o banco com o script atual não precisa fazer nada.
 
 ```sql
 SET FOREIGN_KEY_CHECKS = 0;
@@ -113,7 +120,7 @@ cd Codigo/RestauranteItaliano/RestauranteWeb
 dotnet run
 ```
 
-### Dados para testar
+### Dados para testar a aplicação
 
 Enquanto o CS05 (Restaurantes) não estiver pronto, cadastre um restaurante direto no banco para poder criar itens do cardápio:
 
@@ -125,15 +132,42 @@ VALUES (LAST_INSERT_ID(), '00000000000000', 'Restaurante Italiano');
 
 ---
 
+## 🧪 Testes
+
+A solução tem dois projetos de teste, no mesmo formato do projeto de referência da disciplina:
+
+| Projeto | O que testa | Como |
+|---|---|---|
+| `ServiceTest` | Regras de negócio dos serviços | Banco em memória (`Microsoft.EntityFrameworkCore.InMemory`), criado do zero a cada teste |
+| `RestauranteWebTest` | Controllers | Serviços simulados com Moq |
+
+Os testes não usam o MySQL, então rodam mesmo sem o banco instalado.
+
+**Visual Studio:** menu **Teste → Executar Todos os Testes** (ou `Ctrl+R, A`). O resultado aparece no **Gerenciador de Testes**.
+
+**Linha de comando:**
+
+```bash
+cd Codigo/RestauranteItaliano
+dotnet test
+```
+
+Os métodos seguem o nome `Metodo_QuandoCondicao_DeveResultado` e são divididos em `// Arrange`, `// Act` e `// Assert`.
+
+---
+
 ## 🤝 Como contribuir
 
 1. Atualize a `main`: `git checkout main && git pull`
 2. Crie uma branch para o caso de uso: `git checkout -b cs05-restaurantes`
-3. Siga o padrão das funcionalidades já prontas (veja o CS04 – Grupos do Cardápio como referência):
+3. Siga o padrão das funcionalidades já prontas (veja o CS07 – Itens do Cardápio como referência):
    - regras de negócio no **Service**, lançando `ServiceException` com mensagens claras em português;
+   - o `GetAll` do serviço devolve a consulta com `AsNoTracking()`, sem `ToList()`;
    - validações de tela no **Model**, com mensagens no formato `"O campo {0} é de preenchimento obrigatório."`;
-   - registro do serviço no `Program.cs` e link no menu (`Views/Shared/_Layout.cshtml`).
-4. Compile e teste antes de enviar.
+   - conversão entre entidade e modelo de tela em uma classe da pasta **Mapper**, com `ToViewModel` e `ToEntity`;
+   - registro do serviço no `Program.cs` com `AddTransient` e entrada no mapa do sistema (`Models/Navegacao.cs`), que alimenta o menu e a página inicial;
+   - testes do serviço em `ServiceTest` e do controller em `RestauranteWebTest`.
+4. Compile e rode os testes antes de enviar.
 5. Faça commits no padrão `feat: implementa CS05 - Manter Restaurante`.
 6. Envie a branch e abra um **Pull Request** para a `main`, descrevendo o que mudou.
 

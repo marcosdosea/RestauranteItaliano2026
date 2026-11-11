@@ -13,6 +13,7 @@
     var saudacao = agora.Hour < 12 ? "Buongiorno" : (agora.Hour < 18 ? "Buon pomeriggio" : "Buona sera");
 
     var mensagem = TempData["Mensagem"] as string;
+    var erro = TempData["Erro"] as string;
 }
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -74,46 +75,64 @@
             </ul>
         </nav>
 
-        @if (capituloAtual != null || !string.IsNullOrEmpty(mensagem))
+        @if (capituloAtual != null)
         {
-            <section class="cabecalho__secoes" aria-label="Telas do capítulo">
-                @if (capituloAtual != null)
-                {
-                    <ul class="secoes u-lista-limpa">
-                        @foreach (var entrada in capituloAtual.Entradas)
-                        {
-                            var atual = string.Equals(entrada.Controller, controllerAtual, StringComparison.OrdinalIgnoreCase);
-                            <li>
-                                @if (entrada.Pronta)
-                                {
-                                    <a class="secoes__link @(atual ? "secoes__link--atual" : null)" asp-controller="@entrada.Controller" asp-action="Index" aria-current="@(atual ? "page" : null)">@entrada.Titulo</a>
-                                }
-                                else
-                                {
-                                    <span class="secoes__link secoes__link--em-breve">@entrada.Titulo <small>em breve</small></span>
-                                }
-                            </li>
-                        }
-                    </ul>
-                }
-
-                @if (!string.IsNullOrEmpty(mensagem))
-                {
-                    <p class="aviso" role="status">
-                        <svg class="aviso__icone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M5 12.5l4.5 4.5L19 7.5" />
-                        </svg>
-                        <span class="aviso__texto">@mensagem</span>
-                        <button class="aviso__fechar" type="button" aria-label="Fechar aviso" data-fechar-aviso>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-                                <path d="M6 6l12 12M18 6L6 18" />
-                            </svg>
-                        </button>
-                    </p>
-                }
-            </section>
+            <nav class="cabecalho__secoes" aria-label="Telas do capítulo">
+                <ul class="secoes u-lista-limpa">
+                    @foreach (var entrada in capituloAtual.Entradas)
+                    {
+                        var atual = string.Equals(entrada.Controller, controllerAtual, StringComparison.OrdinalIgnoreCase);
+                        <li>
+                            @if (entrada.Pronta)
+                            {
+                                <a class="secoes__link @(atual ? "secoes__link--atual" : null)" asp-controller="@entrada.Controller" asp-action="Index" aria-current="@(atual ? "page" : null)">@entrada.Titulo</a>
+                            }
+                            else
+                            {
+                                <span class="secoes__link secoes__link--em-breve">@entrada.Titulo <small>em breve</small></span>
+                            }
+                        </li>
+                    }
+                </ul>
+            </nav>
         }
     </header>
+
+    @if (!string.IsNullOrEmpty(mensagem) || !string.IsNullOrEmpty(erro))
+    {
+        <aside class="avisos" aria-label="Avisos">
+            @if (!string.IsNullOrEmpty(mensagem))
+            {
+                <p class="aviso" role="status">
+                    <svg class="aviso__icone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12.5l4.5 4.5L19 7.5" />
+                    </svg>
+                    <span class="aviso__texto">@mensagem</span>
+                    <button class="aviso__fechar" type="button" aria-label="Fechar aviso" data-fechar-aviso>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                            <path d="M6 6l12 12M18 6L6 18" />
+                        </svg>
+                    </button>
+                </p>
+            }
+
+            @if (!string.IsNullOrEmpty(erro))
+            {
+                <p class="aviso aviso--erro" role="alert">
+                    <svg class="aviso__icone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M12 7.5v5M12 16v.5" />
+                    </svg>
+                    <span class="aviso__texto">@erro</span>
+                    <button class="aviso__fechar" type="button" aria-label="Fechar aviso" data-fechar-aviso>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                            <path d="M6 6l12 12M18 6L6 18" />
+                        </svg>
+                    </button>
+                </p>
+            }
+        </aside>
+    }
 
     <main id="conteudo" class="conteudo" tabindex="-1">
         @RenderBody()

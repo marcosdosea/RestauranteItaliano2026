@@ -8,26 +8,13 @@ namespace RestauranteWeb.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IItemCardapioService _itemCardapioService;
-        private readonly IGrupoCardapioService _grupoCardapioService;
-        private readonly ITipoFuncionario _tipoFuncionarioService;
-        private readonly ITipoRestauranteService _tipoRestauranteService;
-        private readonly IFormaPagamentoService _formaPagamentoService;
-        private readonly ILogger<HomeController> _logger;
+        private readonly IResumoService resumoService;
+        private readonly ILogger<HomeController> logger;
 
-        public HomeController(IItemCardapioService itemCardapioService,
-                              IGrupoCardapioService grupoCardapioService,
-                              ITipoFuncionario tipoFuncionarioService,
-                              ITipoRestauranteService tipoRestauranteService,
-                              IFormaPagamentoService formaPagamentoService,
-                              ILogger<HomeController> logger)
+        public HomeController(IResumoService resumoService, ILogger<HomeController> logger)
         {
-            _itemCardapioService = itemCardapioService;
-            _grupoCardapioService = grupoCardapioService;
-            _tipoFuncionarioService = tipoFuncionarioService;
-            _tipoRestauranteService = tipoRestauranteService;
-            _formaPagamentoService = formaPagamentoService;
-            _logger = logger;
+            this.resumoService = resumoService;
+            this.logger = logger;
         }
 
         public IActionResult Index()
@@ -36,7 +23,7 @@ namespace RestauranteWeb.Controllers
             var cultura = new CultureInfo("pt-BR");
             var data = agora.ToString("dddd, d 'de' MMMM 'de' yyyy", cultura);
 
-            var model = new HomeModel
+            var homeModel = new HomeModel
             {
                 Saudacao = agora.Hour < 12 ? "Buongiorno" : (agora.Hour < 18 ? "Buon pomeriggio" : "Buona sera"),
                 DataLonga = char.ToUpper(data[0]) + data[1..],
@@ -46,29 +33,26 @@ namespace RestauranteWeb.Controllers
 
             try
             {
-                var itensAtivos = _itemCardapioService.GetAll().Where(i => i.Ativo == 1).ToList();
-                model.ItensNoCardapio = itensAtivos.Count;
-                model.ItensDisponiveis = itensAtivos.Count(i => i.Disponivel == "1");
-                model.ItensEmFalta = model.ItensNoCardapio - model.ItensDisponiveis;
-                model.Grupos = itensAtivos
-                    .GroupBy(i => i.IdGrupoCardapioNavigation?.Nome ?? "Sem grupo")
-                    .Select(g => new GrupoResumoModel { Nome = g.Key, QuantidadeItens = g.Count() })
-                    .OrderByDescending(g => g.QuantidadeItens)
-                    .ThenBy(g => g.Nome)
-                    .Take(5)
+                var resumo = resumoService.GetResumo();
+
+                homeModel.ItensNoCardapio = resumo.ItensNoCardapio;
+                homeModel.ItensDisponiveis = resumo.ItensDisponiveis;
+                homeModel.ItensEmFalta = resumo.ItensEmFalta;
+                homeModel.Grupos = resumo.Grupos
+                    .Select(grupo => new GrupoResumoModel { Nome = grupo.Nome, QuantidadeItens = grupo.QuantidadeItens })
                     .ToList();
 
                 // Quantidade de registros de cada função pronta, mostrada no índice
                 var quantidades = new Dictionary<string, int>
                 {
-                    ["ItemCardapio"] = itensAtivos.Count,
-                    ["GrupoCardapio"] = _grupoCardapioService.GetAll().Count(),
-                    ["TipoFuncionario"] = _tipoFuncionarioService.GetAll().Count(),
-                    ["TipoRestaurante"] = _tipoRestauranteService.GetAll().Count(),
-                    ["FormaPagamento"] = _formaPagamentoService.GetAll().Count()
+                    ["ItemCardapio"] = resumo.ItensNoCardapio,
+                    ["GrupoCardapio"] = resumo.QuantidadeGruposCardapio,
+                    ["TipoFuncionario"] = resumo.QuantidadeTiposFuncionario,
+                    ["TipoRestaurante"] = resumo.QuantidadeTiposRestaurante,
+                    ["FormaPagamento"] = resumo.QuantidadeFormasPagamento
                 };
 
-                foreach (var entrada in model.Capitulos.SelectMany(c => c.Entradas))
+                foreach (var entrada in homeModel.Capitulos.SelectMany(capitulo => capitulo.Entradas))
                 {
                     if (entrada.Controller != null && quantidades.TryGetValue(entrada.Controller, out var quantidade))
                     {
@@ -76,16 +60,16 @@ namespace RestauranteWeb.Controllers
                     }
                 }
 
-                model.DadosDisponiveis = true;
+                homeModel.DadosDisponiveis = true;
             }
             catch (Exception ex)
             {
                 // A página inicial continua abrindo mesmo se o banco estiver fora do ar.
-                _logger.LogError(ex, "Não foi possível carregar os dados da página inicial.");
-                model.DadosDisponiveis = false;
+                logger.LogError(ex, "Não foi possível carregar os dados da página inicial.");
+                homeModel.DadosDisponiveis = false;
             }
 
-            return View(model);
+            return View(homeModel);
         }
 
         public IActionResult Privacy()

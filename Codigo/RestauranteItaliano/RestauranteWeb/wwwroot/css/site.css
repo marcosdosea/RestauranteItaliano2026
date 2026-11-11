@@ -389,17 +389,24 @@ h3 {
 
 /* ---------- Aviso de sucesso ---------- */
 
-/* fica preso no canto da tela para ser visto mesmo quando a página
+/* ficam presos no canto da tela para serem vistos mesmo quando a página
    rola até o item que acabou de ser alterado */
-.aviso {
+.avisos {
   position: fixed;
   top: 16px;
   right: 16px;
   z-index: 1080;
   display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: min(440px, calc(100vw - 32px));
+}
+
+.aviso {
+  display: flex;
   align-items: center;
   gap: 10px;
-  max-width: min(440px, calc(100vw - 32px));
   margin: 0;
   padding: 4px 4px 4px 14px;
   border: 1px solid var(--cor-basilico);
@@ -408,6 +415,12 @@ h3 {
   color: var(--cor-basilico-texto);
   font-size: 0.90625rem;
   animation: deslizar 0.4s var(--curva);
+}
+
+.aviso--erro {
+  border-color: var(--cor-pomodoro-escuro);
+  background: #fbeee9;
+  color: var(--cor-pomodoro-escuro);
 }
 
 .aviso__icone {
@@ -581,10 +594,7 @@ h3 {
 
 .form-label,
 .campo__rotulo {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
+  display: block;
   margin-bottom: 8px;
   font-size: 0.71875rem;
   font-weight: 700;
@@ -663,6 +673,18 @@ div.validation-summary-valid {
   margin: 0;
 }
 
+/* o asterisco dos campos obrigatórios vem do CSS; o texto do rótulo vem do [Display] da ViewModel */
+.campo--obrigatorio .campo__rotulo::after {
+  content: " *";
+}
+
+.campo__cabeca {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .campo__ajuda {
   margin-top: 6px;
   font-size: 0.875rem;
@@ -679,9 +701,8 @@ div.validation-summary-valid {
 }
 
 .campo__contador {
+  font-size: 0.8125rem;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: none;
   color: var(--cor-tinta-2);
 }
 
@@ -1506,6 +1527,22 @@ a.entrada:hover .entrada__seta {
   margin: 0;
 }
 
+/* ---------- Lista simples (cadastros com poucos campos, como formas de pagamento) ---------- */
+
+.lista-simples {
+  max-width: 760px;
+  border-top: 4px double var(--cor-tinta);
+}
+
+.prato__codigo {
+  flex: none;
+  font-family: var(--fonte-serifa);
+  font-size: 1.125rem;
+  font-style: italic;
+  white-space: nowrap;
+  color: var(--cor-tinta-3);
+}
+
 /* ---------- Estados vazios ---------- */
 
 .vazio {
@@ -1846,7 +1883,8 @@ a.entrada:hover .entrada__seta {
     display: none;
   }
 
-  .prato__preco {
+  .prato__preco,
+  .prato__codigo {
     margin-left: auto;
   }
 

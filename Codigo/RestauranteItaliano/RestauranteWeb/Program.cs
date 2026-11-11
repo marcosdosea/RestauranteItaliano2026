@@ -4,7 +4,6 @@ using Core.Service;
 using Mapster;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
-using RestauranteWeb.Mapper;
 using Service;
 
 namespace RestauranteWeb
@@ -36,22 +35,17 @@ namespace RestauranteWeb
             builder.Services.AddDbContext<RestauranteContext>(options =>
                 options.UseMySQL(builder.Configuration.GetConnectionString("RestauranteConnection") ?? throw new InvalidOperationException("Conexão com o banco de dados não foi possível. Favor entrar em contato com o Administrador.")));
             
-            //Serviços de aplicação
-            builder.Services.AddScoped<ITipoRestauranteService, TipoRestauranteService>();
-
-            builder.Services.AddScoped<ITipoFuncionario, TipoFuncionarioService>();
-
-            builder.Services.AddScoped<IGrupoCardapioService, GrupoCardapioService>();
-
-            builder.Services.AddScoped<IFormaPagamentoService, FormaPagamentoService>();
-
-            builder.Services.AddScoped<IItemCardapioService, ItemCardapioService>();
-
-            builder.Services.AddScoped<IRestauranteService, RestauranteService>();
+            // Serviços de aplicação
+            builder.Services.AddTransient<ITipoRestauranteService, TipoRestauranteService>();
+            builder.Services.AddTransient<ITipoFuncionario, TipoFuncionarioService>();
+            builder.Services.AddTransient<IGrupoCardapioService, GrupoCardapioService>();
+            builder.Services.AddTransient<IFormaPagamentoService, FormaPagamentoService>();
+            builder.Services.AddTransient<IItemCardapioService, ItemCardapioService>();
+            builder.Services.AddTransient<IRestauranteService, RestauranteService>();
+            builder.Services.AddTransient<IResumoService, ResumoService>();
 
             // Configuração do Mapster
             builder.Services.AddMapster();
-            ItemCardapioMapper.Registrar(TypeAdapterConfig.GlobalSettings);
 
             var app = builder.Build();
 
