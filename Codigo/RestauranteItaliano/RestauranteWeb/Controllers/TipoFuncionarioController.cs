@@ -27,6 +27,10 @@ namespace RestauranteWeb.Controllers
         public ActionResult Details(uint id)
         {
             var tipoFuncionario = tipoFuncionarioService.Get(id);
+            if (tipoFuncionario == null)
+            {
+                return NotFound();
+            }
             var tipoFuncionarioViewModel = TipoFuncionarioMapper.ToViewModel(tipoFuncionario);
             return View(tipoFuncionarioViewModel);
         }
@@ -56,6 +60,10 @@ namespace RestauranteWeb.Controllers
         public ActionResult Edit(uint id)
         {
             var tipoFuncionario = tipoFuncionarioService.Get(id);
+            if (tipoFuncionario == null)
+            {
+                return NotFound();
+            }
             var tipoFuncionarioViewModel = TipoFuncionarioMapper.ToViewModel(tipoFuncionario);
             return View(tipoFuncionarioViewModel);
         }
@@ -78,6 +86,10 @@ namespace RestauranteWeb.Controllers
         public ActionResult Delete(uint id)
         {
             var tipoFuncionario = tipoFuncionarioService.Get(id);
+            if (tipoFuncionario == null)
+            {
+                return NotFound();
+            }
             var tipoFuncionarioViewModel = TipoFuncionarioMapper.ToViewModel(tipoFuncionario);
             return View(tipoFuncionarioViewModel);
         }

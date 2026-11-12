@@ -1,12 +1,19 @@
-﻿namespace Core.Service
+﻿using Core.Datatables;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Core.Service
 {
     public interface IFuncionarioService
     {
-        int Create(Funcionario funcionario);
+        uint Create(Funcionario funcionario);
         void Edit(Funcionario funcionario);
-        void Delete(int id);
-        Funcionario Get(int id);
+        void Delete(uint id);
+        Funcionario? Get(uint id);
         IEnumerable<Funcionario> GetAll();
         IEnumerable<Funcionario> GetByNome(string nome);
+        DatatableResponse<Funcionario> GetDataPage(DatatableRequest request);
+
     }
 }
