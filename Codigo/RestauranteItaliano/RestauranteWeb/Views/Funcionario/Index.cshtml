@@ -1,0 +1,103 @@
+﻿@model IEnumerable<RestauranteWeb.Models.FuncionarioViewModel>
+
+@{
+    ViewData["Title"] = "Funcionários";
+    var funcionarios = Model.ToList();
+}
+
+<header class="titulo-pagina">
+    <hgroup class="titulo-pagina__texto">
+        <p class="u-rotulo">Capítulo · Cadastros</p>
+
+        <h1 class="titulo-pagina__titulo">
+            Funcionários<span class="u-acento">.</span>
+        </h1>
+
+        @if (funcionarios.Any())
+        {
+            <p class="titulo-pagina__resumo">
+                @funcionarios.Count
+                @(funcionarios.Count == 1 ? "funcionário cadastrado" : "funcionários cadastrados")
+            </p>
+        }
+    </hgroup>
+
+    <a class="btn btn--tinta" asp-action="Create">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+        </svg>
+        Novo funcionário
+    </a>
+</header>
+
+@if (!funcionarios.Any())
+{
+    <section class="vazio" aria-labelledby="vazio-titulo">
+        <h2 class="vazio__titulo" id="vazio-titulo">
+            Nenhum funcionário cadastrado.
+        </h2>
+
+        <p class="vazio__texto">
+            Cadastre os funcionários do restaurante para organizar
+            seus dados e identificar suas funções.
+        </p>
+
+        <p class="grupo-botoes">
+            <a class="btn btn--tinta" asp-action="Create">
+                Cadastrar o primeiro funcionário
+            </a>
+        </p>
+    </section>
+}
+else
+{
+    <ul class="lista-simples u-lista-limpa" aria-label="Funcionários cadastrados">
+        @foreach (var item in funcionarios)
+        {
+            <li class="prato" id="funcionario-@item.Id">
+
+                <a class="prato__link" asp-action="Details" asp-route-id="@item.Id">
+                    <span class="prato__texto">
+                        <span class="prato__nome">
+                            @Html.DisplayFor(modelItem => item.Nome)
+                        </span>
+
+                        <span class="prato__codigo">
+                            CPF: @Html.DisplayFor(modelItem => item.Cpf)
+                            · @Html.DisplayFor(modelItem => item.NomeTipoFuncionario)
+                        </span>
+                    </span>
+
+                    <span class="u-pontos" aria-hidden="true"></span>
+
+                    <span class="prato__codigo">
+                        Código @Html.DisplayFor(modelItem => item.Id)
+                    </span>
+                </a>
+
+                <ul class="prato__acoes u-lista-limpa">
+                    <li>
+                        <a class="prato__acao"
+                           asp-action="Edit"
+                           asp-route-id="@item.Id"
+                           aria-label="Editar @item.Nome">
+                            Editar
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="prato__acao prato__acao--perigo"
+                           asp-action="Delete"
+                           asp-route-id="@item.Id"
+                           aria-label="Excluir @item.Nome">
+                            Excluir
+                        </a>
+                    </li>
+                </ul>
+
+            </li>
+        }
+    </ul>
+}

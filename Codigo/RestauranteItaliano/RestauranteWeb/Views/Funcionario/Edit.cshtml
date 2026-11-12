@@ -1,0 +1,138 @@
+﻿@model RestauranteWeb.Models.FuncionarioViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Editar funcionário";
+}
+
+<header class="titulo-pagina titulo-pagina--empilhado">
+
+    <a class="link-voltar" asp-action="Index">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true">
+            <path d="M19 12H5M11 6l-6 6 6 6" />
+        </svg>
+        Voltar para a lista
+    </a>
+
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">
+            Editar funcionário<span class="u-acento">.</span>
+        </h1>
+
+        <p class="titulo-pagina__resumo">
+            @Html.DisplayFor(model => model.Nome)
+        </p>
+    </hgroup>
+
+</header>
+
+<form class="edicao" asp-action="Edit" asp-route-id="@Model.Id" method="post" data-travar-envio>
+
+    <input type="hidden" asp-for="Id">
+
+    <section class="edicao__formulario" aria-label="Dados do funcionário">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <p class="campo campo--serifa campo--obrigatorio">
+            <label class="campo__rotulo" asp-for="Nome"></label>
+            <input class="form-control" asp-for="Nome"
+                   placeholder="Ex.: João da Silva"
+                   autocomplete="off">
+            <span class="campo__erro text-danger" asp-validation-for="Nome"></span>
+        </p>
+
+        <p class="campo campo--serifa campo--obrigatorio">
+            <label class="campo__rotulo" asp-for="Cpf"></label>
+            <input class="form-control" asp-for="Cpf"
+                   placeholder="Ex.: 000.000.000-00">
+            <span class="campo__erro text-danger" asp-validation-for="Cpf"></span>
+        </p>
+
+        <p class="campo campo--serifa">
+            <label class="campo__rotulo" asp-for="Cep"></label>
+            <input class="form-control" asp-for="Cep"
+                   placeholder="Ex.: 49000-000">
+            <span class="campo__erro text-danger" asp-validation-for="Cep"></span>
+        </p>
+
+        <p class="campo campo--serifa">
+            <label class="campo__rotulo" asp-for="Rua"></label>
+            <input class="form-control" asp-for="Rua"
+                   placeholder="Ex.: Rua das Flores">
+            <span class="campo__erro text-danger" asp-validation-for="Rua"></span>
+        </p>
+
+        <p class="campo campo--serifa">
+            <label class="campo__rotulo" asp-for="Bairro"></label>
+            <input class="form-control" asp-for="Bairro"
+                   placeholder="Ex.: Centro">
+            <span class="campo__erro text-danger" asp-validation-for="Bairro"></span>
+        </p>
+
+        <p class="campo campo--serifa">
+            <label class="campo__rotulo" asp-for="Cidade"></label>
+            <input class="form-control" asp-for="Cidade"
+                   placeholder="Ex.: Aracaju">
+            <span class="campo__erro text-danger" asp-validation-for="Cidade"></span>
+        </p>
+
+        <p class="campo campo--serifa">
+            <label class="campo__rotulo" asp-for="Estado"></label>
+            <input class="form-control" asp-for="Estado"
+                   placeholder="Ex.: SE">
+            <span class="campo__erro text-danger" asp-validation-for="Estado"></span>
+        </p>
+
+        <p class="campo campo--serifa">
+            <label class="campo__rotulo" asp-for="Telefone1"></label>
+            <input class="form-control" asp-for="Telefone1"
+                   placeholder="Ex.: (79) 99999-9999">
+            <span class="campo__erro text-danger" asp-validation-for="Telefone1"></span>
+        </p>
+
+        <p class="campo campo--serifa">
+            <label class="campo__rotulo" asp-for="Telefone2"></label>
+            <input class="form-control" asp-for="Telefone2"
+                   placeholder="Ex.: (79) 3333-3333">
+            <span class="campo__erro text-danger" asp-validation-for="Telefone2"></span>
+        </p>
+
+        <p class="campo campo--serifa campo--obrigatorio">
+            <label class="campo__rotulo" asp-for="IdTipoFuncionario"></label>
+
+            <select class="form-control" asp-for="IdTipoFuncionario"
+                    asp-items="@(new SelectList(ViewBag.TiposFuncionarios, "Id", "Nome"))">
+                <option value="0">Selecione um tipo de funcionário</option>
+            </select>
+
+            <span class="campo__erro text-danger" asp-validation-for="IdTipoFuncionario"></span>
+        </p>
+
+        <p class="grupo-botoes">
+
+            <button class="btn btn--tinta" type="submit">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round"
+                     aria-hidden="true">
+                    <path d="M5 12.5l4.5 4.5L19 7.5" />
+                </svg>
+                Salvar alterações
+            </button>
+
+            <a class="btn btn--contorno" asp-action="Index">
+                Cancelar
+            </a>
+        </p>
+    </section>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

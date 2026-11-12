@@ -1,34 +1,48 @@
 ﻿@model RestauranteWeb.Models.TipoFuncionarioViewModel
 
 @{
-    ViewData["Title"] = "Criar Tipo Funcionario";
+    ViewData["Title"] = "Novo tipo de funcionário";
 }
 
-<h1>Criar Tipo Funcionario</h1>
+<header class="titulo-pagina titulo-pagina--empilhado">
+    <a class="link-voltar" asp-action="Index">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 12H5M11 6l-6 6 6 6" />
+        </svg>
+        Voltar para a lista
+    </a>
 
-<h4>TipoFuncionarioViewModel</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">Novo tipo de funcionário<span class="u-acento">.</span></h1>
+        <p class="titulo-pagina__resumo">Os campos com asterisco são obrigatórios.</p>
+    </hgroup>
+</header>
 
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
-            </div>
+<form class="edicao" asp-action="Create" method="post" data-travar-envio>
+    <section class="edicao__formulario" aria-label="Dados do tipo de funcionário">
 
-            <div class="form-group">
-                <input type="submit" value="Criar" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<div>
-    <a asp-action="Index">Voltar para lista</a>
-</div>
+        <p class="campo campo--serifa campo--obrigatorio">
+            <label class="campo__rotulo" asp-for="Nome"></label>
+            <input class="form-control" asp-for="Nome" placeholder="Ex: Garçom" autocomplete="off" aria-describedby="Nome-ajuda">
+            <small class="campo__ajuda" id="Nome-ajuda">Nome do tipo de funcionário. Entre 3 e 50 caracteres.</small>
+            <span class="campo__erro text-danger" asp-validation-for="Nome"></span>
+        </p>
+
+        <p class="grupo-botoes">
+            <button class="btn btn--tinta" type="submit">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12.5l4.5 4.5L19 7.5" />
+                </svg>
+                Salvar tipo
+            </button>
+            <a class="btn btn--contorno" asp-action="Index">Cancelar</a>
+        </p>
+
+    </section>
+</form>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
