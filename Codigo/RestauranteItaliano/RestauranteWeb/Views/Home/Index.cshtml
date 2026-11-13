@@ -1,4 +1,4 @@
-﻿@model RestauranteWeb.Models.HomeModel
+﻿@model RestauranteWeb.Models.HomeViewModel
 
 @{
     ViewData["Title"] = "Início";
@@ -25,7 +25,7 @@
     <aside class="painel u-surge" style="--atraso: 2" aria-labelledby="painel-titulo">
         <header class="painel__cabeca">
             <h2 class="painel__titulo" id="painel-titulo">Na carta hoje</h2>
-            <time class="painel__hora" datetime="@DateTime.Now.ToString("HH:mm")">@Model.HoraAgora</time>
+            <time class="painel__hora" datetime="@Model.HoraAgora">@Model.HoraAgora</time>
         </header>
 
         @if (!Model.DadosDisponiveis)
@@ -83,18 +83,14 @@
         {
             <a class="btn btn--tinta btn--seta" asp-controller="ItemCardapio" asp-action="Create">
                 Cadastrar o primeiro prato
-                <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-                    <path d="M12 5v14M5 12h14" />
-                </svg>
+                <svg class="icone" aria-hidden="true"><use href="#icone-mais"></use></svg>
             </a>
         }
         else
         {
             <a class="btn btn--tinta btn--seta" asp-controller="ItemCardapio" asp-action="Index">
                 Abrir o cardápio
-                <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M5 12h14M13 6l6 6-6 6" />
-                </svg>
+                <svg class="icone" aria-hidden="true"><use href="#icone-seta"></use></svg>
             </a>
         }
     </aside>
@@ -126,9 +122,7 @@
                         </span>
                         <span class="u-pontos" aria-hidden="true"></span>
                         <span class="entrada__resumo">@entrada.Resumo</span>
-                        <svg class="entrada__seta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M5 12h14M13 6l6 6-6 6" />
-                        </svg>
+                        <svg class="icone entrada__seta" aria-hidden="true"><use href="#icone-seta"></use></svg>
                     </a>
                 }
                 else

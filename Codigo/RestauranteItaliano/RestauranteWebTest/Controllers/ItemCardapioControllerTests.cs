@@ -102,7 +102,7 @@ public class ItemCardapioControllerTests
 
         // Assert
         var jsonResult = Assert.IsInstanceOfType<JsonResult>(resultado);
-        var resposta = Assert.IsInstanceOfType<DatatableResponse<ItemCardapioModel>>(jsonResult.Value);
+        var resposta = Assert.IsInstanceOfType<DatatableResponse<ItemCardapioViewModel>>(jsonResult.Value);
 
         Assert.AreEqual(3, resposta.Draw);
         Assert.AreEqual(9, resposta.RecordsTotal);
@@ -147,7 +147,7 @@ public class ItemCardapioControllerTests
 
         // Assert
         var jsonResult = Assert.IsInstanceOfType<JsonResult>(resultado);
-        var resposta = Assert.IsInstanceOfType<DatatableResponse<ItemCardapioModel>>(jsonResult.Value);
+        var resposta = Assert.IsInstanceOfType<DatatableResponse<ItemCardapioViewModel>>(jsonResult.Value);
 
         Assert.AreEqual(0, resposta.RecordsTotal);
         Assert.IsNotNull(resposta.Data);
@@ -162,7 +162,7 @@ public class ItemCardapioControllerTests
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var item = Assert.IsInstanceOfType<ItemCardapioModel>(
+        var item = Assert.IsInstanceOfType<ItemCardapioViewModel>(
             viewResult.ViewData.Model);
 
         Assert.AreEqual(1u, item.Id);
@@ -197,7 +197,7 @@ public class ItemCardapioControllerTests
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var item = Assert.IsInstanceOfType<ItemCardapioModel>(
+        var item = Assert.IsInstanceOfType<ItemCardapioViewModel>(
             viewResult.ViewData.Model);
 
         Assert.IsNull(item.Id);
@@ -257,7 +257,7 @@ public class ItemCardapioControllerTests
         var modelo = CriarModeloDeNovoItem();
 
         controller.ModelState.AddModelError(
-            nameof(ItemCardapioModel.Nome),
+            nameof(ItemCardapioViewModel.Nome),
             "O campo Nome é de preenchimento obrigatório.");
 
         // Act
@@ -265,7 +265,7 @@ public class ItemCardapioControllerTests
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var item = Assert.IsInstanceOfType<ItemCardapioModel>(
+        var item = Assert.IsInstanceOfType<ItemCardapioViewModel>(
             viewResult.ViewData.Model);
 
         // as listas voltam preenchidas para o formulário ser mostrado de novo
@@ -306,7 +306,7 @@ public class ItemCardapioControllerTests
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var item = Assert.IsInstanceOfType<ItemCardapioModel>(
+        var item = Assert.IsInstanceOfType<ItemCardapioViewModel>(
             viewResult.ViewData.Model);
 
         Assert.AreEqual(1u, item.Id);
@@ -375,7 +375,7 @@ public class ItemCardapioControllerTests
         var modelo = CriarModeloDeItemExistente();
 
         controller.ModelState.AddModelError(
-            nameof(ItemCardapioModel.Preco),
+            nameof(ItemCardapioViewModel.Preco),
             "O campo Preço deve ser maior que zero.");
 
         // Act
@@ -383,7 +383,7 @@ public class ItemCardapioControllerTests
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var item = Assert.IsInstanceOfType<ItemCardapioModel>(
+        var item = Assert.IsInstanceOfType<ItemCardapioViewModel>(
             viewResult.ViewData.Model);
 
         Assert.IsNotNull(item.Restaurantes);
@@ -422,7 +422,7 @@ public class ItemCardapioControllerTests
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var item = Assert.IsInstanceOfType<ItemCardapioModel>(
+        var item = Assert.IsInstanceOfType<ItemCardapioViewModel>(
             viewResult.ViewData.Model);
 
         Assert.AreEqual(1u, item.Id);
@@ -477,11 +477,11 @@ public class ItemCardapioControllerTests
             .Throws(new ServiceException("Não é possível excluir o item, pois ele já foi usado em pedidos."));
 
         // Act
-        var resultado = controller.Delete(1, new ItemCardapioModel { Id = 1, Nome = "Lasagna" });
+        var resultado = controller.Delete(1, new ItemCardapioViewModel { Id = 1, Nome = "Lasagna" });
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var item = Assert.IsInstanceOfType<ItemCardapioModel>(
+        var item = Assert.IsInstanceOfType<ItemCardapioViewModel>(
             viewResult.ViewData.Model);
 
         // o item é buscado de novo para a tela mostrar grupo, preço e restaurante
@@ -574,9 +574,9 @@ public class ItemCardapioControllerTests
         return redirectResult;
     }
 
-    private static ItemCardapioModel CriarModeloDeNovoItem()
+    private static ItemCardapioViewModel CriarModeloDeNovoItem()
     {
-        return new ItemCardapioModel
+        return new ItemCardapioViewModel
         {
             Nome = "Tiramisù",
             Preco = 28.50m,
@@ -588,9 +588,9 @@ public class ItemCardapioControllerTests
         };
     }
 
-    private static ItemCardapioModel CriarModeloDeItemExistente()
+    private static ItemCardapioViewModel CriarModeloDeItemExistente()
     {
-        return new ItemCardapioModel
+        return new ItemCardapioViewModel
         {
             Id = 2,
             Nome = "Gnocchi",

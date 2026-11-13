@@ -1,4 +1,4 @@
-@model RestauranteWeb.Models.ItemCardapioModel
+@model RestauranteWeb.Models.ItemCardapioViewModel
 
 @{
     ViewData["Title"] = "Itens do cardápio";
@@ -16,19 +16,14 @@
         <p class="titulo-pagina__resumo" aria-live="polite" data-resumo-itens></p>
     </hgroup>
     <a class="btn btn--tinta" asp-action="Create">
-        <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-            <path d="M12 5v14M5 12h14" />
-        </svg>
+        <svg class="icone" aria-hidden="true"><use href="#icone-mais"></use></svg>
         Novo item
     </a>
 </header>
 
 <search class="ferramentas">
     <label class="busca">
-        <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-            <circle cx="11" cy="11" r="6.5" />
-            <path d="M16 16l4.5 4.5" />
-        </svg>
+        <svg class="icone" aria-hidden="true"><use href="#icone-busca"></use></svg>
         <span class="visually-hidden">Buscar item pelo nome, detalhes ou grupo</span>
         <input class="busca__campo" type="search" placeholder="Buscar prato, bebida ou grupo…" autocomplete="off" data-busca-itens>
     </label>
@@ -44,8 +39,13 @@
 @* token usado pelos botões "Marcar em falta" que a tabela monta a cada página *@
 @Html.AntiForgeryToken()
 
+@* os endereços saem daqui, montados pelo ASP.NET, para o JavaScript não ter rotas escritas à mão *@
 <table class="tabela-itens" id="tabela-itens"
-       data-url="@Url.Action(nameof(RestauranteWeb.Controllers.ItemCardapioController.GetDataPage))"
+       data-url="@Url.Action("GetDataPage")"
+       data-url-detalhes="@Url.Action("Details")"
+       data-url-editar="@Url.Action("Edit")"
+       data-url-excluir="@Url.Action("Delete")"
+       data-url-disponibilidade="@Url.Action("AlternarDisponivel")"
        data-idioma="@Url.Content("~/lib/datatables.net/pt-BR.json")">
     <caption class="visually-hidden">Itens do cardápio, com busca, filtro por grupo, ordenação e paginação</caption>
     <thead>

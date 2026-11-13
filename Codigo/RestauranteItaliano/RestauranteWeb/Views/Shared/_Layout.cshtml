@@ -1,5 +1,4 @@
-﻿@using System.Globalization
-@{
+﻿@{
     var controllerAtual = ViewContext.RouteData.Values["controller"]?.ToString();
     var acaoAtual = ViewContext.RouteData.Values["action"]?.ToString();
     var paginaInicial = controllerAtual == "Home" && acaoAtual == "Index";
@@ -7,10 +6,9 @@
     var capitulos = Navegacao.Capitulos();
     var capituloAtual = Navegacao.CapituloDo(capitulos, controllerAtual);
 
-    var agora = DateTime.Now;
-    var dataBruta = agora.ToString("dddd, d 'de' MMMM 'de' yyyy", new CultureInfo("pt-BR"));
-    var dataLonga = char.ToUpper(dataBruta[0]) + dataBruta[1..];
-    var saudacao = agora.Hour < 12 ? "Buongiorno" : (agora.Hour < 18 ? "Buon pomeriggio" : "Buona sera");
+    // preenchidos pelo HomeController: só a página inicial mostra a data e a saudação no topo
+    var dataLonga = ViewData["DataLonga"] as string;
+    var saudacao = ViewData["Saudacao"] as string;
 
     var mensagem = TempData["Mensagem"] as string;
     var erro = TempData["Erro"] as string;
@@ -34,6 +32,8 @@
 
 <body>
     <a class="u-pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+    <partial name="_Icones" />
 
     <header class="cabecalho @(paginaInicial ? "cabecalho--inicial" : null)">
         @if (paginaInicial)
@@ -105,14 +105,10 @@
             @if (!string.IsNullOrEmpty(mensagem))
             {
                 <p class="aviso" role="status">
-                    <svg class="icone aviso__icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M5 12.5l4.5 4.5L19 7.5" />
-                    </svg>
+                    <svg class="icone" aria-hidden="true"><use href="#icone-confirmar"></use></svg>
                     <span class="aviso__texto">@mensagem</span>
                     <button class="aviso__fechar" type="button" aria-label="Fechar aviso" data-fechar-aviso>
-                        <svg class="icone icone--pequeno" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-                            <path d="M6 6l12 12M18 6L6 18" />
-                        </svg>
+                        <svg class="icone icone--pequeno" aria-hidden="true"><use href="#icone-fechar"></use></svg>
                     </button>
                 </p>
             }
@@ -120,15 +116,10 @@
             @if (!string.IsNullOrEmpty(erro))
             {
                 <p class="aviso aviso--erro" role="alert">
-                    <svg class="icone aviso__icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="12" cy="12" r="9" />
-                        <path d="M12 7.5v5M12 16v.5" />
-                    </svg>
+                    <svg class="icone" aria-hidden="true"><use href="#icone-erro"></use></svg>
                     <span class="aviso__texto">@erro</span>
                     <button class="aviso__fechar" type="button" aria-label="Fechar aviso" data-fechar-aviso>
-                        <svg class="icone icone--pequeno" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-                            <path d="M6 6l12 12M18 6L6 18" />
-                        </svg>
+                        <svg class="icone icone--pequeno" aria-hidden="true"><use href="#icone-fechar"></use></svg>
                     </button>
                 </p>
             }
@@ -140,7 +131,7 @@
     </main>
 
     <footer class="rodape">
-        <p class="rodape__texto">&copy; @agora.Year Restaurante Italiano</p>
+        <p class="rodape__texto">&copy; @DateTime.Now.Year Restaurante Italiano</p>
         <p class="rodape__colofao">Composto em Instrument Serif e Instrument Sans</p>
         <a class="rodape__link" asp-controller="Home" asp-action="Privacy">Privacidade</a>
     </footer>

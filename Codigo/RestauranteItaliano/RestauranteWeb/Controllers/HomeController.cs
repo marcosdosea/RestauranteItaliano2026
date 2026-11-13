@@ -23,7 +23,7 @@ namespace RestauranteWeb.Controllers
             var cultura = new CultureInfo("pt-BR");
             var data = agora.ToString("dddd, d 'de' MMMM 'de' yyyy", cultura);
 
-            var homeModel = new HomeModel
+            var homeViewModel = new HomeViewModel
             {
                 Saudacao = agora.Hour < 12 ? "Buongiorno" : (agora.Hour < 18 ? "Buon pomeriggio" : "Buona sera"),
                 DataLonga = char.ToUpper(data[0]) + data[1..],
@@ -31,15 +31,19 @@ namespace RestauranteWeb.Controllers
                 Capitulos = Navegacao.Capitulos()
             };
 
+            // o cabeçalho da página inicial, no _Layout, mostra a mesma data e a mesma saudação
+            ViewData["DataLonga"] = homeViewModel.DataLonga;
+            ViewData["Saudacao"] = homeViewModel.Saudacao;
+
             try
             {
                 var resumo = resumoService.GetResumo();
 
-                homeModel.ItensNoCardapio = resumo.ItensNoCardapio;
-                homeModel.ItensDisponiveis = resumo.ItensDisponiveis;
-                homeModel.ItensEmFalta = resumo.ItensEmFalta;
-                homeModel.Grupos = resumo.Grupos
-                    .Select(grupo => new GrupoResumoModel { Nome = grupo.Nome, QuantidadeItens = grupo.QuantidadeItens })
+                homeViewModel.ItensNoCardapio = resumo.ItensNoCardapio;
+                homeViewModel.ItensDisponiveis = resumo.ItensDisponiveis;
+                homeViewModel.ItensEmFalta = resumo.ItensEmFalta;
+                homeViewModel.Grupos = resumo.Grupos
+                    .Select(grupo => new GrupoResumoViewModel { Nome = grupo.Nome, QuantidadeItens = grupo.QuantidadeItens })
                     .ToList();
 
                 // Quantidade de registros de cada função pronta, mostrada no índice
@@ -52,7 +56,7 @@ namespace RestauranteWeb.Controllers
                     ["FormaPagamento"] = resumo.QuantidadeFormasPagamento
                 };
 
-                foreach (var entrada in homeModel.Capitulos.SelectMany(capitulo => capitulo.Entradas))
+                foreach (var entrada in homeViewModel.Capitulos.SelectMany(capitulo => capitulo.Entradas))
                 {
                     if (entrada.Controller != null && quantidades.TryGetValue(entrada.Controller, out var quantidade))
                     {
@@ -60,16 +64,16 @@ namespace RestauranteWeb.Controllers
                     }
                 }
 
-                homeModel.DadosDisponiveis = true;
+                homeViewModel.DadosDisponiveis = true;
             }
             catch (Exception ex)
             {
                 // A página inicial continua abrindo mesmo se o banco estiver fora do ar.
                 logger.LogError(ex, "Não foi possível carregar os dados da página inicial.");
-                homeModel.DadosDisponiveis = false;
+                homeViewModel.DadosDisponiveis = false;
             }
 
-            return View(homeModel);
+            return View(homeViewModel);
         }
 
         public IActionResult Privacy()

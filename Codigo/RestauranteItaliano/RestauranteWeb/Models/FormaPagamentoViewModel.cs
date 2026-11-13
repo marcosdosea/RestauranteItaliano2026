@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RestauranteWeb.Models
 {
-    public class FormaPagamentoModel
+    public class FormaPagamentoViewModel
     {
         [Display(Name = "Código")]
         public uint? Id { get; set; }

@@ -1,6 +1,6 @@
 namespace RestauranteWeb.Models
 {
-    public class HomeModel
+    public class HomeViewModel
     {
         public string Saudacao { get; set; } = "Buongiorno";
         public string DataLonga { get; set; } = string.Empty;
@@ -12,7 +12,7 @@ namespace RestauranteWeb.Models
         public int ItensNoCardapio { get; set; }
         public int ItensDisponiveis { get; set; }
         public int ItensEmFalta { get; set; }
-        public List<GrupoResumoModel> Grupos { get; set; } = new();
+        public List<GrupoResumoViewModel> Grupos { get; set; } = new();
 
         public List<CapituloModel> Capitulos { get; set; } = new();
 
@@ -24,7 +24,7 @@ namespace RestauranteWeb.Models
             : 0;
     }
 
-    public class GrupoResumoModel
+    public class GrupoResumoViewModel
     {
         public string Nome { get; set; } = string.Empty;
         public int QuantidadeItens { get; set; }

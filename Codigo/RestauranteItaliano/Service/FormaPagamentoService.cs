@@ -6,11 +6,11 @@ namespace Service
 {
     public class FormaPagamentoService : IFormaPagamentoService
     {
-        private readonly RestauranteContext _context;
+        private readonly RestauranteContext context;
 
         public FormaPagamentoService(RestauranteContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         /// <summary>
@@ -21,13 +21,13 @@ namespace Service
         /// <exception cref="ServiceException"></exception>
         public uint Create(Formapagamento formaPagamento)
         {
-            if (_context.Formapagamentos.Any(f => f.Nome == formaPagamento.Nome))
+            if (context.Formapagamentos.Any(f => f.Nome == formaPagamento.Nome))
             {
                 throw new ServiceException("Já existe uma forma de pagamento com o mesmo nome.");
             }
 
-            _context.Add(formaPagamento);
-            _context.SaveChanges();
+            context.Add(formaPagamento);
+            context.SaveChanges();
             return formaPagamento.Id;
         }
 
@@ -38,13 +38,13 @@ namespace Service
         /// <exception cref="ServiceException"></exception>
         public void Edit(Formapagamento formaPagamento)
         {
-            if (_context.Formapagamentos.Any(f => f.Nome == formaPagamento.Nome && f.Id != formaPagamento.Id))
+            if (context.Formapagamentos.Any(f => f.Nome == formaPagamento.Nome && f.Id != formaPagamento.Id))
             {
                 throw new ServiceException("Já existe uma forma de pagamento com o mesmo nome.");
             }
 
-            _context.Update(formaPagamento);
-            _context.SaveChanges();
+            context.Update(formaPagamento);
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -55,16 +55,16 @@ namespace Service
         /// <exception cref="ServiceException"></exception>
         public void Delete(uint id)
         {
-            var formaPagamento = _context.Formapagamentos.Find(id);
+            var formaPagamento = context.Formapagamentos.Find(id);
             if (formaPagamento == null) return;
 
-            if (_context.Pagamentos.Any(p => p.IdFormaPagamento == id))
+            if (context.Pagamentos.Any(p => p.IdFormaPagamento == id))
             {
                 throw new ServiceException("Não é possível excluir a forma de pagamento, pois existem pagamentos associados a ela.");
             }
 
-            _context.Remove(formaPagamento);
-            _context.SaveChanges();
+            context.Remove(formaPagamento);
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Service
         /// <returns>A forma de pagamento encontrada ou nulo</returns>
         public Formapagamento? Get(uint id)
         {
-            return _context.Formapagamentos.Find(id);
+            return context.Formapagamentos.Find(id);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Service
         /// <returns>Uma coleção de formas de pagamento</returns>
         public IEnumerable<Formapagamento> GetAll()
         {
-            return _context.Formapagamentos.AsNoTracking().OrderBy(f => f.Nome);
+            return context.Formapagamentos.AsNoTracking().OrderBy(f => f.Nome);
         }
     }
 }

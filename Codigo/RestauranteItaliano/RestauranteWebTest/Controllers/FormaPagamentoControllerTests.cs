@@ -53,7 +53,7 @@ public class FormaPagamentoControllerTests
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var formasPagamento = Assert.IsInstanceOfType<IEnumerable<FormaPagamentoModel>>(
+        var formasPagamento = Assert.IsInstanceOfType<IEnumerable<FormaPagamentoViewModel>>(
             viewResult.ViewData.Model);
 
         Assert.HasCount(3, formasPagamento);
@@ -81,7 +81,7 @@ public class FormaPagamentoControllerTests
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var formasPagamento = Assert.IsInstanceOfType<IEnumerable<FormaPagamentoModel>>(
+        var formasPagamento = Assert.IsInstanceOfType<IEnumerable<FormaPagamentoViewModel>>(
             viewResult.ViewData.Model);
 
         Assert.IsEmpty(formasPagamento);
@@ -99,7 +99,7 @@ public class FormaPagamentoControllerTests
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var formaPagamento = Assert.IsInstanceOfType<FormaPagamentoModel>(
+        var formaPagamento = Assert.IsInstanceOfType<FormaPagamentoViewModel>(
             viewResult.ViewData.Model);
 
         Assert.AreEqual(1u, formaPagamento.Id);
@@ -132,7 +132,7 @@ public class FormaPagamentoControllerTests
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var formaPagamento = Assert.IsInstanceOfType<FormaPagamentoModel>(
+        var formaPagamento = Assert.IsInstanceOfType<FormaPagamentoViewModel>(
             viewResult.ViewData.Model);
 
         Assert.IsNull(formaPagamento.Id);
@@ -176,7 +176,7 @@ public class FormaPagamentoControllerTests
         var modelo = CriarModeloDeNovaFormaDePagamento();
 
         controller.ModelState.AddModelError(
-            nameof(FormaPagamentoModel.Nome),
+            nameof(FormaPagamentoViewModel.Nome),
             "O campo Nome é de preenchimento obrigatório.");
 
         // Act
@@ -221,7 +221,7 @@ public class FormaPagamentoControllerTests
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var formaPagamento = Assert.IsInstanceOfType<FormaPagamentoModel>(
+        var formaPagamento = Assert.IsInstanceOfType<FormaPagamentoViewModel>(
             viewResult.ViewData.Model);
 
         Assert.AreEqual(1u, formaPagamento.Id);
@@ -282,7 +282,7 @@ public class FormaPagamentoControllerTests
         var modelo = CriarModeloDeFormaDePagamentoExistente();
 
         controller.ModelState.AddModelError(
-            nameof(FormaPagamentoModel.Nome),
+            nameof(FormaPagamentoViewModel.Nome),
             "O campo Nome é de preenchimento obrigatório.");
 
         // Act
@@ -326,7 +326,7 @@ public class FormaPagamentoControllerTests
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var formaPagamento = Assert.IsInstanceOfType<FormaPagamentoModel>(
+        var formaPagamento = Assert.IsInstanceOfType<FormaPagamentoViewModel>(
             viewResult.ViewData.Model);
 
         Assert.AreEqual(1u, formaPagamento.Id);
@@ -416,18 +416,18 @@ public class FormaPagamentoControllerTests
             redirectResult.ActionName);
     }
 
-    private static FormaPagamentoModel CriarModeloDeNovaFormaDePagamento()
+    private static FormaPagamentoViewModel CriarModeloDeNovaFormaDePagamento()
     {
-        return new FormaPagamentoModel
+        return new FormaPagamentoViewModel
         {
             Id = 4,
             Nome = "Cartão de débito"
         };
     }
 
-    private static FormaPagamentoModel CriarModeloDeFormaDePagamentoExistente()
+    private static FormaPagamentoViewModel CriarModeloDeFormaDePagamentoExistente()
     {
-        return new FormaPagamentoModel
+        return new FormaPagamentoViewModel
         {
             Id = 2,
             Nome = "Cartão de crédito"

@@ -1,10 +1,5 @@
 ﻿"use strict";
 
-const reais = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "BRL",
-});
-
 /* ---------- Avisos de sucesso e de erro ---------- */
 
 document.querySelectorAll(".aviso").forEach((aviso) => {
@@ -32,7 +27,8 @@ document.querySelectorAll(".aviso").forEach((aviso) => {
 const previa = document.querySelector("[data-previa]");
 
 if (previa) {
-  const formulario = previa.closest("form") ?? document.querySelector("[data-formulario-item]");
+  const formulario = previa.closest("form");
+  const reais = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
   const campo = (nome) => formulario.querySelector(`[name="${nome}"]`);
   const ver = (nome) => previa.querySelector(`[data-previa-${nome}]`);
 

@@ -36,7 +36,7 @@ namespace RestauranteWeb.Controllers
         public IActionResult GetDataPage(DatatableRequest request)
         {
             var response = itemCardapioService.GetDataPage(request);
-            var responseModel = new DatatableResponse<ItemCardapioModel>()
+            var responseViewModel = new DatatableResponse<ItemCardapioViewModel>()
             {
                 Data = ItemCardapioMapper.ToViewModel(response.Data),
                 Draw = response.Draw,
@@ -44,7 +44,7 @@ namespace RestauranteWeb.Controllers
                 RecordsTotal = response.RecordsTotal,
                 Error = response.Error
             };
-            return Json(responseModel);
+            return Json(responseViewModel);
         }
 
         // GET: ItemCardapioController/Details/5
@@ -52,30 +52,30 @@ namespace RestauranteWeb.Controllers
         {
             var itemCardapio = itemCardapioService.Get(id);
             if (itemCardapio == null) return NotFound();
-            var itemCardapioModel = ItemCardapioMapper.ToViewModel(itemCardapio);
-            return View(itemCardapioModel);
+            var itemCardapioViewModel = ItemCardapioMapper.ToViewModel(itemCardapio);
+            return View(itemCardapioViewModel);
         }
 
         // GET: ItemCardapioController/Create
         public ActionResult Create()
         {
-            var itemCardapioModel = new ItemCardapioModel { Ativo = true, Disponivel = true };
-            CarregarListas(itemCardapioModel);
-            return View(itemCardapioModel);
+            var itemCardapioViewModel = new ItemCardapioViewModel { Ativo = true, Disponivel = true };
+            CarregarListas(itemCardapioViewModel);
+            return View(itemCardapioViewModel);
         }
 
         // POST: ItemCardapioController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(ItemCardapioModel itemCardapioModel)
+        public ActionResult Create(ItemCardapioViewModel itemCardapioViewModel)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var itemCardapio = ItemCardapioMapper.ToEntity(itemCardapioModel);
+                    var itemCardapio = ItemCardapioMapper.ToEntity(itemCardapioViewModel);
                     var id = itemCardapioService.Create(itemCardapio);
-                    TempData["Mensagem"] = $"{itemCardapioModel.Nome} entrou no cardápio.";
+                    TempData["Mensagem"] = $"{itemCardapioViewModel.Nome} entrou no cardápio.";
                     return RedirectToAction(nameof(Index), null, $"item-{id}");
                 }
                 catch (ServiceException ex)
@@ -83,8 +83,8 @@ namespace RestauranteWeb.Controllers
                     ModelState.AddModelError("", ex.Message);
                 }
             }
-            CarregarListas(itemCardapioModel);
-            return View(itemCardapioModel);
+            CarregarListas(itemCardapioViewModel);
+            return View(itemCardapioViewModel);
         }
 
         // GET: ItemCardapioController/Edit/5
@@ -92,24 +92,24 @@ namespace RestauranteWeb.Controllers
         {
             var itemCardapio = itemCardapioService.Get(id);
             if (itemCardapio == null) return NotFound();
-            var itemCardapioModel = ItemCardapioMapper.ToViewModel(itemCardapio);
-            CarregarListas(itemCardapioModel);
-            return View(itemCardapioModel);
+            var itemCardapioViewModel = ItemCardapioMapper.ToViewModel(itemCardapio);
+            CarregarListas(itemCardapioViewModel);
+            return View(itemCardapioViewModel);
         }
 
         // POST: ItemCardapioController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(uint id, ItemCardapioModel itemCardapioModel)
+        public ActionResult Edit(uint id, ItemCardapioViewModel itemCardapioViewModel)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    itemCardapioModel.Id = id;
-                    var itemCardapio = ItemCardapioMapper.ToEntity(itemCardapioModel);
+                    itemCardapioViewModel.Id = id;
+                    var itemCardapio = ItemCardapioMapper.ToEntity(itemCardapioViewModel);
                     itemCardapioService.Edit(itemCardapio);
-                    TempData["Mensagem"] = $"Alterações em {itemCardapioModel.Nome} salvas.";
+                    TempData["Mensagem"] = $"Alterações em {itemCardapioViewModel.Nome} salvas.";
                     return RedirectToAction(nameof(Index), null, $"item-{id}");
                 }
                 catch (ServiceException ex)
@@ -117,8 +117,8 @@ namespace RestauranteWeb.Controllers
                     ModelState.AddModelError("", ex.Message);
                 }
             }
-            CarregarListas(itemCardapioModel);
-            return View(itemCardapioModel);
+            CarregarListas(itemCardapioViewModel);
+            return View(itemCardapioViewModel);
         }
 
         // GET: ItemCardapioController/Delete/5
@@ -126,19 +126,19 @@ namespace RestauranteWeb.Controllers
         {
             var itemCardapio = itemCardapioService.Get(id);
             if (itemCardapio == null) return NotFound();
-            var itemCardapioModel = ItemCardapioMapper.ToViewModel(itemCardapio);
-            return View(itemCardapioModel);
+            var itemCardapioViewModel = ItemCardapioMapper.ToViewModel(itemCardapio);
+            return View(itemCardapioViewModel);
         }
 
         // POST: ItemCardapioController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(uint id, ItemCardapioModel itemCardapioModel)
+        public ActionResult Delete(uint id, ItemCardapioViewModel itemCardapioViewModel)
         {
             try
             {
                 itemCardapioService.Delete(id);
-                TempData["Mensagem"] = $"{itemCardapioModel.Nome} saiu do cardápio.";
+                TempData["Mensagem"] = $"{itemCardapioViewModel.Nome} saiu do cardápio.";
                 return RedirectToAction(nameof(Index));
             }
             catch (ServiceException ex)
@@ -147,7 +147,7 @@ namespace RestauranteWeb.Controllers
 
                 // recarrega o item para a tela mostrar grupo, preço e restaurante de novo
                 var itemCardapio = itemCardapioService.Get(id);
-                return View(itemCardapio == null ? itemCardapioModel : ItemCardapioMapper.ToViewModel(itemCardapio));
+                return View(itemCardapio == null ? itemCardapioViewModel : ItemCardapioMapper.ToViewModel(itemCardapio));
             }
         }
 
@@ -174,18 +174,18 @@ namespace RestauranteWeb.Controllers
         /// <summary>
         /// Preenche as listas de restaurantes e de grupos do cardápio usadas nos formulários
         /// </summary>
-        private void CarregarListas(ItemCardapioModel itemCardapioModel)
+        private void CarregarListas(ItemCardapioViewModel itemCardapioViewModel)
         {
             var restaurantes = restauranteService.GetAll().ToList();
 
             // com um restaurante só, ele já vem escolhido
-            if (itemCardapioModel.IdRestaurante == null && restaurantes.Count == 1)
+            if (itemCardapioViewModel.IdRestaurante == null && restaurantes.Count == 1)
             {
-                itemCardapioModel.IdRestaurante = restaurantes[0].Id;
+                itemCardapioViewModel.IdRestaurante = restaurantes[0].Id;
             }
 
-            itemCardapioModel.Restaurantes = new SelectList(restaurantes, "Id", "Nome", itemCardapioModel.IdRestaurante);
-            itemCardapioModel.GruposCardapio = new SelectList(grupoCardapioService.GetAll(), "Id", "Nome", itemCardapioModel.IdGrupoCardapio);
+            itemCardapioViewModel.Restaurantes = new SelectList(restaurantes, "Id", "Nome", itemCardapioViewModel.IdRestaurante);
+            itemCardapioViewModel.GruposCardapio = new SelectList(grupoCardapioService.GetAll(), "Id", "Nome", itemCardapioViewModel.IdGrupoCardapio);
         }
     }
 }

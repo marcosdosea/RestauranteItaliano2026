@@ -41,6 +41,8 @@ O visual do sistema, chamado **La Carta**, imita um cardápio impresso de cantin
 
 O estilo fica todo em `RestauranteWeb/wwwroot/css/site.css`, com variáveis de cor em português (`--cor-tinta`, `--cor-papel`…) e classes no padrão BEM (`prato__nome`, `aviso--erro`). O layout único das páginas é `Views/Shared/_Layout.cshtml`.
 
+Os ícones são desenhados uma única vez em `Views/Shared/_Icones.cshtml`. Cada tela usa um deles com `<svg class="icone" aria-hidden="true"><use href="#icone-voltar"></use></svg>`, e o tamanho, a cor e o traço vêm do CSS, sem `width`, `height` nem `style` no HTML.
+
 ---
 
 ## 🛠️ Tecnologias
@@ -76,7 +78,7 @@ Como uma funcionalidade é organizada (exemplo do CS07):
 | Core | `Itemcardapio.cs`, `Service/IItemCardapioService.cs` | Entidade e contrato do serviço |
 | Service | `ItemCardapioService.cs` | Regras de negócio; lança `ServiceException` quando uma regra é violada |
 | ServiceTest | `ItemCardapioServiceTests.cs` | Testa as regras do serviço em um banco em memória |
-| RestauranteWeb | `Models/ItemCardapioModel.cs` | Campos da tela e validações (`[Required]`, `[StringLength]`…) |
+| RestauranteWeb | `Models/ItemCardapioViewModel.cs` | ViewModel: campos da tela e validações (`[Required]`, `[StringLength]`…) |
 | RestauranteWeb | `Mapper/ItemCardapioMapper.cs` | Converte entidade em modelo de tela e vice-versa (`ToViewModel` e `ToEntity`) |
 | RestauranteWeb | `Controllers/ItemCardapioController.cs` | Recebe as requisições e mostra os erros do serviço na tela |
 | RestauranteWeb | `Views/ItemCardapio/*.cshtml` | Index, Create, Edit, Details e Delete |
@@ -223,7 +225,7 @@ Os métodos seguem o nome `Metodo_QuandoCondicao_DeveResultado` e são divididos
 3. Siga o padrão das funcionalidades já prontas (veja o CS07 – Itens do Cardápio como referência):
    - regras de negócio no **Service**, lançando `ServiceException` com mensagens claras em português;
    - o `GetAll` do serviço devolve a consulta com `AsNoTracking()`, sem `ToList()`;
-   - validações de tela no **Model**, com mensagens no formato `"O campo {0} é de preenchimento obrigatório."`;
+   - validações de tela na **ViewModel** (`Models/NomeViewModel.cs`), com mensagens no formato `"O campo {0} é de preenchimento obrigatório."`;
    - conversão entre entidade e modelo de tela em uma classe da pasta **Mapper**, com `ToViewModel` e `ToEntity`;
    - registro do serviço no `Program.cs` com `AddTransient` e entrada no mapa do sistema (`Models/Navegacao.cs`), que alimenta o menu e a página inicial;
    - em listas com muitos registros que o usuário precisa consultar ou ordenar, use o DataTables com `GetDataPage` (veja o CS07);

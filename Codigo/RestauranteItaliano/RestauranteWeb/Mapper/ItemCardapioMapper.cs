@@ -13,7 +13,7 @@ namespace RestauranteWeb.Mapper
         /// </summary>
         static ItemCardapioMapper()
         {
-            TypeAdapterConfig<Itemcardapio, ItemCardapioModel>.NewConfig()
+            TypeAdapterConfig<Itemcardapio, ItemCardapioViewModel>.NewConfig()
                 .Map(destino => destino.Ativo, origem => origem.Ativo == 1)
                 .Map(destino => destino.Disponivel, origem => origem.Disponivel == "1")
                 .Map(destino => destino.NomeRestaurante,
@@ -21,7 +21,7 @@ namespace RestauranteWeb.Mapper
                 .Map(destino => destino.NomeGrupoCardapio,
                      origem => origem.IdGrupoCardapioNavigation != null ? origem.IdGrupoCardapioNavigation.Nome : null);
 
-            TypeAdapterConfig<ItemCardapioModel, Itemcardapio>.NewConfig()
+            TypeAdapterConfig<ItemCardapioViewModel, Itemcardapio>.NewConfig()
                 .Map(destino => destino.Id, origem => origem.Id ?? 0)
                 .Map(destino => destino.Ativo, origem => origem.Ativo ? (sbyte)1 : (sbyte)0)
                 .Map(destino => destino.Disponivel, origem => origem.Disponivel ? "1" : "0")
@@ -32,24 +32,24 @@ namespace RestauranteWeb.Mapper
                 .Ignore(destino => destino.Pedidoitemcardapios);
         }
 
-        public static ItemCardapioModel ToViewModel(Itemcardapio itemCardapio)
+        public static ItemCardapioViewModel ToViewModel(Itemcardapio itemCardapio)
         {
-            return itemCardapio.Adapt<ItemCardapioModel>();
+            return itemCardapio.Adapt<ItemCardapioViewModel>();
         }
 
-        public static Itemcardapio ToEntity(ItemCardapioModel itemCardapioModel)
+        public static Itemcardapio ToEntity(ItemCardapioViewModel itemCardapioViewModel)
         {
-            return itemCardapioModel.Adapt<Itemcardapio>();
+            return itemCardapioViewModel.Adapt<Itemcardapio>();
         }
 
-        public static IEnumerable<ItemCardapioModel> ToViewModel(IEnumerable<Itemcardapio>? itensCardapio)
+        public static IEnumerable<ItemCardapioViewModel> ToViewModel(IEnumerable<Itemcardapio>? itensCardapio)
         {
-            return itensCardapio?.Adapt<IEnumerable<ItemCardapioModel>>() ?? new List<ItemCardapioModel>();
+            return itensCardapio?.Adapt<IEnumerable<ItemCardapioViewModel>>() ?? new List<ItemCardapioViewModel>();
         }
 
-        public static IEnumerable<Itemcardapio> ToEntity(IEnumerable<ItemCardapioModel>? itensCardapioModel)
+        public static IEnumerable<Itemcardapio> ToEntity(IEnumerable<ItemCardapioViewModel>? itensCardapioViewModel)
         {
-            return itensCardapioModel?.Adapt<IEnumerable<Itemcardapio>>() ?? new List<Itemcardapio>();
+            return itensCardapioViewModel?.Adapt<IEnumerable<Itemcardapio>>() ?? new List<Itemcardapio>();
         }
     }
 }

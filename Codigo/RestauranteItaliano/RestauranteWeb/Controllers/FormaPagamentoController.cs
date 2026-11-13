@@ -18,8 +18,8 @@ namespace RestauranteWeb.Controllers
         public ActionResult Index()
         {
             var formasPagamento = formaPagamentoService.GetAll();
-            var formasPagamentoModel = FormaPagamentoMapper.ToViewModel(formasPagamento);
-            return View(formasPagamentoModel);
+            var formasPagamentoViewModel = FormaPagamentoMapper.ToViewModel(formasPagamento);
+            return View(formasPagamentoViewModel);
         }
 
         // GET: FormaPagamentoController/Details/5
@@ -27,29 +27,29 @@ namespace RestauranteWeb.Controllers
         {
             var formaPagamento = formaPagamentoService.Get(id);
             if (formaPagamento == null) return NotFound();
-            var formaPagamentoModel = FormaPagamentoMapper.ToViewModel(formaPagamento);
-            return View(formaPagamentoModel);
+            var formaPagamentoViewModel = FormaPagamentoMapper.ToViewModel(formaPagamento);
+            return View(formaPagamentoViewModel);
         }
 
         // GET: FormaPagamentoController/Create
         public ActionResult Create()
         {
-            var formaPagamentoModel = new FormaPagamentoModel();
-            return View(formaPagamentoModel);
+            var formaPagamentoViewModel = new FormaPagamentoViewModel();
+            return View(formaPagamentoViewModel);
         }
 
         // POST: FormaPagamentoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(FormaPagamentoModel formaPagamentoModel)
+        public ActionResult Create(FormaPagamentoViewModel formaPagamentoViewModel)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var formaPagamento = FormaPagamentoMapper.ToEntity(formaPagamentoModel);
+                    var formaPagamento = FormaPagamentoMapper.ToEntity(formaPagamentoViewModel);
                     formaPagamentoService.Create(formaPagamento);
-                    TempData["Mensagem"] = $"{formaPagamentoModel.Nome} entrou nas formas de pagamento.";
+                    TempData["Mensagem"] = $"{formaPagamentoViewModel.Nome} entrou nas formas de pagamento.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (ServiceException ex)
@@ -57,7 +57,7 @@ namespace RestauranteWeb.Controllers
                     ModelState.AddModelError("", ex.Message);
                 }
             }
-            return View(formaPagamentoModel);
+            return View(formaPagamentoViewModel);
         }
 
         // GET: FormaPagamentoController/Edit/5
@@ -65,23 +65,23 @@ namespace RestauranteWeb.Controllers
         {
             var formaPagamento = formaPagamentoService.Get(id);
             if (formaPagamento == null) return NotFound();
-            var formaPagamentoModel = FormaPagamentoMapper.ToViewModel(formaPagamento);
-            return View(formaPagamentoModel);
+            var formaPagamentoViewModel = FormaPagamentoMapper.ToViewModel(formaPagamento);
+            return View(formaPagamentoViewModel);
         }
 
         // POST: FormaPagamentoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(uint id, FormaPagamentoModel formaPagamentoModel)
+        public ActionResult Edit(uint id, FormaPagamentoViewModel formaPagamentoViewModel)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    formaPagamentoModel.Id = id;
-                    var formaPagamento = FormaPagamentoMapper.ToEntity(formaPagamentoModel);
+                    formaPagamentoViewModel.Id = id;
+                    var formaPagamento = FormaPagamentoMapper.ToEntity(formaPagamentoViewModel);
                     formaPagamentoService.Edit(formaPagamento);
-                    TempData["Mensagem"] = $"Alterações em {formaPagamentoModel.Nome} salvas.";
+                    TempData["Mensagem"] = $"Alterações em {formaPagamentoViewModel.Nome} salvas.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (ServiceException ex)
@@ -89,7 +89,7 @@ namespace RestauranteWeb.Controllers
                     ModelState.AddModelError("", ex.Message);
                 }
             }
-            return View(formaPagamentoModel);
+            return View(formaPagamentoViewModel);
         }
 
         // GET: FormaPagamentoController/Delete/5
@@ -97,25 +97,25 @@ namespace RestauranteWeb.Controllers
         {
             var formaPagamento = formaPagamentoService.Get(id);
             if (formaPagamento == null) return NotFound();
-            var formaPagamentoModel = FormaPagamentoMapper.ToViewModel(formaPagamento);
-            return View(formaPagamentoModel);
+            var formaPagamentoViewModel = FormaPagamentoMapper.ToViewModel(formaPagamento);
+            return View(formaPagamentoViewModel);
         }
 
         // POST: FormaPagamentoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(uint id, FormaPagamentoModel formaPagamentoModel)
+        public ActionResult Delete(uint id, FormaPagamentoViewModel formaPagamentoViewModel)
         {
             try
             {
                 formaPagamentoService.Delete(id);
-                TempData["Mensagem"] = $"{formaPagamentoModel.Nome} saiu das formas de pagamento.";
+                TempData["Mensagem"] = $"{formaPagamentoViewModel.Nome} saiu das formas de pagamento.";
                 return RedirectToAction(nameof(Index));
             }
             catch (ServiceException ex)
             {
                 ModelState.AddModelError("", ex.Message);
-                return View(formaPagamentoModel);
+                return View(formaPagamentoViewModel);
             }
         }
     }

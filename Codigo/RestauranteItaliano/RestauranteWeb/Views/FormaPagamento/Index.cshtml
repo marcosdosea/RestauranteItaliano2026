@@ -1,4 +1,4 @@
-@model IEnumerable<RestauranteWeb.Models.FormaPagamentoModel>
+@model IEnumerable<RestauranteWeb.Models.FormaPagamentoViewModel>
 
 @{
     ViewData["Title"] = "Formas de pagamento";
@@ -15,9 +15,7 @@
         }
     </hgroup>
     <a class="btn btn--tinta" asp-action="Create">
-        <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-            <path d="M12 5v14M5 12h14" />
-        </svg>
+        <svg class="icone" aria-hidden="true"><use href="#icone-mais"></use></svg>
         Nova forma
     </a>
 </header>
