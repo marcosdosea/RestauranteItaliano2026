@@ -5,16 +5,6 @@ const reais = new Intl.NumberFormat("pt-BR", {
   currency: "BRL",
 });
 
-/* ---------- Utilidades ---------- */
-
-// Compara textos sem diferenciar maiúsculas nem acentos ("Tiramisu" acha "Tiramisù").
-const normalizar = (texto) =>
-  texto
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .trim();
-
 /* ---------- Avisos de sucesso e de erro ---------- */
 
 document.querySelectorAll(".aviso").forEach((aviso) => {
@@ -36,67 +26,6 @@ document.querySelectorAll(".aviso").forEach((aviso) => {
     tempo = setTimeout(fecharAviso, 3000);
   });
 });
-
-/* ---------- Cardápio: busca e filtro por grupo ---------- */
-
-const carta = document.querySelector("[data-carta]");
-
-if (carta) {
-  const campoBusca = document.querySelector("[data-busca]");
-  const botoesFiltro = [...document.querySelectorAll("[data-filtro]")];
-  const grupos = [...carta.querySelectorAll("[data-grupo]")];
-  const semResultado = document.querySelector("[data-sem-resultado]");
-  const contagem = document.querySelector("[data-contagem]");
-  const total = carta.querySelectorAll("[data-prato]").length;
-  let grupoEscolhido = "";
-
-  const aplicarFiltros = () => {
-    const termo = normalizar(campoBusca?.value ?? "");
-    let visiveis = 0;
-
-    grupos.forEach((grupo) => {
-      const doGrupo = !grupoEscolhido || grupo.dataset.grupo === grupoEscolhido;
-      let visiveisNoGrupo = 0;
-
-      grupo.querySelectorAll("[data-prato]").forEach((prato) => {
-        const mostrar = doGrupo && normalizar(prato.dataset.prato).includes(termo);
-        prato.hidden = !mostrar;
-        if (mostrar) visiveisNoGrupo++;
-      });
-
-      grupo.hidden = visiveisNoGrupo === 0;
-      visiveis += visiveisNoGrupo;
-    });
-
-    if (semResultado) semResultado.hidden = visiveis > 0;
-    if (contagem) contagem.textContent = `Mostrando ${visiveis} de ${total} ${total === 1 ? "item" : "itens"}`;
-  };
-
-  botoesFiltro.forEach((botao) => {
-    botao.addEventListener("click", () => {
-      grupoEscolhido = botao.dataset.filtro;
-      botoesFiltro.forEach((outro) => outro.setAttribute("aria-pressed", String(outro === botao)));
-      aplicarFiltros();
-    });
-  });
-
-  campoBusca?.addEventListener("input", aplicarFiltros);
-
-  document.querySelector("[data-limpar-filtros]")?.addEventListener("click", () => {
-    if (campoBusca) campoBusca.value = "";
-    botoesFiltro[0]?.click();
-    campoBusca?.focus();
-  });
-
-  // atalho "/" leva para a busca, como no ItaPets
-  document.addEventListener("keydown", (evento) => {
-    const digitando = evento.target.closest("input, textarea, select");
-    if (evento.key === "/" && !digitando && campoBusca) {
-      evento.preventDefault();
-      campoBusca.focus();
-    }
-  });
-}
 
 /* ---------- Formulário do item: prévia e contador ---------- */
 

@@ -34,7 +34,8 @@ O visual do sistema, chamado **La Carta**, imita um cardápio impresso de cantin
 - **Página inicial:** funciona como o índice de um livro. Mostra uma saudação conforme a hora do dia, atalhos para os cadastros mais usados, um resumo do cardápio (itens disponíveis e em falta e os grupos com mais itens) e todos os casos de uso organizados em capítulos, com a quantidade de registros de cada um.
 - **Navegação por capítulos:** o menu agrupa as telas em Cardápio, Equipe, Configurações, Salão, Pedidos e Pagamentos. Os casos de uso que ainda não foram implementados aparecem como "em breve".
 - **Avisos:** depois de salvar, editar ou excluir, aparece um aviso verde no canto da tela, que some sozinho. Erros aparecem em vermelho e ficam até serem fechados.
-- **Cardápio:** os itens são listados por grupo, com busca, filtro por grupo e marcação de item em falta direto na lista.
+- **Cardápio:** os itens ficam numa tabela com [DataTables](https://datatables.net/), seguindo a orientação do professor para páginas com muitos registros que o usuário precisa consultar ou ordenar. A busca (por nome, detalhes ou grupo), o filtro por grupo, a ordenação por coluna e a paginação são feitos no servidor. Dá para marcar um item em falta direto na tabela.
+- **Erros:** um filtro global (`Filter/CustomExceptionFilter.cs`) leva qualquer erro que escape dos controllers para a tela de erro, com uma mensagem em português. Erros do MySQL são traduzidos pelo número (por exemplo, 1451: registro vinculado a outros dados).
 - **Celular:** todas as telas se adaptam a telas pequenas, e as ações ficam sempre visíveis em telas de toque.
 - **Acessibilidade e validação:** HTML semântico, navegação por teclado, atributos `aria-*` e respeito à opção de reduzir animações. As páginas passam sem erros nos validadores de [HTML](https://validator.w3.org/nu/) e de [CSS](https://jigsaw.w3.org/css-validator/) do W3C.
 
@@ -49,6 +50,7 @@ O estilo fica todo em `RestauranteWeb/wwwroot/css/site.css`, com variáveis de c
 - [MySQL 8](https://dev.mysql.com/) e MySQL Workbench
 - [Mapster](https://github.com/MapsterMapper/Mapster) para converter entidades em modelos de tela
 - Bootstrap 5 e jQuery Validation (validação no navegador)
+- [DataTables](https://datatables.net/) 3.1.5 nas listas com muitos registros (busca, ordenação e paginação no servidor)
 - [MSTest](https://learn.microsoft.com/dotnet/core/testing/unit-testing-mstest-intro), [Moq](https://github.com/devlooped/moq) e o provedor **InMemory** do Entity Framework Core nos testes unitários
 
 ---
@@ -83,6 +85,16 @@ Como uma funcionalidade é organizada (exemplo do CS07):
 Os serviços são registrados no `Program.cs` com `AddTransient`, e o sistema usa a cultura **pt-BR** (valores em R$ e decimais com vírgula).
 
 Consultas que juntam dados de várias tabelas devolvem um **DTO** (pasta `Core/DTO`). É o caso do resumo da página inicial: o `ResumoService` faz as contagens no banco e devolve um `ResumoDTO`.
+
+Listas com muitos registros usam o **DataTables** com processamento no servidor, como no projeto de referência:
+
+| Camada | Arquivo | Papel |
+|---|---|---|
+| Core | `Datatables/DatatableRequest.cs`, `Datatables/DatatableResponse.cs` | Pedido do DataTables (página, busca, ordenação) e resposta (itens da página e totais) |
+| Service | `ItemCardapioService.GetDataPage` | Aplica busca, filtro, ordenação e paginação na consulta (`Count`, `Skip` e `Take` no banco) |
+| RestauranteWeb | `ItemCardapioController.GetDataPage` | Action `[HttpPost]` chamada pela tabela; devolve a página em JSON |
+| RestauranteWeb | `Views/ItemCardapio/Index.cshtml`, `wwwroot/js/itens-cardapio.js` | Monta a tabela e liga a busca e o filtro por grupo |
+| RestauranteWeb | `wwwroot/lib/datatables.net/` | Biblioteca DataTables e a tradução `pt-BR.json` (registrada no `libman.json`) |
 
 ---
 
@@ -179,16 +191,17 @@ A solução tem dois projetos de teste, no mesmo formato do projeto de referênc
 
 Os testes não usam o MySQL, então rodam mesmo sem o banco instalado.
 
-Situação atual: **75 testes, todos aprovados**.
+Situação atual: **93 testes, todos aprovados**.
 
 | Arquivo | Testes | O que cobre |
 |---|---|---|
 | `ServiceTest/FormaPagamentoServiceTests.cs` | 13 | Cadastro, edição, exclusão e consultas; nome repetido; exclusão bloqueada quando a forma já foi usada em um pagamento |
-| `ServiceTest/ItemCardapioServiceTests.cs` | 17 | Cadastro, edição, exclusão e consultas; grupo ou restaurante inexistente; nome repetido no mesmo restaurante; item já pedido; marcar em falta e disponível |
+| `ServiceTest/ItemCardapioServiceTests.cs` | 27 | Cadastro, edição, exclusão e consultas; grupo ou restaurante inexistente; nome repetido no mesmo restaurante; item já pedido; marcar em falta e disponível; página do DataTables (busca, filtro por grupo, ordenação e paginação) |
 | `ServiceTest/ResumoServiceTests.cs` | 4 | Números da página inicial: itens ativos, disponíveis e em falta, grupos com mais itens e quantidade de cada cadastro |
 | `RestauranteWebTest/Controllers/FormaPagamentoControllerTests.cs` | 17 | Todas as ações do controller, avisos de sucesso, erros do serviço e páginas inexistentes (404) |
-| `RestauranteWebTest/Controllers/ItemCardapioControllerTests.cs` | 21 | Todas as ações do controller, listas do formulário, aviso de erro ao marcar em falta e páginas inexistentes (404) |
+| `RestauranteWebTest/Controllers/ItemCardapioControllerTests.cs` | 21 | Todas as ações do controller, incluindo a página em JSON para o DataTables, listas do formulário, aviso de erro ao marcar em falta e páginas inexistentes (404) |
 | `RestauranteWebTest/Controllers/HomeControllerTests.cs` | 3 | Resumo da página inicial e funcionamento com o banco fora do ar |
+| `RestauranteWebTest/Filter/CustomExceptionFilterTests.cs` | 8 | Tela de erro com a mensagem certa para erro inesperado, regra de negócio e erros do MySQL |
 
 **Visual Studio:** menu **Teste → Executar Todos os Testes** (ou `Ctrl+R, A`). O resultado aparece no **Gerenciador de Testes**.
 
@@ -213,6 +226,7 @@ Os métodos seguem o nome `Metodo_QuandoCondicao_DeveResultado` e são divididos
    - validações de tela no **Model**, com mensagens no formato `"O campo {0} é de preenchimento obrigatório."`;
    - conversão entre entidade e modelo de tela em uma classe da pasta **Mapper**, com `ToViewModel` e `ToEntity`;
    - registro do serviço no `Program.cs` com `AddTransient` e entrada no mapa do sistema (`Models/Navegacao.cs`), que alimenta o menu e a página inicial;
+   - em listas com muitos registros que o usuário precisa consultar ou ordenar, use o DataTables com `GetDataPage` (veja o CS07);
    - testes do serviço em `ServiceTest` e do controller em `RestauranteWebTest`.
 4. Compile e rode os testes antes de enviar.
 5. Antes do commit, confira na lista de alterações que não há arquivos das pastas `bin/` e `obj/`. Elas são geradas pela compilação e já estão no `.gitignore`.

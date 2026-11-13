@@ -47,6 +47,37 @@
   --bs-form-invalid-border-color: var(--cor-pomodoro-escuro);
   --bs-form-valid-border-color: var(--cor-basilico);
   --bs-focus-ring-color: rgba(168, 55, 31, 0.25);
+
+  /* DataTables (tabela dos itens do cardápio) no visual do sistema */
+  --dt-header_padding: 0 12px 10px;
+  --dt-header_border: 4px double var(--cor-tinta);
+  --dt-body_padding: 14px 12px;
+  --dt-body_border: 1px solid var(--cor-linha);
+  --dt-row_background-hover: 255, 252, 247;
+  --dt-row_alpha-hover: 1;
+  --dt-control_color: var(--cor-tinta-2);
+  --dt-input_border: 1px solid var(--cor-pontilhado);
+  --dt-input_border-radius: 0;
+  --dt-input_padding: 6px 8px;
+  --dt-input_background: var(--cor-cartao);
+  --dt-order-arrow_color: #1c1a17;
+  --dt-order-arrow_color-current: #a8371f;
+  --dt-order-arrow_opacity-current: 1;
+  --dt-order-header_outline-hover: 0;
+  --dt-paging-button_padding: 0.5em 0.9em;
+  --dt-paging-button_border-radius: 0;
+  --dt-paging-button_border-current: 1px solid var(--cor-tinta);
+  --dt-paging-button_background-current: var(--cor-tinta);
+  --dt-paging-button_color-current: var(--cor-cartao);
+  --dt-paging-button_border-current-hover: 1px solid var(--cor-tinta);
+  --dt-paging-button_background-current-hover: var(--cor-tinta);
+  --dt-paging-button_color-current-hover: var(--cor-cartao);
+  --dt-paging-button_border-hover: 1px solid var(--cor-tinta);
+  --dt-paging-button_background-hover: transparent;
+  --dt-paging-button_color-hover: var(--cor-tinta);
+  --dt-paging-button_color-disabled: var(--cor-tinta-4);
+  --dt-paging-button_box-shadow-active: none;
+  --dt-processing-circle_background: 168, 55, 31;
 }
 
 /* ---------- Base ---------- */
@@ -68,6 +99,23 @@ body {
 
 main:focus {
   outline: none;
+}
+
+/* Ícones SVG: o tamanho fica aqui no CSS, e não em width/height no HTML */
+.icone {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+.icone--pequeno {
+  width: 16px;
+  height: 16px;
+}
+
+.icone--grande {
+  width: 22px;
+  height: 22px;
 }
 
 a {
@@ -1005,8 +1053,10 @@ h1:not([class]) {
   color: var(--cor-tinta-3);
 }
 
-.painel__vazio svg {
+.painel__ilustracao {
   flex: none;
+  width: 72px;
+  height: 44px;
 }
 
 .numeros {
@@ -1252,6 +1302,11 @@ a.entrada:hover .entrada__seta {
   text-align: center;
 }
 
+.proverbio__ornamento {
+  width: 88px;
+  height: 30px;
+}
+
 .proverbio__frase {
   margin: 0;
   font-family: var(--fonte-serifa);
@@ -1262,7 +1317,7 @@ a.entrada:hover .entrada__seta {
   color: var(--cor-tinta);
 }
 
-/* ---------- Cardápio: busca e filtros ---------- */
+/* ---------- Cardápio: busca e filtro por grupo ---------- */
 
 .ferramentas {
   display: flex;
@@ -1312,75 +1367,123 @@ a.entrada:hover .entrada__seta {
   opacity: 1;
 }
 
-.filtros {
+.filtro-grupo {
   display: flex;
-  gap: 8px;
-  min-width: 0;
-  max-width: 100%;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: 12px;
   margin: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
 }
 
-.filtros__botao {
+.filtro-grupo__rotulo {
   flex: none;
-  min-height: 44px;
-  padding: 0 16px;
-  border: 1px solid var(--cor-pontilhado);
-  background: transparent;
-  color: var(--cor-tinta);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+  color: var(--cor-tinta-2);
+}
+
+.filtro-grupo__campo {
+  min-width: 200px;
+  min-height: 46px;
+  border-color: var(--cor-pontilhado);
+  border-radius: 0;
+  background-color: var(--cor-cartao);
+  font-family: var(--fonte-serifa);
+  font-size: 1.1875rem;
+}
+
+/* ---------- Cardápio: tabela com DataTables (busca, ordenação e paginação no servidor) ---------- */
+
+.tabela-itens {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela-itens thead th {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cor-tinta-2);
   white-space: nowrap;
 }
 
-.filtros__botao:hover {
-  border-color: var(--cor-tinta);
+.tabela-itens tbody td {
+  border-bottom: var(--dt-body_border);
+  vertical-align: middle;
 }
 
-.filtros__botao[aria-pressed="true"] {
-  border-color: transparent;
-  background: var(--cor-tinta);
-  color: var(--cor-cartao);
-}
-
-/* ---------- Cardápio: lista em duas colunas ---------- */
-
-.carta {
-  column-gap: 72px;
-  columns: 2 420px;
-}
-
-.grupo {
+.tabela-itens__link {
   display: flex;
   flex-direction: column;
-  margin: 0 0 40px;
-  break-inside: avoid;
+  gap: 3px;
+  text-decoration: none;
 }
 
-.grupo__titulo {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 0;
-  padding-bottom: 10px;
-  border-bottom: 4px double var(--cor-tinta);
+.tabela-itens__link:hover .prato__nome {
+  color: var(--cor-pomodoro);
 }
 
-.grupo__nome {
-  font-size: 2.125rem;
-  line-height: 1;
-}
-
-.grupo__resumo {
+.tabela-itens td.tabela-itens__preco {
   font-family: var(--fonte-serifa);
-  font-size: 1.125rem;
-  font-style: italic;
+  font-size: 1.375rem;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.tabela-itens__disponivel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cor-basilico-texto);
+}
+
+.tabela-itens__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 2px;
+  margin: 0;
+}
+
+.tabela-itens__linha--em-falta .prato__nome,
+.tabela-itens__linha--em-falta .tabela-itens__preco,
+.tabela-itens__linha--inativa .prato__nome,
+.tabela-itens__linha--inativa .tabela-itens__preco {
   color: var(--cor-tinta-3);
 }
+
+.tabela-itens__linha--em-falta .tabela-itens__preco,
+.tabela-itens__linha--inativa .tabela-itens__preco {
+  text-decoration: line-through;
+}
+
+.dt-container .dt-info,
+.dt-container .dt-length {
+  font-size: 0.875rem;
+}
+
+.dt-container .dt-length select {
+  margin-right: 6px;
+}
+
+.dt-container .dt-paging .dt-paging-button {
+  min-height: 40px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.dt-container .dt-processing {
+  border: 1px solid var(--cor-linha-forte);
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-painel);
+}
+
+/* ---------- Linhas de prato (formas de pagamento e prévia do item) ---------- */
 
 .prato {
   position: relative;
@@ -1574,11 +1677,6 @@ a.entrada:hover .entrada__seta {
 .vazio .grupo-botoes {
   justify-content: center;
   margin-top: 10px;
-}
-
-.vazio--busca {
-  padding: 48px 16px;
-  border: 0;
 }
 
 /* ---------- Formulário do item com a prévia ao lado ---------- */
@@ -1886,6 +1984,51 @@ a.entrada:hover .entrada__seta {
   .prato__preco,
   .prato__codigo {
     margin-left: auto;
+  }
+
+  /* no celular cada item da tabela vira um bloco, sem rolagem para o lado */
+  .tabela-itens thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .tabela-itens tbody tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px 12px;
+    padding: 14px 0;
+    border-bottom: var(--dt-body_border);
+  }
+
+  .tabela-itens tbody td {
+    display: block;
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  .tabela-itens tbody td:first-child,
+  .tabela-itens tbody td.tabela-itens__coluna-acoes {
+    grid-column: 1 / -1;
+  }
+
+  .tabela-itens td.tabela-itens__preco {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .tabela-itens__acoes {
+    justify-content: flex-start;
+  }
+
+  .tabela-itens__acoes > li:first-child .prato__acao {
+    padding-left: 0;
+  }
+
+  .filtro-grupo {
+    flex: 1 1 100%;
   }
 
   .proverbio {
