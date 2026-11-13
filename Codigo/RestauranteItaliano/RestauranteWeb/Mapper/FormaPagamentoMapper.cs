@@ -6,24 +6,24 @@ namespace RestauranteWeb.Mapper
 {
     public class FormaPagamentoMapper
     {
-        public static FormaPagamentoModel ToViewModel(Formapagamento formaPagamento)
+        public static FormaPagamentoViewModel ToViewModel(Formapagamento formaPagamento)
         {
-            return formaPagamento.Adapt<FormaPagamentoModel>();
+            return formaPagamento.Adapt<FormaPagamentoViewModel>();
         }
 
-        public static Formapagamento ToEntity(FormaPagamentoModel formaPagamentoModel)
+        public static Formapagamento ToEntity(FormaPagamentoViewModel formaPagamentoViewModel)
         {
-            return formaPagamentoModel.Adapt<Formapagamento>();
+            return formaPagamentoViewModel.Adapt<Formapagamento>();
         }
 
-        public static IEnumerable<FormaPagamentoModel> ToViewModel(IEnumerable<Formapagamento>? formasPagamento)
+        public static IEnumerable<FormaPagamentoViewModel> ToViewModel(IEnumerable<Formapagamento>? formasPagamento)
         {
-            return formasPagamento?.Adapt<IEnumerable<FormaPagamentoModel>>() ?? new List<FormaPagamentoModel>();
+            return formasPagamento?.Adapt<IEnumerable<FormaPagamentoViewModel>>() ?? new List<FormaPagamentoViewModel>();
         }
 
-        public static IEnumerable<Formapagamento> ToEntity(IEnumerable<FormaPagamentoModel>? formasPagamentoModel)
+        public static IEnumerable<Formapagamento> ToEntity(IEnumerable<FormaPagamentoViewModel>? formasPagamentoViewModel)
         {
-            return formasPagamentoModel?.Adapt<IEnumerable<Formapagamento>>() ?? new List<Formapagamento>();
+            return formasPagamentoViewModel?.Adapt<IEnumerable<Formapagamento>>() ?? new List<Formapagamento>();
         }
     }
 }

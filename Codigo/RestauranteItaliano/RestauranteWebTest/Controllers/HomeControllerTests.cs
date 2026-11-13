@@ -41,8 +41,12 @@ public class HomeControllerTests
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var home = Assert.IsInstanceOfType<HomeModel>(
+        var home = Assert.IsInstanceOfType<HomeViewModel>(
             viewResult.ViewData.Model);
+
+        // a data e a saudação vão também para o cabeçalho, no _Layout
+        Assert.AreEqual(home.DataLonga, viewResult.ViewData["DataLonga"]);
+        Assert.AreEqual(home.Saudacao, viewResult.ViewData["Saudacao"]);
 
         Assert.IsTrue(home.DadosDisponiveis);
         Assert.AreEqual(9, home.ItensNoCardapio);
@@ -67,7 +71,7 @@ public class HomeControllerTests
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var home = Assert.IsInstanceOfType<HomeModel>(
+        var home = Assert.IsInstanceOfType<HomeViewModel>(
             viewResult.ViewData.Model);
 
         var entradas = home.Capitulos
@@ -99,7 +103,7 @@ public class HomeControllerTests
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var home = Assert.IsInstanceOfType<HomeModel>(
+        var home = Assert.IsInstanceOfType<HomeViewModel>(
             viewResult.ViewData.Model);
 
         Assert.IsFalse(home.DadosDisponiveis);

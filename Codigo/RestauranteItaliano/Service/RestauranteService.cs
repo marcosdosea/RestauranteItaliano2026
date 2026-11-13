@@ -10,11 +10,11 @@ namespace Service
     /// </summary>
     public class RestauranteService : IRestauranteService
     {
-        private readonly RestauranteContext _context;
+        private readonly RestauranteContext context;
 
         public RestauranteService(RestauranteContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         public int Create(Restaurante restaurante)
@@ -40,7 +40,7 @@ namespace Service
         /// <exception cref="ServiceException"></exception>
         public Restaurante Get(int id)
         {
-            return _context.Restaurantes.Find((uint)id)
+            return context.Restaurantes.Find((uint)id)
                 ?? throw new ServiceException("Restaurante não encontrado.");
         }
 
@@ -50,7 +50,7 @@ namespace Service
         /// <returns>Uma coleção de restaurantes</returns>
         public IEnumerable<Restaurante> GetAll()
         {
-            return _context.Restaurantes.AsNoTracking().OrderBy(r => r.Nome);
+            return context.Restaurantes.AsNoTracking().OrderBy(r => r.Nome);
         }
     }
 }

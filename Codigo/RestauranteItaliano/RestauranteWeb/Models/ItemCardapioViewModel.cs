@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace RestauranteWeb.Models
 {
-    public class ItemCardapioModel
+    public class ItemCardapioViewModel
     {
         [Display(Name = "Código")]
         public uint? Id { get; set; }

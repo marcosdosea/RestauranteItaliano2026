@@ -11,6 +11,16 @@ if (tabelaItens && window.jQuery) {
   const campoGrupo = document.querySelector("[data-grupo-itens]");
   const resumo = document.querySelector("[data-resumo-itens]");
   const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? "";
+  const reais = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+
+  // endereços das ações, vindos da view (Url.Action)
+  const url = {
+    pagina: tabelaItens.dataset.url,
+    detalhes: tabelaItens.dataset.urlDetalhes,
+    editar: tabelaItens.dataset.urlEditar,
+    excluir: tabelaItens.dataset.urlExcluir,
+    disponibilidade: tabelaItens.dataset.urlDisponibilidade,
+  };
 
   // os textos vêm do banco: escapa antes de montar o HTML de cada linha
   const escapar = (texto) =>
@@ -27,7 +37,7 @@ if (tabelaItens && window.jQuery) {
     const detalhes = item.detalhes
       ? `<span class="prato__detalhe">${escapar(item.detalhes)}</span>`
       : "";
-    return `<a class="tabela-itens__link" href="/ItemCardapio/Details/${item.id}">
+    return `<a class="tabela-itens__link" href="${url.detalhes}/${item.id}">
       <span class="prato__nome">${escapar(item.nome)}</span>${detalhes}</a>`;
   };
 
@@ -43,7 +53,7 @@ if (tabelaItens && window.jQuery) {
     const nome = escapar(item.nome);
     const alternar = item.ativo
       ? `<li>
-          <form class="prato__formulario" action="/ItemCardapio/AlternarDisponivel/${item.id}" method="post">
+          <form class="prato__formulario" action="${url.disponibilidade}/${item.id}" method="post">
             <input type="hidden" name="__RequestVerificationToken" value="${escapar(token)}">
             <input type="hidden" name="disponivel" value="${item.disponivel ? "false" : "true"}">
             <button class="prato__acao" type="submit" aria-label="${item.disponivel ? "Marcar em falta" : "Marcar disponível"}: ${nome}">${item.disponivel ? "Marcar em falta" : "Marcar disponível"}</button>
@@ -51,9 +61,9 @@ if (tabelaItens && window.jQuery) {
         </li>`
       : "";
     return `<ul class="tabela-itens__acoes u-lista-limpa">
-        <li><a class="prato__acao" href="/ItemCardapio/Edit/${item.id}" aria-label="Editar ${nome}">Editar</a></li>
+        <li><a class="prato__acao" href="${url.editar}/${item.id}" aria-label="Editar ${nome}">Editar</a></li>
         ${alternar}
-        <li><a class="prato__acao prato__acao--perigo" href="/ItemCardapio/Delete/${item.id}" aria-label="Excluir ${nome}">Excluir</a></li>
+        <li><a class="prato__acao prato__acao--perigo" href="${url.excluir}/${item.id}" aria-label="Excluir ${nome}">Excluir</a></li>
       </ul>`;
   };
 
@@ -76,7 +86,7 @@ if (tabelaItens && window.jQuery) {
       bottomEnd: "paging",
     },
     ajax: {
-      url: tabelaItens.dataset.url,
+      url: url.pagina,
       type: "POST",
       datatype: "json",
       // envia a busca de cada coluna como texto simples, para o ASP.NET ler em DatatableRequest.Columns
@@ -102,8 +112,15 @@ if (tabelaItens && window.jQuery) {
       { data: "disponivel", name: "Situação", render: colunaSituacao },
       { data: null, name: "Ações", orderable: false, searchable: false, className: "tabela-itens__coluna-acoes", render: colunaAcoes },
     ],
+    // tradução do DataTables, com os textos da tabela falando em "itens" em vez de "registros"
     language: {
       url: tabelaItens.dataset.idioma,
+      info: "Mostrando de _START_ até _END_ de _TOTAL_ itens",
+      infoEmpty: "Nenhum item para mostrar",
+      infoFiltered: "(filtrados de _MAX_ itens)",
+      lengthMenu: "_MENU_ itens por página",
+      emptyTable: "Nenhum item cadastrado ainda.",
+      zeroRecords: "Nenhum item encontrado. Confira a busca ou escolha outro grupo.",
     },
   });
 

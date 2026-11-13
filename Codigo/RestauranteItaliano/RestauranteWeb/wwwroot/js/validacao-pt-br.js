@@ -1,5 +1,8 @@
 "use strict";
 
+/* Validação no navegador ajustada para o português do Brasil.
+   Este arquivo é carregado pela _ValidationScriptsPartial, então vale para todos os formulários. */
+
 // Mensagens padrão do jQuery Validation em português. Elas só aparecem quando
 // o campo não tem mensagem própria vinda dos atributos da ViewModel
 // (por exemplo, o limite do atributo maxlength do HTML).
@@ -22,4 +25,17 @@ if (window.jQuery && jQuery.validator) {
     min: jQuery.validator.format("Informe um valor maior ou igual a {0}."),
     step: jQuery.validator.format("Informe um múltiplo de {0}."),
   });
+
+  // O sistema usa a cultura pt-BR: os números são digitados com vírgula nos centavos (29,90)
+  // e, se houver, ponto nos milhares (1.250,00). Sem isto, o navegador recusaria a vírgula.
+  const paraNumero = (valor) => parseFloat(String(valor).replace(/\./g, "").replace(",", "."));
+
+  jQuery.validator.methods.number = function (valor, elemento) {
+    return this.optional(elemento) || /^-?\d{1,3}(\.\d{3})*(,\d+)?$|^-?\d+(,\d+)?$/.test(valor);
+  };
+
+  jQuery.validator.methods.range = function (valor, elemento, limites) {
+    const numero = paraNumero(valor);
+    return this.optional(elemento) || (numero >= limites[0] && numero <= limites[1]);
+  };
 }

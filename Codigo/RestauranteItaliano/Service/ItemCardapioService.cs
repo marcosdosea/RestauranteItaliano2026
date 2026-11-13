@@ -7,11 +7,11 @@ namespace Service
 {
     public class ItemCardapioService : IItemCardapioService
     {
-        private readonly RestauranteContext _context;
+        private readonly RestauranteContext context;
 
         public ItemCardapioService(RestauranteContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         /// <summary>
@@ -25,8 +25,8 @@ namespace Service
         {
             Validar(itemCardapio);
 
-            _context.Add(itemCardapio);
-            _context.SaveChanges();
+            context.Add(itemCardapio);
+            context.SaveChanges();
             return itemCardapio.Id;
         }
 
@@ -39,8 +39,8 @@ namespace Service
         {
             Validar(itemCardapio);
 
-            _context.Update(itemCardapio);
-            _context.SaveChanges();
+            context.Update(itemCardapio);
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -51,16 +51,16 @@ namespace Service
         /// <exception cref="ServiceException"></exception>
         public void Delete(uint id)
         {
-            var item = _context.Itemcardapios.Find(id);
+            var item = context.Itemcardapios.Find(id);
             if (item == null) return;
 
-            if (_context.Pedidoitemcardapios.Any(p => p.IdItemCardapio == id))
+            if (context.Pedidoitemcardapios.Any(p => p.IdItemCardapio == id))
             {
                 throw new ServiceException("Não é possível excluir o item, pois ele já foi usado em pedidos. Para tirá-lo do cardápio, desmarque a opção Ativo no cardápio.");
             }
 
-            _context.Remove(item);
-            _context.SaveChanges();
+            context.Remove(item);
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -71,11 +71,11 @@ namespace Service
         /// <exception cref="ServiceException"></exception>
         public void AlterarDisponibilidade(uint id, bool disponivel)
         {
-            var item = _context.Itemcardapios.Find(id)
+            var item = context.Itemcardapios.Find(id)
                 ?? throw new ServiceException("Item do cardápio não encontrado.");
 
             item.Disponivel = disponivel ? "1" : "0";
-            _context.SaveChanges();
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Service
         /// <returns>O item encontrado ou nulo</returns>
         public Itemcardapio? Get(uint id)
         {
-            return _context.Itemcardapios
+            return context.Itemcardapios
                 .Include(i => i.IdGrupoCardapioNavigation)
                 .Include(i => i.IdRestauranteNavigation)
                 .AsNoTracking()
@@ -98,7 +98,7 @@ namespace Service
         /// <returns>Uma coleção de itens do cardápio</returns>
         public IEnumerable<Itemcardapio> GetAll()
         {
-            return _context.Itemcardapios
+            return context.Itemcardapios
                 .Include(i => i.IdGrupoCardapioNavigation)
                 .Include(i => i.IdRestauranteNavigation)
                 .AsNoTracking()
@@ -114,7 +114,7 @@ namespace Service
         /// <returns>Os itens da página e as quantidades de registros</returns>
         public DatatableResponse<Itemcardapio> GetDataPage(DatatableRequest request)
         {
-            var itens = _context.Itemcardapios
+            var itens = context.Itemcardapios
                 .Include(i => i.IdGrupoCardapioNavigation)
                 .Include(i => i.IdRestauranteNavigation)
                 .AsNoTracking();
@@ -195,17 +195,17 @@ namespace Service
         /// <exception cref="ServiceException"></exception>
         private void Validar(Itemcardapio itemCardapio)
         {
-            if (!_context.Grupocardapios.Any(g => g.Id == itemCardapio.IdGrupoCardapio))
+            if (!context.Grupocardapios.Any(g => g.Id == itemCardapio.IdGrupoCardapio))
             {
                 throw new ServiceException("O grupo do cardápio informado não existe.");
             }
 
-            if (!_context.Restaurantes.Any(r => r.Id == itemCardapio.IdRestaurante))
+            if (!context.Restaurantes.Any(r => r.Id == itemCardapio.IdRestaurante))
             {
                 throw new ServiceException("O restaurante informado não existe.");
             }
 
-            if (_context.Itemcardapios.Any(i => i.Nome == itemCardapio.Nome
+            if (context.Itemcardapios.Any(i => i.Nome == itemCardapio.Nome
                                              && i.IdRestaurante == itemCardapio.IdRestaurante
                                              && i.Id != itemCardapio.Id))
             {

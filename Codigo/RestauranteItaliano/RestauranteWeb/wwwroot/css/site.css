@@ -101,11 +101,24 @@ main:focus {
   outline: none;
 }
 
-/* Ícones SVG: o tamanho fica aqui no CSS, e não em width/height no HTML */
+/* Ícones SVG: o desenho de cada um fica em Views/Shared/_Icones.cshtml.
+   O tamanho, a cor e o traço ficam aqui no CSS, e não em atributos no HTML. */
+.icones {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
 .icone {
   flex: none;
   width: 18px;
   height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .icone--pequeno {
@@ -469,10 +482,6 @@ h3 {
   border-color: var(--cor-pomodoro-escuro);
   background: #fbeee9;
   color: var(--cor-pomodoro-escuro);
-}
-
-.aviso__icone {
-  flex: none;
 }
 
 .aviso__fechar {
@@ -1410,6 +1419,17 @@ a.entrada:hover .entrada__seta {
   white-space: nowrap;
 }
 
+/* a seta de ordenação fica logo depois do nome da coluna (o DataTables a joga para a ponta);
+   o seletor repete o da biblioteca para ter a mesma força que ele */
+table.tabela-itens thead > tr > th div.dt-column-header {
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
+  flex-grow: 0;
+}
+
 .tabela-itens tbody td {
   border-bottom: var(--dt-body_border);
   vertical-align: middle;
@@ -2003,10 +2023,21 @@ a.entrada:hover .entrada__seta {
     border-bottom: var(--dt-body_border);
   }
 
-  .tabela-itens tbody td {
+  /* o seletor repete o da biblioteca, para o espaçamento dela não valer no celular */
+  table.tabela-itens > tbody > tr > td {
     display: block;
     padding: 0;
     border-bottom: 0;
+  }
+
+  /* a linha dupla que fecha a tabela fica no último item, e não em cada célula dele:
+     a variável zera a borda que o DataTables põe nas células da última linha */
+  .tabela-itens {
+    --dt-header_border: 0;
+  }
+
+  .tabela-itens tbody tr:last-child {
+    border-bottom: 4px double var(--cor-tinta);
   }
 
   .tabela-itens tbody td:first-child,
@@ -2029,6 +2060,11 @@ a.entrada:hover .entrada__seta {
 
   .filtro-grupo {
     flex: 1 1 100%;
+  }
+
+  .filtro-grupo__campo {
+    flex: 1;
+    min-width: 0;
   }
 
   .proverbio {
