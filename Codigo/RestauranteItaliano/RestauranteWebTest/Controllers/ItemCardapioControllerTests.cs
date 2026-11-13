@@ -1,7 +1,9 @@
 using Core;
+using Core.Datatables;
 using Core.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using RestauranteWeb.Models;
@@ -61,71 +63,95 @@ public class ItemCardapioControllerTests
     }
 
     [TestMethod]
-    public void Index_QuandoChamado_DeveRetornarViewComTodosOsItens()
+    public void Index_QuandoChamado_DeveRetornarViewComListaDeGrupos()
     {
         // Act
         var resultado = controller.Index();
 
         // Assert
         var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var itens = Assert.IsInstanceOfType<IEnumerable<ItemCardapioModel>>(
-            viewResult.ViewData.Model);
+        var grupos = Assert.IsInstanceOfType<SelectList>(viewResult.ViewData["GruposCardapio"]);
 
-        Assert.HasCount(3, itens);
+        Assert.HasCount(2, grupos.ToList());
+        Assert.IsNull(viewResult.ViewData.Model);
 
-        var primeiroItem = itens.First();
-
-        Assert.AreEqual(1u, primeiroItem.Id);
-        Assert.AreEqual("Bruschetta", primeiroItem.Nome);
-        Assert.AreEqual(24.90m, primeiroItem.Preco);
-        Assert.IsTrue(primeiroItem.Ativo);
-        Assert.IsTrue(primeiroItem.Disponivel);
-        Assert.AreEqual("Entradas", primeiroItem.NomeGrupoCardapio);
-        Assert.AreEqual("Restaurante Italiano", primeiroItem.NomeRestaurante);
-
+        // os itens não são carregados aqui: a tabela busca cada página em GetDataPage
         itemCardapioServiceMock.Verify(
             service => service.GetAll(),
-            Times.Once);
+            Times.Never);
     }
 
     [TestMethod]
-    public void Index_QuandoItemEstaEmFalta_DeveRetornarItemComoIndisponivel()
-    {
-        // Act
-        var resultado = controller.Index();
-
-        // Assert
-        var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var itens = Assert.IsInstanceOfType<IEnumerable<ItemCardapioModel>>(
-            viewResult.ViewData.Model);
-
-        var itemEmFalta = itens.Single(item => item.Id == 3);
-
-        Assert.IsTrue(itemEmFalta.Ativo);
-        Assert.IsFalse(itemEmFalta.Disponivel);
-    }
-
-    [TestMethod]
-    public void Index_QuandoNaoExistemItens_DeveRetornarViewComColecaoVazia()
+    public void GetDataPage_QuandoChamado_DeveRetornarJsonComAPaginaDeItens()
     {
         // Arrange
+        var request = new DatatableRequest { Draw = 3, Start = 0, Length = 10 };
+
         itemCardapioServiceMock
-            .Setup(service => service.GetAll())
-            .Returns(Array.Empty<Itemcardapio>());
+            .Setup(service => service.GetDataPage(request))
+            .Returns(new DatatableResponse<Itemcardapio>
+            {
+                Draw = 3,
+                RecordsTotal = 9,
+                RecordsFiltered = 3,
+                Data = ObterItensDeTeste()
+            });
 
         // Act
-        var resultado = controller.Index();
+        var resultado = controller.GetDataPage(request);
 
         // Assert
-        var viewResult = Assert.IsInstanceOfType<ViewResult>(resultado);
-        var itens = Assert.IsInstanceOfType<IEnumerable<ItemCardapioModel>>(
-            viewResult.ViewData.Model);
+        var jsonResult = Assert.IsInstanceOfType<JsonResult>(resultado);
+        var resposta = Assert.IsInstanceOfType<DatatableResponse<ItemCardapioModel>>(jsonResult.Value);
 
-        Assert.IsEmpty(itens);
+        Assert.AreEqual(3, resposta.Draw);
+        Assert.AreEqual(9, resposta.RecordsTotal);
+        Assert.AreEqual(3, resposta.RecordsFiltered);
+
+        Assert.IsNotNull(resposta.Data);
+        var itens = resposta.Data.ToList();
+
+        Assert.HasCount(3, itens);
+        Assert.AreEqual("Bruschetta", itens[0].Nome);
+        Assert.AreEqual(24.90m, itens[0].Preco);
+        Assert.AreEqual("Entradas", itens[0].NomeGrupoCardapio);
+        Assert.IsTrue(itens[0].Disponivel);
+
+        // o item 3 está em falta: chega na tela como indisponível
+        Assert.IsTrue(itens[2].Ativo);
+        Assert.IsFalse(itens[2].Disponivel);
 
         itemCardapioServiceMock.Verify(
-            service => service.GetAll(),
+            service => service.GetDataPage(request),
             Times.Once);
+    }
+
+    [TestMethod]
+    public void GetDataPage_QuandoNaoExistemItens_DeveRetornarJsonComPaginaVazia()
+    {
+        // Arrange
+        var request = new DatatableRequest { Draw = 1, Start = 0, Length = 10 };
+
+        itemCardapioServiceMock
+            .Setup(service => service.GetDataPage(request))
+            .Returns(new DatatableResponse<Itemcardapio>
+            {
+                Draw = 1,
+                RecordsTotal = 0,
+                RecordsFiltered = 0,
+                Data = Array.Empty<Itemcardapio>()
+            });
+
+        // Act
+        var resultado = controller.GetDataPage(request);
+
+        // Assert
+        var jsonResult = Assert.IsInstanceOfType<JsonResult>(resultado);
+        var resposta = Assert.IsInstanceOfType<DatatableResponse<ItemCardapioModel>>(jsonResult.Value);
+
+        Assert.AreEqual(0, resposta.RecordsTotal);
+        Assert.IsNotNull(resposta.Data);
+        Assert.IsEmpty(resposta.Data.ToList());
     }
 
     [TestMethod]

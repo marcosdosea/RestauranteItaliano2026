@@ -1,4 +1,5 @@
 using Core;
+using Core.Datatables;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -103,6 +104,88 @@ namespace Service
                 .AsNoTracking()
                 .OrderBy(i => i.IdGrupoCardapio)
                 .ThenBy(i => i.Nome);
+        }
+
+        /// <summary>
+        /// Obtém uma página de itens do cardápio para a tabela da tela (DataTables),
+        /// aplicando a busca, o filtro por grupo e a ordenação pedidos pela tabela
+        /// </summary>
+        /// <param name="request">Página, busca e ordenação enviadas pelo DataTables</param>
+        /// <returns>Os itens da página e as quantidades de registros</returns>
+        public DatatableResponse<Itemcardapio> GetDataPage(DatatableRequest request)
+        {
+            var itens = _context.Itemcardapios
+                .Include(i => i.IdGrupoCardapioNavigation)
+                .Include(i => i.IdRestauranteNavigation)
+                .AsNoTracking();
+
+            // total de registros na tabela
+            var totalRecords = itens.Count();
+
+            // filtra pelo grupo escolhido na tela (coluna 1 da tabela)
+            var grupo = request.Columns?.ElementAtOrDefault(1)?.GetValueOrDefault("search");
+            if (uint.TryParse(grupo, out var idGrupoCardapio))
+            {
+                itens = itens.Where(item => item.IdGrupoCardapio == idGrupoCardapio);
+            }
+
+            // filtra pelo campo de busca: nome, detalhes ou grupo do item
+            var searchValue = request.Search?.GetValueOrDefault("value");
+            if (!string.IsNullOrWhiteSpace(searchValue))
+            {
+                var termo = searchValue.Trim().ToLower();
+                itens = itens.Where(item => item.Nome.ToLower().Contains(termo)
+                                         || (item.Detalhes != null && item.Detalhes.ToLower().Contains(termo))
+                                         || item.IdGrupoCardapioNavigation.Nome.ToLower().Contains(termo));
+            }
+
+            // ordenação pelas colunas permitidas
+            var coluna = request.Order?.FirstOrDefault()?.GetValueOrDefault("column");
+            var crescente = request.Order?.FirstOrDefault()?.GetValueOrDefault("dir") != "desc";
+
+            if (coluna == "0")
+            {
+                itens = crescente
+                    ? itens.OrderBy(item => item.Nome)
+                    : itens.OrderByDescending(item => item.Nome);
+            }
+            else if (coluna == "2")
+            {
+                itens = crescente
+                    ? itens.OrderBy(item => item.Preco).ThenBy(item => item.Nome)
+                    : itens.OrderByDescending(item => item.Preco).ThenBy(item => item.Nome);
+            }
+            else if (coluna == "3")
+            {
+                // disponíveis primeiro, depois os em falta e por último os que saíram do cardápio
+                itens = crescente
+                    ? itens.OrderByDescending(item => item.Ativo).ThenByDescending(item => item.Disponivel).ThenBy(item => item.Nome)
+                    : itens.OrderBy(item => item.Ativo).ThenBy(item => item.Disponivel).ThenBy(item => item.Nome);
+            }
+            else
+            {
+                // coluna 1 (grupo) ou nenhuma: a ordem do cardápio, grupo a grupo
+                itens = crescente
+                    ? itens.OrderBy(item => item.IdGrupoCardapio).ThenBy(item => item.Nome)
+                    : itens.OrderByDescending(item => item.IdGrupoCardapio).ThenBy(item => item.Nome);
+            }
+
+            // total de registros filtrados
+            var countRecordsFiltered = itens.Count();
+
+            // paginação que será exibida (tamanho -1 é a opção "Todos")
+            if (request.Length > 0)
+            {
+                itens = itens.Skip(request.Start).Take(request.Length);
+            }
+
+            return new DatatableResponse<Itemcardapio>()
+            {
+                Data = itens,
+                Draw = request.Draw,
+                RecordsFiltered = countRecordsFiltered,
+                RecordsTotal = totalRecords
+            };
         }
 
         /// <summary>

@@ -1,3 +1,4 @@
+using Core.Datatables;
 using Core.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -22,11 +23,28 @@ namespace RestauranteWeb.Controllers
         }
 
         // GET: ItemCardapioController
+        // os itens não vêm aqui: a tabela busca cada página em GetDataPage (DataTables)
         public ActionResult Index()
         {
-            var itensCardapio = itemCardapioService.GetAll();
-            var itensCardapioModel = ItemCardapioMapper.ToViewModel(itensCardapio);
-            return View(itensCardapioModel);
+            var gruposCardapio = grupoCardapioService.GetAll();
+            ViewData["GruposCardapio"] = new SelectList(gruposCardapio, "Id", "Nome");
+            return View();
+        }
+
+        // POST: ItemCardapioController/GetDataPage
+        [HttpPost]
+        public IActionResult GetDataPage(DatatableRequest request)
+        {
+            var response = itemCardapioService.GetDataPage(request);
+            var responseModel = new DatatableResponse<ItemCardapioModel>()
+            {
+                Data = ItemCardapioMapper.ToViewModel(response.Data),
+                Draw = response.Draw,
+                RecordsFiltered = response.RecordsFiltered,
+                RecordsTotal = response.RecordsTotal,
+                Error = response.Error
+            };
+            return Json(responseModel);
         }
 
         // GET: ItemCardapioController/Details/5

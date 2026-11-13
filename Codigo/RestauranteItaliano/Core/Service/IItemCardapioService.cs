@@ -1,4 +1,6 @@
-﻿namespace Core.Service
+﻿using Core.Datatables;
+
+namespace Core.Service
 {
     public interface IItemCardapioService
     {
@@ -8,5 +10,6 @@
         void AlterarDisponibilidade(uint id, bool disponivel);
         Itemcardapio? Get(uint id);
         IEnumerable<Itemcardapio> GetAll();
+        DatatableResponse<Itemcardapio> GetDataPage(DatatableRequest request);
     }
 }

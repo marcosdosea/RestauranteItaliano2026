@@ -1,4 +1,5 @@
 using Core;
+using Core.Datatables;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -390,6 +391,204 @@ public class ItemCardapioServiceTests
         // Assert
         Assert.IsNotNull(itens);
         Assert.IsEmpty(itens);
+    }
+
+    [TestMethod]
+    public void GetDataPage_QuandoSemBuscaNemOrdenacao_DeveRetornarTodosNaOrdemDoCardapio()
+    {
+        // Arrange
+        var request = CriarRequest();
+
+        // Act
+        var resposta = servicoItemCardapio.GetDataPage(request);
+
+        // Assert
+        Assert.AreEqual(7, resposta.Draw);
+        Assert.AreEqual(3, resposta.RecordsTotal);
+        Assert.AreEqual(3, resposta.RecordsFiltered);
+        Assert.IsNotNull(resposta.Data);
+
+        // Entradas (Bruschetta) e depois Massas (Gnocchi, Lasagna)
+        CollectionAssert.AreEqual(
+            new uint[] { 1, 3, 2 },
+            resposta.Data.Select(item => item.Id).ToList());
+    }
+
+    [TestMethod]
+    public void GetDataPage_QuandoBuscaPeloNome_DeveRetornarSoOsItensEncontrados()
+    {
+        // Arrange
+        var request = CriarRequest(busca: "LASA");
+
+        // Act
+        var resposta = servicoItemCardapio.GetDataPage(request);
+
+        // Assert
+        Assert.AreEqual(3, resposta.RecordsTotal);
+        Assert.AreEqual(1, resposta.RecordsFiltered);
+        Assert.IsNotNull(resposta.Data);
+
+        var itens = resposta.Data.ToList();
+
+        Assert.HasCount(1, itens);
+        Assert.AreEqual("Lasagna", itens[0].Nome);
+        Assert.AreEqual("Massas", itens[0].IdGrupoCardapioNavigation.Nome);
+    }
+
+    [TestMethod]
+    public void GetDataPage_QuandoBuscaPeloGrupoOuDetalhes_DeveRetornarOsItensRelacionados()
+    {
+        // Act
+        var porGrupo = servicoItemCardapio.GetDataPage(CriarRequest(busca: "massas"));
+        var porDetalhes = servicoItemCardapio.GetDataPage(CriarRequest(busca: "manjericão"));
+
+        // Assert
+        Assert.AreEqual(2, porGrupo.RecordsFiltered);
+        Assert.AreEqual(1, porDetalhes.RecordsFiltered);
+        Assert.IsNotNull(porDetalhes.Data);
+        Assert.AreEqual(1u, porDetalhes.Data.Single().Id);
+    }
+
+    [TestMethod]
+    public void GetDataPage_QuandoFiltraPorGrupo_DeveRetornarSoOsItensDoGrupo()
+    {
+        // Arrange
+        var request = CriarRequest(idGrupo: "2");
+
+        // Act
+        var resposta = servicoItemCardapio.GetDataPage(request);
+
+        // Assert
+        Assert.AreEqual(3, resposta.RecordsTotal);
+        Assert.AreEqual(2, resposta.RecordsFiltered);
+        Assert.IsNotNull(resposta.Data);
+        Assert.IsTrue(resposta.Data.All(item => item.IdGrupoCardapio == 2));
+    }
+
+    [TestMethod]
+    public void GetDataPage_QuandoOrdenaPeloNomeDecrescente_DeveRetornarDeZaA()
+    {
+        // Arrange
+        var request = CriarRequest(coluna: "0", direcao: "desc");
+
+        // Act
+        var resposta = servicoItemCardapio.GetDataPage(request);
+
+        // Assert
+        Assert.IsNotNull(resposta.Data);
+        CollectionAssert.AreEqual(
+            new[] { "Lasagna", "Gnocchi", "Bruschetta" },
+            resposta.Data.Select(item => item.Nome).ToList());
+    }
+
+    [TestMethod]
+    public void GetDataPage_QuandoOrdenaPeloPrecoDecrescente_DeveRetornarDoMaisCaroAoMaisBarato()
+    {
+        // Arrange
+        var request = CriarRequest(coluna: "2", direcao: "desc");
+
+        // Act
+        var resposta = servicoItemCardapio.GetDataPage(request);
+
+        // Assert
+        Assert.IsNotNull(resposta.Data);
+        CollectionAssert.AreEqual(
+            new[] { 49.90m, 42.00m, 24.90m },
+            resposta.Data.Select(item => item.Preco).ToList());
+    }
+
+    [TestMethod]
+    public void GetDataPage_QuandoOrdenaPelaSituacao_DeveRetornarDisponiveisPrimeiro()
+    {
+        // Arrange
+        var request = CriarRequest(coluna: "3", direcao: "asc");
+
+        // Act
+        var resposta = servicoItemCardapio.GetDataPage(request);
+
+        // Assert
+        Assert.IsNotNull(resposta.Data);
+        CollectionAssert.AreEqual(
+            new uint[] { 1, 2, 3 },
+            resposta.Data.Select(item => item.Id).ToList());
+    }
+
+    [TestMethod]
+    public void GetDataPage_QuandoPedeASegundaPagina_DeveRetornarSoOsItensDaPagina()
+    {
+        // Arrange
+        var request = CriarRequest(inicio: 1, tamanho: 1);
+
+        // Act
+        var resposta = servicoItemCardapio.GetDataPage(request);
+
+        // Assert
+        Assert.AreEqual(3, resposta.RecordsFiltered);
+        Assert.IsNotNull(resposta.Data);
+
+        var itens = resposta.Data.ToList();
+
+        Assert.HasCount(1, itens);
+        Assert.AreEqual(3u, itens[0].Id);
+    }
+
+    [TestMethod]
+    public void GetDataPage_QuandoTamanhoEhTodos_DeveRetornarTodosOsItens()
+    {
+        // Arrange
+        var request = CriarRequest(tamanho: -1);
+
+        // Act
+        var resposta = servicoItemCardapio.GetDataPage(request);
+
+        // Assert
+        Assert.IsNotNull(resposta.Data);
+        Assert.HasCount(3, resposta.Data.ToList());
+    }
+
+    [TestMethod]
+    public void GetDataPage_QuandoBuscaNaoEncontraNada_DeveRetornarPaginaVazia()
+    {
+        // Arrange
+        var request = CriarRequest(busca: "feijoada");
+
+        // Act
+        var resposta = servicoItemCardapio.GetDataPage(request);
+
+        // Assert
+        Assert.AreEqual(3, resposta.RecordsTotal);
+        Assert.AreEqual(0, resposta.RecordsFiltered);
+        Assert.IsNotNull(resposta.Data);
+        Assert.IsEmpty(resposta.Data.ToList());
+    }
+
+    private static DatatableRequest CriarRequest(string? busca = null, string? idGrupo = null,
+                                                 string? coluna = null, string direcao = "asc",
+                                                 int inicio = 0, int tamanho = 10)
+    {
+        // mesmo formato que o DataTables envia: 5 colunas, com o grupo escolhido na coluna 1
+        var colunas = Enumerable.Range(0, 5)
+            .Select(indice => new Dictionary<string, string>
+            {
+                ["data"] = indice.ToString(),
+                ["search"] = indice == 1 ? idGrupo ?? string.Empty : string.Empty
+            })
+            .ToList();
+
+        return new DatatableRequest
+        {
+            Draw = 7,
+            Start = inicio,
+            Length = tamanho,
+            Search = new Dictionary<string, string> { ["value"] = busca ?? string.Empty },
+            Order = coluna == null
+                ? null
+                : new List<Dictionary<string, string>>
+                {
+                    new() { ["column"] = coluna, ["dir"] = direcao }
+                },
+            Columns = colunas
+        };
     }
 
     private static Itemcardapio CriarNovoItem()

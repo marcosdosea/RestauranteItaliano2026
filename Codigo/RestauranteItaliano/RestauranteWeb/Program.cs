@@ -4,6 +4,7 @@ using Core.Service;
 using Mapster;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using RestauranteWeb.Filter;
 using Service;
 
 namespace RestauranteWeb
@@ -17,6 +18,9 @@ namespace RestauranteWeb
             // Add services to the container.
             builder.Services.AddControllersWithViews(options =>
             {
+                // Erros que escapam dos controllers vão para a tela de erro com uma mensagem clara
+                options.Filters.Add<CustomExceptionFilter>();
+
                 // Mensagens de validação geradas pelo próprio ASP.NET (ex.: número inválido) em português
                 var mensagens = options.ModelBindingMessageProvider;
                 mensagens.SetValueMustBeANumberAccessor(campo => $"O campo {campo} deve ser um número, com vírgula nos centavos (ex.: 29,90).");
