@@ -3,14 +3,15 @@
 @{
     ViewData["Title"] = "Início";
     var cardapioVazio = Model.DadosDisponiveis && Model.ItensNoCardapio == 0;
-    var atraso = 0;
+    var capitulosProntos = Model.Capitulos.Where(capitulo => capitulo.TemFuncaoPronta);
+    // a data por extenso para as pessoas e no formato ISO para o <time>
+    var hojeIso = DateTime.Today.ToString("yyyy-MM-dd");
 }
 
 <section class="abertura" aria-labelledby="saudacao">
     <header class="abertura__texto u-surge">
-        <p class="u-rotulo">Benvenuti</p>
-        <h1 class="abertura__saudacao" id="saudacao">@Model.Saudacao<span class="u-acento">.</span></h1>
-        <p class="abertura__lead">@Model.DataLonga. Este é o índice da casa: cada capítulo reúne uma parte do restaurante, do salão às configurações.</p>
+        <h1 class="abertura__saudacao" id="saudacao">@Model.Saudacao</h1>
+        <p class="abertura__lead"><time datetime="@hojeIso">@Model.DataLonga</time>.</p>
 
         <nav class="atalhos" aria-labelledby="atalhos-titulo">
             <h2 class="u-rotulo" id="atalhos-titulo">Começar por</h2>
@@ -22,137 +23,147 @@
         </nav>
     </header>
 
-    <aside class="painel u-surge" style="--atraso: 2" aria-labelledby="painel-titulo">
-        <header class="painel__cabeca">
-            <h2 class="painel__titulo" id="painel-titulo">Na carta hoje</h2>
-            <time class="painel__hora" datetime="@Model.HoraAgora">@Model.HoraAgora</time>
-        </header>
+    @* Cardápio dobrado em 3D: a aba da esquerda tem a capa por fora e a gravura do forno por dentro;
+       a página da direita é o resumo do dia. O movimento fica no js/movimento.js e no CSS. *@
+    <div class="cardapio u-surge u-surge--depois" data-cardapio>
+        <div class="cardapio__objeto" data-inclinar>
+            @* a gravura do forno é a imagem da página; os nomes impressos na aba repetem a marca do cabeçalho
+               e a capa só aparece com o cardápio fechado, por isso ficam escondidos do leitor de tela *@
+            <div class="cardapio__aba">
+                <figure class="cardapio__face cardapio__face--dentro">
+                    <span class="cardapio__casa" aria-hidden="true">Restaurante Italiano</span>
+                    <picture class="cardapio__gravura">
+                        <source type="image/avif" srcset="@Url.Content("~/images/forno-768.avif") 768w, @Url.Content("~/images/forno-1536.avif") 1536w" sizes="(max-width: 767px) 92vw, 340px">
+                        <source type="image/webp" srcset="@Url.Content("~/images/forno-768.webp") 768w, @Url.Content("~/images/forno-1536.webp") 1536w" sizes="(max-width: 767px) 92vw, 340px">
+                        <img class="cardapio__imagem" src="~/images/forno-1536.jpg" alt="Gravura de um forno a lenha de tijolos aceso, com a pá de pizza ao lado, lenha amarrada e folhas de manjericão sobre a bancada" fetchpriority="high">
+                    </picture>
+                    <span class="cardapio__nome-carta" aria-hidden="true">La Carta</span>
+                </figure>
+                <div class="cardapio__face cardapio__face--capa" aria-hidden="true">
+                    <span class="cardapio__capa-titulo">La Carta</span>
+                    <span class="cardapio__capa-casa">Restaurante Italiano</span>
+                </div>
+            </div>
 
-        @if (!Model.DadosDisponiveis)
-        {
-            <p class="painel__vazio">Não foi possível consultar o cardápio agora. Verifique se o banco de dados está ligado.</p>
-        }
-        else if (cardapioVazio)
-        {
-            <p class="painel__vazio">
-                <svg class="painel__ilustracao" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="32" cy="20" r="15" />
-                    <circle cx="32" cy="20" r="10" opacity=".55" />
-                    <path d="M8 6v8M5 6v6a3 3 0 0 0 6 0V6M8 15v19" />
-                    <path d="M56 6c-3.4 3.4-3.4 10 0 13.4V34" />
-                </svg>
-                O cardápio ainda está em branco. Cadastre o primeiro prato e ele aparece aqui.
-            </p>
-        }
-        else
-        {
-            <ul class="u-lista-limpa" aria-label="Itens por grupo do cardápio">
-                @foreach (var grupo in Model.Grupos)
+            <section class="painel cardapio__pagina" aria-labelledby="painel-titulo">
+                <header class="painel__cabeca">
+                    <h2 class="painel__titulo" id="painel-titulo">Na carta hoje</h2>
+                    <time class="painel__hora" datetime="@Model.HoraAgora">@Model.HoraAgora</time>
+                </header>
+
+                @if (!Model.DadosDisponiveis)
                 {
-                    <li class="painel__grupo">
-                        <span class="painel__grupo-nome">@grupo.Nome</span>
-                        <span class="u-pontos" aria-hidden="true"></span>
-                        <span class="painel__grupo-qtd">@grupo.QuantidadeItens @(grupo.QuantidadeItens == 1 ? "item" : "itens")</span>
-                    </li>
+                    <p class="painel__vazio">Não foi possível consultar o cardápio agora. Verifique se o banco de dados está ligado.</p>
                 }
-            </ul>
-        }
-
-        @* <div> dentro de <dl> é o jeito válido de agrupar cada termo com o seu valor *@
-        <dl class="numeros">
-            <div class="numeros__item">
-                <dt class="numeros__rotulo">Itens</dt>
-                <dd class="numeros__valor">@(Model.DadosDisponiveis ? Model.ItensNoCardapio.ToString() : "—")</dd>
-            </div>
-            <div class="numeros__item">
-                <dt class="numeros__rotulo numeros__rotulo--verde">Disponíveis</dt>
-                <dd class="numeros__valor">@(Model.DadosDisponiveis ? Model.ItensDisponiveis.ToString() : "—")</dd>
-            </div>
-            <div class="numeros__item">
-                <dt class="numeros__rotulo numeros__rotulo--ocra">Em falta</dt>
-                <dd class="numeros__valor">@(Model.DadosDisponiveis ? Model.ItensEmFalta.ToString() : "—")</dd>
-            </div>
-        </dl>
-
-        @if (Model.ItensNoCardapio > 0)
-        {
-            <p class="barra" style="--percentual: @(Model.PercentualDisponivel)%" role="img" aria-label="@Model.PercentualDisponivel% dos itens disponíveis para pedido"></p>
-        }
-
-        @if (cardapioVazio)
-        {
-            <a class="btn btn--tinta btn--seta" asp-controller="ItemCardapio" asp-action="Create">
-                Cadastrar o primeiro prato
-                <svg class="icone" aria-hidden="true"><use href="#icone-mais"></use></svg>
-            </a>
-        }
-        else
-        {
-            <a class="btn btn--tinta btn--seta" asp-controller="ItemCardapio" asp-action="Index">
-                Abrir o cardápio
-                <svg class="icone" aria-hidden="true"><use href="#icone-seta"></use></svg>
-            </a>
-        }
-    </aside>
-</section>
-
-<header class="titulo-secao">
-    <h2 class="titulo-secao__titulo">Índice</h2>
-    <p class="titulo-secao__resumo"><span class="u-acento">@Model.FuncoesProntas</span> funções prontas · @Model.FuncoesEmBreve a caminho</p>
-</header>
-
-<nav class="indice" aria-label="Índice do sistema">
-    @foreach (var capitulo in Model.Capitulos)
-    {
-        atraso++;
-        <section class="capitulo u-surge @(capitulo.TemFuncaoPronta ? null : "capitulo--em-breve")" id="@capitulo.Ancora" style="--atraso: @atraso" aria-labelledby="titulo-@capitulo.Ancora">
-            <h3 class="capitulo__titulo" id="titulo-@capitulo.Ancora">
-                <span class="capitulo__romano">@capitulo.Romano.ToUpper()</span>
-                <span class="capitulo__nome">@capitulo.Nome</span>
-            </h3>
-
-            @foreach (var entrada in capitulo.Entradas)
-            {
-                if (entrada.Pronta)
+                else if (cardapioVazio)
                 {
-                    <a class="entrada" asp-controller="@entrada.Controller" asp-action="Index" title="@entrada.CasoDeUso">
-                        <span class="entrada__texto">
-                            <span class="entrada__titulo">@entrada.Titulo</span>
-                            <span class="entrada__descricao">@entrada.Descricao</span>
-                        </span>
-                        <span class="u-pontos" aria-hidden="true"></span>
-                        <span class="entrada__resumo">@entrada.Resumo</span>
-                        <svg class="icone entrada__seta" aria-hidden="true"><use href="#icone-seta"></use></svg>
+                    <p class="painel__vazio">
+                        <img class="painel__ilustracao" src="~/images/gravuras/vazio.svg" alt="Gravura de um prato vazio com garfo e faca sobre um guardanapo xadrez">
+                        O cardápio ainda está em branco. Cadastre o primeiro prato e ele aparece aqui.
+                    </p>
+                }
+                else
+                {
+                    <ul class="u-lista-limpa" aria-label="Itens por grupo do cardápio">
+                        @foreach (var grupo in Model.Grupos)
+                        {
+                            <li class="painel__grupo">
+                                @* a gravura repete o nome que vem ao lado: é decorativa, por isso o alt vazio *@
+                                <img class="painel__gravura" src="@Url.Content(Gravuras.CaminhoDoGrupo(grupo.Nome))" alt="">
+                                <span class="painel__grupo-nome">@grupo.Nome</span>
+                                <span class="u-pontos" aria-hidden="true"></span>
+                                <span class="painel__grupo-qtd">@grupo.QuantidadeItens @(grupo.QuantidadeItens == 1 ? "item" : "itens")</span>
+                            </li>
+                        }
+                    </ul>
+                }
+
+                @* <div> dentro de <dl> é o jeito válido de agrupar cada termo com o seu valor *@
+                <dl class="numeros">
+                    <div class="numeros__item">
+                        <dt class="numeros__rotulo">Itens</dt>
+                        <dd class="numeros__valor">@(Model.DadosDisponiveis ? Model.ItensNoCardapio.ToString() : "—")</dd>
+                    </div>
+                    <div class="numeros__item">
+                        <dt class="numeros__rotulo numeros__rotulo--verde">Disponíveis</dt>
+                        <dd class="numeros__valor">@(Model.DadosDisponiveis ? Model.ItensDisponiveis.ToString() : "—")</dd>
+                    </div>
+                    <div class="numeros__item">
+                        <dt class="numeros__rotulo numeros__rotulo--ocra">Em falta</dt>
+                        <dd class="numeros__valor">@(Model.DadosDisponiveis ? Model.ItensEmFalta.ToString() : "—")</dd>
+                    </div>
+                </dl>
+
+                @if (Model.ItensNoCardapio > 0)
+                {
+                    <meter class="barra" min="0" max="@Model.ItensNoCardapio" value="@Model.ItensDisponiveis" aria-label="@Model.PercentualDisponivel% dos itens disponíveis para pedido">@Model.PercentualDisponivel%</meter>
+                }
+
+                @if (cardapioVazio)
+                {
+                    <a class="btn btn--tinta btn--seta" asp-controller="ItemCardapio" asp-action="Create">
+                        Cadastrar o primeiro prato
+                        <svg class="icone" aria-hidden="true"><use href="#icone-mais"></use></svg>
                     </a>
                 }
                 else
                 {
-                    <p class="entrada entrada--em-breve" title="@entrada.CasoDeUso · ainda não implementado">
-                        <span class="entrada__texto">
-                            <span class="entrada__titulo">@entrada.Titulo</span>
-                            <span class="entrada__descricao">@entrada.Descricao</span>
-                        </span>
-                        <span class="u-pontos" aria-hidden="true"></span>
-                        <span class="entrada__resumo">@entrada.Resumo</span>
-                        <span class="entrada__seta" aria-hidden="true"></span>
-                    </p>
+                    <a class="btn btn--tinta btn--seta" asp-controller="ItemCardapio" asp-action="Index">
+                        Abrir o cardápio
+                        <svg class="icone" aria-hidden="true"><use href="#icone-seta"></use></svg>
+                    </a>
                 }
-            }
-        </section>
+            </section>
+        </div>
+    </div>
+</section>
+
+@* índice do sistema: os capítulos são numerados (I, II, III), por isso <ol>;
+   as telas de cada capítulo são uma lista de links, por isso <ul> *@
+<nav class="sumario" aria-labelledby="indice-titulo">
+    <header class="titulo-secao">
+        <h2 class="titulo-secao__titulo" id="indice-titulo">Índice</h2>
+        <p class="titulo-secao__resumo">@Model.FuncoesProntas @(Model.FuncoesProntas == 1 ? "função pronta" : "funções prontas")</p>
+    </header>
+
+    <ol class="indice u-lista-limpa">
+        @foreach (var capitulo in capitulosProntos)
+        {
+            <li class="capitulo u-surge" id="@capitulo.Ancora">
+                <h3 class="capitulo__titulo">
+                    <span class="capitulo__romano">@capitulo.Romano.ToUpper()</span>
+                    <span class="capitulo__nome">@capitulo.Nome</span>
+                </h3>
+
+                <ul class="u-lista-limpa">
+                    @foreach (var entrada in capitulo.Entradas.Where(entrada => entrada.Pronta))
+                    {
+                        <li>
+                            <a class="entrada" asp-controller="@entrada.Controller" asp-action="Index" title="@entrada.CasoDeUso">
+                                <span class="entrada__texto">
+                                    <span class="entrada__titulo">@entrada.Titulo</span>
+                                    <span class="entrada__descricao">@entrada.Descricao</span>
+                                </span>
+                                <span class="u-pontos" aria-hidden="true"></span>
+                                <span class="entrada__resumo">@entrada.Resumo</span>
+                                <svg class="icone entrada__seta" aria-hidden="true"><use href="#icone-seta"></use></svg>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
+    </ol>
+
+    @if (Model.TitulosEmBreve.Any())
+    {
+        <p class="em-breve">Ainda por vir: @string.Join(", ", Model.TitulosEmBreve.Select(titulo => titulo.ToLower())).</p>
     }
 </nav>
 
-<section class="proverbio" aria-label="Provérbio">
-    <svg class="proverbio__ornamento" viewBox="0 0 88 30" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true">
-        <path d="M4 15 C 26 14, 56 14, 80 12" />
-        <ellipse cx="19" cy="11" rx="6.4" ry="2.3" transform="rotate(-38 19 11)" />
-        <ellipse cx="29" cy="18.5" rx="6.1" ry="2.2" transform="rotate(35 29 18.5)" />
-        <ellipse cx="41" cy="10.5" rx="6.4" ry="2.3" transform="rotate(-38 41 10.5)" />
-        <ellipse cx="51" cy="17.6" rx="6.1" ry="2.2" transform="rotate(34 51 17.6)" />
-        <ellipse cx="62.5" cy="10" rx="6" ry="2.2" transform="rotate(-38 62.5 10)" />
-        <path d="M73 13 L75.5 15.5" />
-        <ellipse cx="77.5" cy="19" rx="3.4" ry="4.4" transform="rotate(-24 77.5 19)" fill="currentColor" stroke="none" />
-    </svg>
-    <p class="proverbio__frase" lang="it">«A tavola non s’invecchia.»</p>
-    <p class="u-rotulo">À mesa não se envelhece · provérbio italiano</p>
-</section>
+@* citação com a sua origem: figure + blockquote + figcaption *@
+<figure class="proverbio">
+    <svg class="proverbio__ornamento" aria-hidden="true"><use href="#ornamento-ramo"></use></svg>
+    <blockquote class="proverbio__frase" lang="it">«A tavola non s’invecchia.»</blockquote>
+    <figcaption class="u-rotulo">À mesa não se envelhece · provérbio italiano</figcaption>
+</figure>

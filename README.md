@@ -29,10 +29,14 @@ O sistema cobre o dia a dia de um restaurante: cadastros básicos (restaurantes,
 
 ## 🎨 Interface
 
-O visual do sistema, chamado **La Carta**, imita um cardápio impresso de cantina italiana: fundo creme, títulos com serifa, linhas pontilhadas ligando o nome ao preço e detalhes em vermelho.
+O visual do sistema, chamado **La Carta · Trattoria**, imita o cardápio impresso de uma trattoria: papel de algodão, títulos com serifa, linhas pontilhadas ligando o nome ao preço e detalhes em vermelho pomodoro.
 
-- **Página inicial:** funciona como o índice de um livro. Mostra uma saudação conforme a hora do dia, atalhos para os cadastros mais usados, um resumo do cardápio (itens disponíveis e em falta e os grupos com mais itens) e todos os casos de uso organizados em capítulos, com a quantidade de registros de cada um.
-- **Navegação por capítulos:** o menu agrupa as telas em Cardápio, Equipe, Configurações, Salão, Pedidos e Pagamentos. Os casos de uso que ainda não foram implementados aparecem como "em breve".
+- **Gravuras próprias:** as imagens do site são linogravuras em duas tintas (preto e vermelho), geradas para o projeto e vetorizadas em SVG (`wwwroot/images/gravuras`): uma para cada grupo do cardápio, o prato vazio e o erro. A foto do forno da página inicial vai em AVIF e WebP, com JPG de reserva, e o fundo é uma textura de papel (`wwwroot/images`).
+- **Cardápio em 3D:** na página inicial, o resumo do dia é um cardápio dobrado feito só com CSS 3D (`perspective` e `rotateY`). Ele abre na primeira visita e se inclina com o mouse (`wwwroot/js/movimento.js`); no celular e para quem pediu menos movimento ele fica plano e parado.
+- **Fontes locais:** Instrument Serif e Instrument Sans são servidas pelo próprio site, registradas no `libman.json`.
+
+- **Página inicial:** funciona como o índice de um livro. Mostra uma saudação conforme a hora do dia, atalhos para os cadastros mais usados, um resumo do cardápio (itens disponíveis e em falta e os grupos com mais itens) e os casos de uso prontos organizados em capítulos, com a quantidade de registros de cada um. Os que ainda não foram implementados aparecem numa única linha, no fim da página.
+- **Navegação por capítulos:** o menu agrupa as telas prontas em capítulos (Cardápio, Equipe e Configurações). Salão, Pedidos e Pagamentos entram no menu quando tiverem a primeira tela pronta.
 - **Avisos:** depois de salvar, editar ou excluir, aparece um aviso verde no canto da tela, que some sozinho. Erros aparecem em vermelho e ficam até serem fechados.
 - **Cardápio:** os itens ficam numa tabela com [DataTables](https://datatables.net/), seguindo a orientação do professor para páginas com muitos registros que o usuário precisa consultar ou ordenar. A busca (por nome, detalhes ou grupo), o filtro por grupo, a ordenação por coluna e a paginação são feitos no servidor. Dá para marcar um item em falta direto na tabela.
 - **Erros:** um filtro global (`Filter/CustomExceptionFilter.cs`) leva qualquer erro que escape dos controllers para a tela de erro, com uma mensagem em português. Erros do MySQL são traduzidos pelo número (por exemplo, 1451: registro vinculado a outros dados).

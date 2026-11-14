@@ -10,17 +10,14 @@
             <svg class="icone" aria-hidden="true"><use href="#icone-voltar"></use></svg>
             Voltar para a lista
         </a>
-        <hgroup class="titulo-pagina__texto">
-            <p class="u-rotulo">Item do cardápio</p>
-            <h1 class="titulo-pagina__titulo" id="titulo-detalhes">@Model.Nome<span class="u-acento">.</span></h1>
-        </hgroup>
+        <h1 class="titulo-pagina__titulo" id="titulo-detalhes">@Model.Nome</h1>
     </header>
 
     <partial name="_Ficha" model="Model" />
 
-    <p class="grupo-botoes">
-        <a class="btn btn--tinta" asp-action="Edit" asp-route-id="@Model.Id">Editar item</a>
-        <a class="btn btn--contorno" asp-action="Index">Voltar</a>
-        <a class="btn btn--perigo" asp-action="Delete" asp-route-id="@Model.Id">Excluir</a>
-    </p>
+    <menu class="grupo-botoes u-lista-limpa">
+        <li><a class="btn btn--tinta" asp-action="Edit" asp-route-id="@Model.Id">Editar item</a></li>
+        <li><a class="btn btn--contorno" asp-action="Index">Voltar</a></li>
+        <li><a class="btn btn--perigo" asp-action="Delete" asp-route-id="@Model.Id">Excluir</a></li>
+    </menu>
 </section>

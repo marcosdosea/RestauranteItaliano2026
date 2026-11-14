@@ -1,4 +1,4 @@
-@using Core.Service
+﻿@using Core.Service
 @model ErrorViewModel?
 @{
     ViewData["Title"] = "Erro";
@@ -8,6 +8,7 @@
 }
 
 <section class="vazio" aria-labelledby="erro-titulo">
+    <img class="vazio__gravura" src="~/images/gravuras/erro.svg" alt="Gravura de um prato de espaguete virado no chão, com molho espalhado e um garfo ao lado">
     <h1 class="vazio__titulo" id="erro-titulo">@titulo</h1>
 
     @if (!string.IsNullOrEmpty(mensagem))
@@ -24,10 +25,10 @@
 
     @if (Model?.ShowRequestId == true)
     {
-        <p class="vazio__texto">Código do erro: <code>@Model.RequestId</code></p>
+        <p class="vazio__codigo">Código do erro: <code class="vazio__codigo-valor">@Model.RequestId</code></p>
     }
 
-    <p class="grupo-botoes">
-        <a class="btn btn--tinta" asp-controller="Home" asp-action="Index">Voltar ao início</a>
-    </p>
+    <menu class="grupo-botoes u-lista-limpa">
+        <li><a class="btn btn--tinta" asp-controller="Home" asp-action="Index">Voltar ao início</a></li>
+    </menu>
 </section>

@@ -1,9 +1,13 @@
-@model RestauranteWeb.Models.ItemCardapioViewModel
+﻿@model RestauranteWeb.Models.ItemCardapioViewModel
 
-@* Prévia do item como ele aparece no cardápio; o js/site.js atualiza enquanto o usuário digita *@
-<aside class="previa" aria-labelledby="previa-titulo" data-previa>
+@* Prévia do item como ele aparece no cardápio; o js/site.js atualiza enquanto o usuário digita
+   e troca a gravura quando o grupo muda (palavras-chave do Models/Gravuras.cs) *@
+<aside class="previa" aria-labelledby="previa-titulo" data-previa data-inclinar data-pasta-gravuras="@Url.Content(Gravuras.Pasta)" data-gravuras="@Gravuras.PalavrasChaveJson">
     <h2 class="previa__titulo" id="previa-titulo">Como vai aparecer</h2>
-    <p class="previa__grupo" data-previa-grupo>@(Model.NomeGrupoCardapio ?? "Grupo")</p>
+    <p class="previa__grupo">
+        <img class="previa__gravura" src="@Url.Content(Gravuras.CaminhoDoGrupo(Model.NomeGrupoCardapio))" alt="" data-previa-gravura>
+        <span data-previa-grupo>@(Model.NomeGrupoCardapio ?? "Grupo")</span>
+    </p>
     <p class="prato" data-previa-item>
         <span class="prato__link">
             <span class="prato__texto">

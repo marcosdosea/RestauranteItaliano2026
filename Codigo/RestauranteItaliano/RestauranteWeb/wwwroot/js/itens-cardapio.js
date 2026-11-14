@@ -41,7 +41,13 @@ if (tabelaItens && window.jQuery) {
       <span class="prato__nome">${escapar(item.nome)}</span>${detalhes}</a>`;
   };
 
-  const colunaPreco = (preco) => (preco === null || preco === undefined ? "—" : reais.format(preco));
+  // grupo com a gravura dele; a gravura repete o nome, por isso é decorativa (alt vazio)
+  const colunaGrupo = (grupo) =>
+    `<span class="tabela-itens__grupo"><img class="tabela-itens__gravura" src="${window.gravuraDoGrupo?.(grupo, tabelaItens) ?? ""}" alt="">${escapar(grupo ?? "—")}</span>`;
+
+  // <data>: o preço formatado para quem lê e o número puro no value
+  const colunaPreco = (preco) =>
+    preco === null || preco === undefined ? "—" : `<data value="${Number(preco).toFixed(2)}">${reais.format(preco)}</data>`;
 
   const colunaSituacao = (dados, tipo, item) => {
     if (!item.ativo) return '<span class="prato__selo prato__selo--inativo">Fora do cardápio</span>';
@@ -60,11 +66,12 @@ if (tabelaItens && window.jQuery) {
           </form>
         </li>`
       : "";
-    return `<ul class="tabela-itens__acoes u-lista-limpa">
+    // <menu>: a lista de comandos que se pode fazer com o item
+    return `<menu class="tabela-itens__acoes u-lista-limpa">
         <li><a class="prato__acao" href="${url.editar}/${item.id}" aria-label="Editar ${nome}">Editar</a></li>
         ${alternar}
         <li><a class="prato__acao prato__acao--perigo" href="${url.excluir}/${item.id}" aria-label="Excluir ${nome}">Excluir</a></li>
-      </ul>`;
+      </menu>`;
   };
 
   const tabela = jQuery(tabelaItens).DataTable({
@@ -106,8 +113,15 @@ if (tabelaItens && window.jQuery) {
       else if (!item.disponivel) linha.classList.add("tabela-itens__linha--em-falta");
     },
     columns: [
-      { data: "nome", name: "Nome", render: colunaNome },
-      { data: "nomeGrupoCardapio", name: "Grupo", render: (grupo) => escapar(grupo ?? "—") },
+      // o nome identifica a linha: vira o cabeçalho dela (<th scope="row">), como pede a tabela acessível
+      {
+        data: "nome",
+        name: "Nome",
+        cellType: "th",
+        createdCell: (celula) => celula.setAttribute("scope", "row"),
+        render: colunaNome,
+      },
+      { data: "nomeGrupoCardapio", name: "Grupo", render: colunaGrupo },
       { data: "preco", name: "Preço", className: "dt-body-right dt-head-right tabela-itens__preco", render: colunaPreco },
       { data: "disponivel", name: "Situação", render: colunaSituacao },
       { data: null, name: "Ações", orderable: false, searchable: false, className: "tabela-itens__coluna-acoes", render: colunaAcoes },
@@ -122,6 +136,12 @@ if (tabelaItens && window.jQuery) {
       emptyTable: "Nenhum item cadastrado ainda.",
       zeroRecords: "Nenhum item encontrado. Confira a busca ou escolha outro grupo.",
     },
+  });
+
+  // as linhas entram em cascata só na primeira carga; buscar, filtrar ou paginar não anima nada
+  tabelaItens.classList.add("tabela-itens--chegando");
+  tabela.one("draw", () => {
+    setTimeout(() => tabelaItens.classList.remove("tabela-itens--chegando"), 600);
   });
 
   tabela.on("xhr", (evento, configuracao, resposta) => {

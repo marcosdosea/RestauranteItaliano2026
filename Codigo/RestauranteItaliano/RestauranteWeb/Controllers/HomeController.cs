@@ -31,10 +31,6 @@ namespace RestauranteWeb.Controllers
                 Capitulos = Navegacao.Capitulos()
             };
 
-            // o cabeçalho da página inicial, no _Layout, mostra a mesma data e a mesma saudação
-            ViewData["DataLonga"] = homeViewModel.DataLonga;
-            ViewData["Saudacao"] = homeViewModel.Saudacao;
-
             try
             {
                 var resumo = resumoService.GetResumo();

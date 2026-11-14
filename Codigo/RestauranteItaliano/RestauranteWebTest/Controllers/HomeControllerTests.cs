@@ -44,9 +44,10 @@ public class HomeControllerTests
         var home = Assert.IsInstanceOfType<HomeViewModel>(
             viewResult.ViewData.Model);
 
-        // a data e a saudação vão também para o cabeçalho, no _Layout
-        Assert.AreEqual(home.DataLonga, viewResult.ViewData["DataLonga"]);
-        Assert.AreEqual(home.Saudacao, viewResult.ViewData["Saudacao"]);
+        // a data e a saudação aparecem uma única vez, na abertura da página, e não no cabeçalho
+        Assert.IsFalse(string.IsNullOrEmpty(home.DataLonga));
+        Assert.IsNull(viewResult.ViewData["DataLonga"]);
+        Assert.IsNull(viewResult.ViewData["Saudacao"]);
 
         Assert.IsTrue(home.DadosDisponiveis);
         Assert.AreEqual(9, home.ItensNoCardapio);

@@ -1,4 +1,4 @@
-@model IEnumerable<RestauranteWeb.Models.FormaPagamentoViewModel>
+﻿@model IEnumerable<RestauranteWeb.Models.FormaPagamentoViewModel>
 
 @{
     ViewData["Title"] = "Formas de pagamento";
@@ -7,8 +7,7 @@
 
 <header class="titulo-pagina">
     <hgroup class="titulo-pagina__texto">
-        <p class="u-rotulo">Capítulo · Configurações</p>
-        <h1 class="titulo-pagina__titulo">Formas de pagamento<span class="u-acento">.</span></h1>
+        <h1 class="titulo-pagina__titulo">Formas de pagamento</h1>
         @if (formasPagamento.Any())
         {
             <p class="titulo-pagina__resumo">@formasPagamento.Count @(formasPagamento.Count == 1 ? "forma cadastrada" : "formas cadastradas")</p>
@@ -23,11 +22,12 @@
 @if (!formasPagamento.Any())
 {
     <section class="vazio" aria-labelledby="vazio-titulo">
+        <img class="vazio__gravura" src="~/images/gravuras/vazio.svg" alt="Gravura de um prato vazio com garfo e faca sobre um guardanapo xadrez">
         <h2 class="vazio__titulo" id="vazio-titulo">Nenhuma forma de pagamento cadastrada.</h2>
         <p class="vazio__texto">Cadastre as formas que o restaurante aceita, como dinheiro, Pix e cartão. Elas serão usadas no pagamento dos atendimentos.</p>
-        <p class="grupo-botoes">
-            <a class="btn btn--tinta" asp-action="Create">Cadastrar a primeira forma</a>
-        </p>
+        <menu class="grupo-botoes u-lista-limpa">
+            <li><a class="btn btn--tinta" asp-action="Create">Cadastrar a primeira forma</a></li>
+        </menu>
     </section>
 }
 else
@@ -44,10 +44,10 @@ else
                     <span class="prato__codigo">@Html.DisplayNameFor(model => model.Id) @Html.DisplayFor(modelItem => item.Id)</span>
                 </a>
 
-                <ul class="prato__acoes u-lista-limpa">
+                <menu class="prato__acoes u-lista-limpa">
                     <li><a class="prato__acao" asp-action="Edit" asp-route-id="@item.Id" aria-label="Editar @item.Nome">Editar</a></li>
                     <li><a class="prato__acao prato__acao--perigo" asp-action="Delete" asp-route-id="@item.Id" aria-label="Excluir @item.Nome">Excluir</a></li>
-                </ul>
+                </menu>
             </li>
         }
     </ul>

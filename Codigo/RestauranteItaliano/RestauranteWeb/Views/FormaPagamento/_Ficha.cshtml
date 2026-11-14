@@ -1,13 +1,10 @@
 @model RestauranteWeb.Models.FormaPagamentoViewModel
 
-<article class="ficha" aria-labelledby="ficha-nome">
-    <p class="prato">
-        <span class="prato__link">
-            <span class="prato__texto">
-                <span class="prato__nome" id="ficha-nome">@Html.DisplayFor(model => model.Nome)</span>
-            </span>
-            <span class="u-pontos" aria-hidden="true"></span>
-            <span class="prato__codigo">@Html.DisplayNameFor(model => model.Id) @Html.DisplayFor(model => model.Id)</span>
-        </span>
-    </p>
+<article class="ficha" aria-labelledby="ficha-nome" data-inclinar>
+    @* a linha do cardápio: o nome, os pontinhos e o código *@
+    <div class="prato">
+        <h2 class="prato__nome" id="ficha-nome">@Html.DisplayFor(model => model.Nome)</h2>
+        <span class="u-pontos" aria-hidden="true"></span>
+        <span class="prato__codigo">@Html.DisplayNameFor(model => model.Id) @Html.DisplayFor(model => model.Id)</span>
+    </div>
 </article>
