@@ -1,28 +1,75 @@
 @charset "UTF-8";
 
+/* Fontes servidas pelo próprio site: wwwroot/lib, baixadas pelo libman.json (pacotes do Fontsource) */
+@font-face {
+  font-family: "Instrument Serif";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../lib/instrument-serif/files/instrument-serif-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Instrument Serif";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../lib/instrument-serif/files/instrument-serif-latin-400-italic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Instrument Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../lib/instrument-sans/files/instrument-sans-latin-wght-normal.woff2") format("woff2");
+}
+
 /* =========================================================
-   La Carta — o sistema apresentado como um cardápio impresso
+   La Carta · Trattoria — o sistema como o cardápio impresso de uma trattoria:
+   papel de algodão, tinta preta, vermelho pomodoro e gravuras em linóleo
    ========================================================= */
 
 :root {
-  --cor-papel: #f5efe6;
+  --cor-papel: #f3eada;
   --cor-cartao: #fffcf7;
   --cor-creme: #f2e3c6;
   --cor-tinta: #1c1a17;
   --cor-tinta-2: #4a443c;
-  --cor-tinta-3: #6b6358;
-  --cor-tinta-4: #857c70;
+  --cor-tinta-3: #6a6357; /* o tom mais claro de texto que ainda passa no contraste AA sobre o papel */
   --cor-linha: #e6ddcf;
   --cor-linha-forte: #d8ccba;
   --cor-pontilhado: #bfb2a0;
   --cor-pomodoro: #a8371f;
   --cor-pomodoro-escuro: #8f2a15;
   --cor-pomodoro-claro: #f0b9a8;
+  --cor-pomodoro-fundo: #fbeee9;
   --cor-basilico: #3e5b3f;
   --cor-basilico-fundo: #eef2e6;
   --cor-basilico-texto: #2c4430;
   --cor-ocra: #8a5a0f;
   --cor-ocra-texto: #5e3d08;
+  --cor-papel-gravura: #ece2d2; /* o papel em que as gravuras foram impressas */
+  --cor-cartao-veu: rgba(255, 252, 247, 0.55);
+
+  /* escala de espaço dos blocos; ajustes finos de alinhamento ficam em px na própria regra */
+  --espaco-2: 8px;
+  --espaco-3: 12px;
+  --espaco-4: 16px;
+  --espaco-5: 24px;
+  --espaco-6: 32px;
+  --espaco-7: 48px;
+  --espaco-8: 64px;
+  --espaco-9: 96px;
+
+  /* escala de texto (px): os títulos grandes usam clamp() direto na regra, para acompanhar a tela */
+  --texto-12: 0.75rem;
+  --texto-14: 0.875rem;
+  --texto-16: 1rem;
+  --texto-18: 1.125rem;
+  --texto-22: 1.375rem;
+  --texto-36: 2.25rem;
+  --texto-48: 3rem;
 
   --fonte-serifa: "Instrument Serif", Georgia, "Times New Roman", serif;
   --fonte-texto: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -30,10 +77,14 @@
   --margem-pagina: clamp(20px, 4vw, 64px);
   --largura-maxima: 1280px;
   --sombra-painel: 0 1px 0 rgba(28, 26, 23, 0.04), 0 24px 48px -30px rgba(28, 26, 23, 0.35);
-  --curva: cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* papel apoiado na mesa: sombra curta e uma longa, as duas deslocadas para baixo */
+  --sombra-papel: 0 1px 1px rgba(28, 26, 23, 0.08), 0 18px 36px -22px rgba(28, 26, 23, 0.45);
+  --sombra-atalho: 0 10px 22px -14px rgba(28, 26, 23, 0.55);
+  --curva-abrir: cubic-bezier(0.22, 1, 0.36, 1);
+  --curva: cubic-bezier(0.23, 1, 0.32, 1);
 
   --bs-body-font-family: var(--fonte-texto);
-  --bs-body-font-size: 1rem;
+  --bs-body-font-size: var(--texto-16);
   --bs-body-color: var(--cor-tinta);
   --bs-body-bg: var(--cor-papel);
   --bs-border-color: var(--cor-pontilhado);
@@ -60,8 +111,8 @@
   --dt-input_border-radius: 0;
   --dt-input_padding: 6px 8px;
   --dt-input_background: var(--cor-cartao);
-  --dt-order-arrow_color: #1c1a17;
-  --dt-order-arrow_color-current: #a8371f;
+  --dt-order-arrow_color: var(--cor-tinta);
+  --dt-order-arrow_color-current: var(--cor-pomodoro);
   --dt-order-arrow_opacity-current: 1;
   --dt-order-header_outline-hover: 0;
   --dt-paging-button_padding: 0.5em 0.9em;
@@ -75,7 +126,7 @@
   --dt-paging-button_border-hover: 1px solid var(--cor-tinta);
   --dt-paging-button_background-hover: transparent;
   --dt-paging-button_color-hover: var(--cor-tinta);
-  --dt-paging-button_color-disabled: var(--cor-tinta-4);
+  --dt-paging-button_color-disabled: var(--cor-tinta-3);
   --dt-paging-button_box-shadow-active: none;
   --dt-processing-circle_background: 168, 55, 31;
 }
@@ -89,17 +140,129 @@ html {
 body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   min-height: 100dvh;
+  -webkit-tap-highlight-color: transparent;
   background-color: var(--cor-papel);
-  /* grão de papel bem sutil, desenhado por um filtro SVG */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .11 0 0 0 0 .10 0 0 0 0 .09 0 0 0 .045 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  /* papel de algodão (images/papel.webp), espelhado nas bordas para repetir sem emenda */
+  background-image: url("../images/papel.webp");
+  background-size: 512px 512px;
   text-rendering: optimizeLegibility;
 }
 
 main:focus {
   outline: none;
 }
+
+a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--cor-pomodoro);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--cor-creme);
+  color: var(--cor-tinta);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--fonte-serifa);
+  font-weight: 400;
+}
+
+/* sem palavra sozinha na última linha dos textos corridos */
+p {
+  text-wrap: pretty;
+}
+
+h1:not([class]) {
+  margin: 0 0 24px;
+  font-size: clamp(2.5rem, 4.6vw, 3.75rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- Utilitários ---------- */
+
+.u-pular-conteudo {
+  position: absolute;
+  top: -60px;
+  left: 16px;
+  z-index: 1100;
+  min-height: 44px;
+  padding: 12px 16px;
+  background: var(--cor-tinta);
+  color: var(--cor-cartao);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s var(--curva);
+}
+
+.u-pular-conteudo:focus {
+  top: 12px;
+  color: var(--cor-cartao);
+}
+
+.u-lista-limpa {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* rótulo único: a caixa-alta espaçada só aparece em rótulos de campo, de tabela e de bloco,
+   e todos saem desta regra; cada classe abaixo cuida só da própria cor e do espaço em volta */
+.u-rotulo,
+.painel__titulo,
+.previa__titulo,
+.form-label,
+.campo__rotulo,
+.filtro-grupo__rotulo,
+.capitulo__nome,
+.cardapio__casa,
+.cardapio__capa-casa,
+.tabela-itens__disponivel,
+.prato__selo,
+.tabela-itens thead th,
+.table > thead th {
+  font-family: var(--fonte-texto);
+  font-size: var(--texto-12);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.u-rotulo {
+  margin: 0;
+  color: var(--cor-tinta-3);
+}
+
+.u-pontos {
+  flex: 1 1 20px;
+  min-width: 20px;
+  border-bottom: 2px dotted var(--cor-pontilhado);
+  transform: translateY(-5px);
+  transition: border-color 0.2s var(--curva);
+}
+
+.u-link-simples {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 0.9375rem;
+}
+
+/* ---------- Ícones ---------- */
 
 /* Ícones SVG: o desenho de cada um fica em Views/Shared/_Icones.cshtml.
    O tamanho, a cor e o traço ficam aqui no CSS, e não em atributos no HTML. */
@@ -131,89 +294,6 @@ main:focus {
   height: 22px;
 }
 
-a {
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-}
-
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-summary:focus-visible {
-  outline: 2px solid var(--cor-pomodoro);
-  outline-offset: 3px;
-}
-
-::selection {
-  background: var(--cor-creme);
-  color: var(--cor-tinta);
-}
-
-h1,
-h2,
-h3 {
-  font-family: var(--fonte-serifa);
-  font-weight: 400;
-}
-
-/* ---------- Utilitários ---------- */
-
-.u-pular-conteudo {
-  position: absolute;
-  top: -60px;
-  left: 16px;
-  z-index: 1100;
-  padding: 10px 16px;
-  background: var(--cor-tinta);
-  color: var(--cor-cartao);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: top 0.2s var(--curva);
-}
-
-.u-pular-conteudo:focus {
-  top: 12px;
-  color: var(--cor-cartao);
-}
-
-.u-lista-limpa {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.u-rotulo {
-  margin: 0;
-  font-family: var(--fonte-texto);
-  font-size: 0.71875rem;
-  font-weight: 700;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--cor-tinta-3);
-}
-
-.u-pontos {
-  flex: 1 1 20px;
-  min-width: 20px;
-  border-bottom: 2px dotted var(--cor-pontilhado);
-  transform: translateY(-5px);
-  transition: border-color 0.2s;
-}
-
-.u-link-simples {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  font-size: 0.9375rem;
-}
-
-.u-acento {
-  color: var(--cor-pomodoro);
-}
-
 /* ---------- Cabeçalho ---------- */
 
 .cabecalho,
@@ -222,35 +302,7 @@ h3 {
   width: 100%;
   max-width: calc(var(--largura-maxima) + 2 * var(--margem-pagina));
   margin-inline: auto;
-  padding-inline: var(--margem-pagina);
-}
-
-.cabecalho__topo {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px 24px;
-  min-height: 42px;
-  margin: 0;
-  border-bottom: 1px solid var(--cor-linha);
-  font-size: 0.78125rem;
-  color: var(--cor-tinta-3);
-}
-
-.cabecalho__saudacao {
-  font-family: var(--fonte-serifa);
-  font-style: italic;
-  font-size: 1.0625rem;
-  color: var(--cor-tinta-2);
-}
-
-.cabecalho__link-topo {
-  display: inline-flex;
-  align-items: center;
-  min-height: 40px;
-  color: var(--cor-tinta-3);
-  text-decoration: none;
+  padding-inline: max(var(--margem-pagina), env(safe-area-inset-left)) max(var(--margem-pagina), env(safe-area-inset-right));
 }
 
 .cabecalho__barra {
@@ -266,7 +318,9 @@ h3 {
 .cabecalho__marca {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 10px;
+  min-height: 44px;
   text-decoration: none;
 }
 
@@ -276,28 +330,10 @@ h3 {
   line-height: 1.1;
 }
 
+/* o itálico aqui é só desenho da marca, por isso fica no CSS e não num <em> */
 .cabecalho__nome-destaque {
+  font-style: italic;
   color: var(--cor-pomodoro);
-}
-
-.cabecalho__sobre-marca {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: var(--cor-tinta-3);
-}
-
-.cabecalho__sobre-marca::before,
-.cabecalho__sobre-marca::after {
-  content: "";
-  width: 40px;
-  height: 1px;
-  background: var(--cor-pontilhado);
 }
 
 /* na página inicial a marca fica centralizada e maior, como o título de um cardápio */
@@ -355,7 +391,7 @@ h3 {
   gap: 8px;
   min-height: 48px;
   padding: 0 14px;
-  font-size: 0.75rem;
+  font-size: var(--texto-12);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -373,11 +409,7 @@ h3 {
   background: currentColor;
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.25s var(--curva);
-}
-
-.capitulos__link:hover::after {
-  transform: scaleX(1);
+  transition: transform 0.2s var(--curva);
 }
 
 .capitulos__link--atual::after {
@@ -393,20 +425,11 @@ h3 {
   letter-spacing: 0;
   text-transform: none;
   color: var(--cor-tinta-3);
-  transition: color 0.2s;
+  transition: color 0.2s var(--curva);
 }
 
-.capitulos__link:hover .capitulos__numero,
 .capitulos__link--atual .capitulos__numero {
   color: var(--cor-pomodoro);
-}
-
-.capitulos__link--em-breve {
-  color: var(--cor-tinta-4);
-}
-
-.capitulos__link--em-breve .capitulos__numero {
-  color: var(--cor-pontilhado);
 }
 
 /* ---------- Telas do capítulo ---------- */
@@ -435,19 +458,6 @@ h3 {
   box-shadow: inset 0 -2px 0 var(--cor-tinta);
 }
 
-.secoes__link--em-breve {
-  color: var(--cor-tinta-4);
-}
-
-.secoes__link--em-breve small {
-  font-family: var(--fonte-texto);
-  font-size: 0.625rem;
-  font-style: normal;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
 /* ---------- Aviso de sucesso ---------- */
 
 /* ficam presos no canto da tela para serem vistos mesmo quando a página
@@ -461,7 +471,7 @@ h3 {
   flex-direction: column;
   align-items: flex-end;
   gap: 8px;
-  max-width: min(440px, calc(100vw - 32px));
+  max-width: min(440px, calc(100% - 32px));
 }
 
 .aviso {
@@ -475,12 +485,12 @@ h3 {
   box-shadow: var(--sombra-painel);
   color: var(--cor-basilico-texto);
   font-size: 0.90625rem;
-  animation: deslizar 0.4s var(--curva);
+  animation: deslizar 0.25s var(--curva);
 }
 
 .aviso--erro {
   border-color: var(--cor-pomodoro-escuro);
-  background: #fbeee9;
+  background: var(--cor-pomodoro-fundo);
   color: var(--cor-pomodoro-escuro);
 }
 
@@ -500,15 +510,15 @@ h3 {
 .aviso--saindo {
   opacity: 0;
   transform: translateY(-4px);
-  transition: opacity 0.4s, transform 0.4s;
+  transition: opacity 0.2s var(--curva), transform 0.2s var(--curva);
 }
 
 /* ---------- Conteúdo e rodapé ---------- */
 
 .conteudo {
   flex: 1 0 auto;
-  padding-top: 36px;
-  padding-bottom: 64px;
+  padding-top: var(--espaco-7);
+  padding-bottom: var(--espaco-9);
 }
 
 .rodape {
@@ -517,31 +527,43 @@ h3 {
   align-items: baseline;
   justify-content: space-between;
   gap: 8px 24px;
+  position: relative;
   padding-top: 18px;
-  padding-bottom: 28px;
-  /* fio de 1px desenhado só na largura do conteúdo, sem pegar as margens */
-  background-image: linear-gradient(var(--cor-tinta), var(--cor-tinta));
-  background-repeat: no-repeat;
-  background-position: var(--margem-pagina) 0;
-  background-size: calc(100% - 2 * var(--margem-pagina)) 1px;
+  padding-bottom: calc(28px + env(safe-area-inset-bottom));
   font-size: 0.78125rem;
   color: var(--cor-tinta-3);
+}
+
+/* fio de 1px só na largura do conteúdo, sem pegar as margens */
+.rodape::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: max(var(--margem-pagina), env(safe-area-inset-right));
+  left: max(var(--margem-pagina), env(safe-area-inset-left));
+  height: 1px;
+  background: var(--cor-tinta);
 }
 
 .rodape p {
   margin: 0;
 }
 
+/* <small> marca o texto de rodapé (direitos); o tamanho já vem do .rodape */
+.rodape small {
+  font-size: inherit;
+}
+
 .rodape__colofao {
   font-family: var(--fonte-serifa);
-  font-size: 1rem;
+  font-size: var(--texto-16);
   font-style: italic;
 }
 
 .rodape__link {
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  min-height: 44px;
   color: var(--cor-tinta-3);
   text-decoration: none;
 }
@@ -551,21 +573,24 @@ h3 {
 .btn {
   --bs-btn-padding-x: 1.6rem;
   --bs-btn-padding-y: 0;
-  --bs-btn-font-size: 0.75rem;
-  --bs-btn-font-weight: 700;
+  --bs-btn-font-size: 0.9375rem;
+  --bs-btn-font-weight: 600;
   --bs-btn-border-radius: 0;
   --bs-btn-border-width: 1px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 52px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  min-height: 48px;
+  letter-spacing: 0.01em;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: color 0.15s var(--curva), background-color 0.15s var(--curva), border-color 0.15s var(--curva), transform 0.12s var(--curva);
 }
 
-.btn svg {
-  transition: transform 0.25s var(--curva);
+.btn svg,
+.link-voltar svg {
+  transition: transform 0.2s var(--curva);
 }
 
 .btn--tinta,
@@ -580,8 +605,8 @@ h3 {
   --bs-btn-active-bg: var(--cor-pomodoro-escuro);
   --bs-btn-active-border-color: var(--cor-pomodoro-escuro);
   --bs-btn-disabled-color: var(--cor-cartao);
-  --bs-btn-disabled-bg: var(--cor-tinta-4);
-  --bs-btn-disabled-border-color: var(--cor-tinta-4);
+  --bs-btn-disabled-bg: var(--cor-tinta-3);
+  --bs-btn-disabled-border-color: var(--cor-tinta-3);
   --bs-btn-focus-shadow-rgb: 168, 55, 31;
 }
 
@@ -613,19 +638,7 @@ h3 {
   --bs-btn-focus-shadow-rgb: 143, 42, 21;
 }
 
-.btn--seta:hover svg {
-  transform: translateX(4px);
-}
-
-.link-voltar svg {
-  transition: transform 0.25s var(--curva);
-}
-
-.link-voltar:hover svg,
-.btn--voltar:hover svg {
-  transform: translateX(-4px);
-}
-
+/* <menu> de comandos da tela; cada <li> passa a largura para o botão (no celular eles ocupam a linha) */
 .grupo-botoes {
   display: flex;
   flex-wrap: wrap;
@@ -634,16 +647,19 @@ h3 {
   margin: 0;
 }
 
+.grupo-botoes > li {
+  display: flex;
+  flex-direction: column;
+}
+
 .link-voltar {
   display: inline-flex;
   align-self: flex-start;
   align-items: center;
   gap: 8px;
   min-height: 44px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-size: var(--texto-14);
+  font-weight: 600;
   text-decoration: none;
 }
 
@@ -653,10 +669,6 @@ h3 {
 .campo__rotulo {
   display: block;
   margin-bottom: 8px;
-  font-size: 0.71875rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
 }
 
 .form-control,
@@ -686,7 +698,7 @@ h3 {
   background: var(--cor-cartao);
   color: var(--cor-tinta-2);
   font-family: var(--fonte-serifa);
-  font-size: 1.375rem;
+  font-size: var(--texto-22);
 }
 
 .input-group > .form-control {
@@ -720,7 +732,7 @@ div.validation-summary-valid {
   margin: 0;
   padding: 14px 18px;
   border: 1px solid var(--cor-pomodoro-escuro);
-  background: #fbeee9;
+  background: var(--cor-pomodoro-fundo);
   list-style: none;
 }
 
@@ -744,13 +756,13 @@ div.validation-summary-valid {
 
 .campo__ajuda {
   margin-top: 6px;
-  font-size: 0.875rem;
+  font-size: var(--texto-14);
   color: var(--cor-tinta-2);
 }
 
 .campo__erro {
   margin-top: 6px;
-  font-size: 0.875rem;
+  font-size: var(--texto-14);
 }
 
 .campo__erro:empty {
@@ -801,29 +813,31 @@ div.validation-summary-valid {
 }
 
 .interruptor__ajuda {
-  font-size: 0.875rem;
+  font-size: var(--texto-14);
   font-weight: 400;
   color: var(--cor-tinta-2);
 }
 
 .interruptor .form-check-input {
+  /* a bolinha branca do interruptor, a mesma ligado e desligado */
+  --bolinha: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fffcf7'/%3e%3c/svg%3e");
   flex: none;
   width: 3.5em;
   height: 1.875em;
   margin: 0;
   border-color: transparent;
   border-radius: 2em;
-  background-color: var(--cor-tinta-4);
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fffcf7'/%3e%3c/svg%3e");
+  background-color: var(--cor-tinta-3);
+  background-image: var(--bolinha);
   background-position: left center;
   cursor: pointer;
-  transition: background-position 0.15s ease-in-out, background-color 0.15s;
+  transition: background-position 0.15s var(--curva), background-color 0.15s var(--curva);
 }
 
 .interruptor .form-check-input:checked {
   border-color: transparent;
   background-color: var(--cor-basilico);
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fffcf7'/%3e%3c/svg%3e");
+  background-image: var(--bolinha);
   background-position: right center;
 }
 
@@ -842,10 +856,6 @@ div.validation-summary-valid {
 
 .table > thead th {
   border-bottom: 4px double var(--cor-tinta);
-  font-size: 0.71875rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
 }
 
 .table > tbody td {
@@ -861,8 +871,8 @@ div.validation-summary-valid {
   flex-wrap: wrap;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 20px 40px;
-  margin-bottom: 30px;
+  gap: var(--espaco-5) var(--espaco-7);
+  margin-bottom: var(--espaco-6);
 }
 
 .titulo-pagina--empilhado {
@@ -893,13 +903,6 @@ div.validation-summary-valid {
   color: var(--cor-tinta-2);
 }
 
-h1:not([class]) {
-  margin: 0 0 24px;
-  font-size: clamp(2.5rem, 4.6vw, 3.75rem);
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-
 /* ---------- Página inicial: abertura ---------- */
 
 .abertura {
@@ -913,18 +916,17 @@ h1:not([class]) {
 
 .abertura__texto {
   display: flex;
-  flex: 999 1 560px;
+  flex: 999 1 480px;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 18px;
   min-width: 0;
 }
 
 .abertura__saudacao {
   margin: 0;
-  font-size: clamp(3.5rem, 9vw, 8.5rem);
-  font-style: italic;
-  line-height: 0.9;
+  font-size: clamp(3rem, 7vw, 6rem);
+  line-height: 0.95;
   letter-spacing: -0.03em;
   overflow-wrap: anywhere;
 }
@@ -932,7 +934,7 @@ h1:not([class]) {
 .abertura__lead {
   max-width: 560px;
   margin: 6px 0 0;
-  font-size: 1.125rem;
+  font-size: var(--texto-18);
   line-height: 1.6;
   color: var(--cor-tinta-2);
 }
@@ -954,16 +956,16 @@ h1:not([class]) {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  min-height: 46px;
+  min-height: 48px;
   padding: 0 20px 0 14px;
   border: 1px solid var(--cor-tinta);
-  background: rgba(255, 252, 247, 0.55);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  background: var(--cor-cartao-veu);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  -webkit-user-select: none;
+  user-select: none;
   text-decoration: none;
-  transition: background-color 0.2s, color 0.2s, transform 0.2s var(--curva), box-shadow 0.2s;
+  transition: background-color 0.2s var(--curva), color 0.2s var(--curva), transform 0.2s var(--curva), box-shadow 0.2s var(--curva);
 }
 
 .atalho__mais {
@@ -972,19 +974,7 @@ h1:not([class]) {
   font-weight: 400;
   line-height: 1;
   color: var(--cor-pomodoro);
-  transition: color 0.2s, transform 0.25s var(--curva);
-}
-
-.atalho:hover {
-  background: var(--cor-tinta);
-  color: var(--cor-cartao);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 22px -14px rgba(28, 26, 23, 0.55);
-}
-
-.atalho:hover .atalho__mais {
-  color: var(--cor-pomodoro-claro);
-  transform: rotate(90deg);
+  transition: color 0.2s var(--curva), transform 0.2s var(--curva);
 }
 
 /* ---------- Página inicial: painel "Na carta hoje" ---------- */
@@ -1013,11 +1003,6 @@ h1:not([class]) {
 
 .painel__titulo {
   margin: 0;
-  font-family: var(--fonte-texto);
-  font-size: 0.71875rem;
-  font-weight: 700;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
 }
 
 .painel__hora {
@@ -1064,8 +1049,17 @@ h1:not([class]) {
 
 .painel__ilustracao {
   flex: none;
-  width: 72px;
-  height: 44px;
+  width: 96px;
+  height: 75px;
+  object-fit: contain;
+}
+
+.painel__gravura {
+  flex: none;
+  align-self: center;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
 }
 
 .numeros {
@@ -1080,15 +1074,16 @@ h1:not([class]) {
 .numeros__item {
   display: flex;
   flex-direction: column-reverse;
+  align-items: center;
   gap: 4px;
+  text-align: center;
 }
 
 .numeros__rotulo {
-  font-size: 0.65625rem;
+  font-size: var(--texto-12);
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  white-space: nowrap;
   color: var(--cor-tinta-2);
 }
 
@@ -1108,22 +1103,32 @@ h1:not([class]) {
   font-variant-numeric: tabular-nums;
 }
 
-/* barra verde: --percentual vem da página, em porcentagem */
+/* barra verde: um <meter> com o total e os disponíveis, desenhado do mesmo jeito em todos os navegadores */
 .barra {
+  display: block;
+  width: 100%;
   height: 6px;
   margin: 0;
-  overflow: hidden;
+  border: 0;
+  background: var(--cor-creme);
+  appearance: none;
+}
+
+.barra::-webkit-meter-bar {
+  height: 6px;
+  border: 0;
+  border-radius: 0;
   background: var(--cor-creme);
 }
 
-.barra::before {
-  content: "";
-  display: block;
-  width: var(--percentual, 0%);
-  height: 100%;
+.barra::-webkit-meter-optimum-value,
+.barra::-webkit-meter-suboptimum-value,
+.barra::-webkit-meter-even-less-good-value {
   background: var(--cor-basilico);
-  transform-origin: left;
-  animation: encher 1s 0.4s var(--curva) both;
+}
+
+.barra::-moz-meter-bar {
+  background: var(--cor-basilico);
 }
 
 /* ---------- Página inicial: índice ---------- */
@@ -1133,8 +1138,8 @@ h1:not([class]) {
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 8px 24px;
-  margin-top: 88px;
+  gap: var(--espaco-2) var(--espaco-5);
+  margin-top: var(--espaco-9);
   padding: 14px 0;
   border-top: 4px double var(--cor-tinta);
   border-bottom: 1px solid var(--cor-tinta);
@@ -1157,8 +1162,8 @@ h1:not([class]) {
 .indice {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 56px 64px;
-  margin-top: 44px;
+  gap: var(--espaco-7) var(--espaco-8);
+  margin-top: var(--espaco-7);
 }
 
 .capitulo {
@@ -1183,26 +1188,6 @@ h1:not([class]) {
   color: var(--cor-pomodoro);
 }
 
-.capitulo__nome {
-  font-family: var(--fonte-texto);
-  font-size: 0.78125rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-
-.capitulo--em-breve .capitulo__titulo {
-  border-bottom-color: var(--cor-pontilhado);
-}
-
-.capitulo--em-breve .capitulo__romano {
-  color: var(--cor-pontilhado);
-}
-
-.capitulo--em-breve .capitulo__nome {
-  color: var(--cor-tinta-4);
-}
-
 /* destaque rápido ao chegar pelo menu */
 .capitulo:target .capitulo__titulo {
   animation: realce 1.8s ease-out;
@@ -1218,7 +1203,7 @@ h1:not([class]) {
   box-shadow: inset 0 -1px 0 var(--cor-linha);
   color: inherit;
   text-decoration: none;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s var(--curva);
 }
 
 .entrada__texto {
@@ -1232,7 +1217,7 @@ h1:not([class]) {
   font-family: var(--fonte-serifa);
   font-size: 1.6875rem;
   line-height: 1.1;
-  transition: color 0.2s;
+  transition: color 0.2s var(--curva);
 }
 
 .entrada__descricao {
@@ -1258,43 +1243,14 @@ h1:not([class]) {
   align-self: center;
   width: 16px;
   height: 16px;
-  color: var(--cor-tinta-4);
-  transition: transform 0.25s var(--curva), color 0.2s;
+  color: var(--cor-tinta-3);
+  transition: transform 0.2s var(--curva), color 0.2s var(--curva);
 }
 
-a.entrada:hover {
-  background: var(--cor-cartao);
-}
-
-a.entrada:hover .entrada__titulo {
-  color: var(--cor-pomodoro);
-}
-
-a.entrada:hover .u-pontos {
-  border-bottom-color: var(--cor-pomodoro-claro);
-}
-
-a.entrada:hover .entrada__seta {
-  color: var(--cor-pomodoro);
-  transform: translateX(4px);
-}
-
-.entrada--em-breve .entrada__titulo {
-  color: var(--cor-tinta-4);
-}
-
-.entrada--em-breve .u-pontos {
-  border-bottom-color: var(--cor-linha-forte);
-}
-
-.entrada--em-breve .entrada__resumo {
-  font-family: var(--fonte-texto);
-  font-size: 0.65625rem;
-  font-style: normal;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--cor-tinta-4);
+.em-breve {
+  margin: var(--espaco-7) 0 0;
+  font-size: 0.9375rem;
+  color: var(--cor-tinta-3);
 }
 
 /* ---------- Página inicial: provérbio ---------- */
@@ -1304,8 +1260,9 @@ a.entrada:hover .entrada__seta {
   flex-direction: column;
   align-items: center;
   gap: 18px;
-  margin: 104px 0 -64px;
-  padding: 56px 24px 80px;
+  /* encosta no rodapé: anula o espaço de baixo do conteúdo */
+  margin: var(--espaco-9) 0 calc(-1 * var(--espaco-9));
+  padding: 56px var(--espaco-5) 80px;
   border-top: 4px double var(--cor-tinta);
   color: var(--cor-tinta-3);
   text-align: center;
@@ -1314,6 +1271,10 @@ a.entrada:hover .entrada__seta {
 .proverbio__ornamento {
   width: 88px;
   height: 30px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  stroke-linecap: round;
 }
 
 .proverbio__frase {
@@ -1386,10 +1347,6 @@ a.entrada:hover .entrada__seta {
 
 .filtro-grupo__rotulo {
   flex: none;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
   color: var(--cor-tinta-2);
 }
 
@@ -1411,10 +1368,6 @@ a.entrada:hover .entrada__seta {
 }
 
 .tabela-itens thead th {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
   color: var(--cor-tinta-2);
   white-space: nowrap;
 }
@@ -1430,9 +1383,16 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   flex-grow: 0;
 }
 
+.tabela-itens tbody th,
 .tabela-itens tbody td {
   border-bottom: var(--dt-body_border);
   vertical-align: middle;
+}
+
+/* o nome do prato é o cabeçalho da linha (<th scope="row">), mas com a aparência de uma célula comum */
+.tabela-itens tbody th {
+  font-weight: inherit;
+  text-align: start;
 }
 
 .tabela-itens__link {
@@ -1442,22 +1402,14 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   text-decoration: none;
 }
 
-.tabela-itens__link:hover .prato__nome {
-  color: var(--cor-pomodoro);
-}
-
 .tabela-itens td.tabela-itens__preco {
   font-family: var(--fonte-serifa);
-  font-size: 1.375rem;
+  font-size: var(--texto-22);
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 
 .tabela-itens__disponivel {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
   color: var(--cor-basilico-texto);
 }
 
@@ -1484,15 +1436,18 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 
 .dt-container .dt-info,
 .dt-container .dt-length {
-  font-size: 0.875rem;
+  font-size: var(--texto-14);
 }
 
 .dt-container .dt-length select {
+  min-height: 44px;
   margin-right: 6px;
+  font-size: var(--texto-16);
 }
 
 .dt-container .dt-paging .dt-paging-button {
-  min-height: 40px;
+  min-width: 44px;
+  min-height: 44px;
   font-size: 0.8125rem;
   font-weight: 700;
 }
@@ -1503,6 +1458,19 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   box-shadow: var(--sombra-painel);
 }
 
+.tabela-itens__grupo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-3);
+}
+
+.tabela-itens__gravura {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
 /* ---------- Linhas de prato (formas de pagamento e prévia do item) ---------- */
 
 .prato {
@@ -1510,19 +1478,24 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  gap: 0 16px;
   margin: 0 -12px;
   padding: 0 12px;
-  transition: background-color 0.15s;
+  /* fio de 1px só na largura do conteúdo, sem pegar o recuo do fundo do hover */
+  background-image: linear-gradient(var(--cor-linha), var(--cor-linha));
+  background-repeat: no-repeat;
+  background-position: 12px 100%;
+  background-size: calc(100% - 24px) 1px;
+  transition: background-color 0.15s var(--curva);
 }
 
 .prato__link {
   display: flex;
-  flex: 1 1 100%;
+  flex: 1 1 320px;
   align-items: baseline;
   gap: 12px;
   min-width: 0;
   padding: 15px 0 14px;
-  box-shadow: inset 0 -1px 0 var(--cor-linha);
   text-decoration: none;
 }
 
@@ -1540,6 +1513,7 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 }
 
 .prato__detalhe {
+  margin: 0;
   font-family: var(--fonte-serifa);
   font-size: 1.03125rem;
   font-style: italic;
@@ -1553,14 +1527,10 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   border: 1px solid var(--cor-ocra);
   background: var(--cor-creme);
   color: var(--cor-ocra-texto);
-  font-size: 0.65625rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
 }
 
 .prato__selo--inativo {
-  border-color: var(--cor-tinta-4);
+  border-color: var(--cor-tinta-3);
   background: transparent;
   color: var(--cor-tinta-2);
 }
@@ -1586,62 +1556,44 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   text-decoration: line-through;
 }
 
-/* ações aparecem ao passar o mouse ou ao chegar pelo teclado */
+/* ações sempre visíveis: em telas de toque não existe "passar o mouse" */
 .prato__acoes {
-  position: absolute;
-  right: 12px;
-  bottom: 5px;
   display: flex;
+  flex: none;
   align-items: center;
   gap: 2px;
   margin: 0;
-  padding-left: 12px;
-  background: var(--cor-cartao);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s;
 }
 
-.prato:hover,
 .prato:focus-within {
-  background: var(--cor-cartao);
-}
-
-.prato:hover .prato__acoes,
-.prato:focus-within .prato__acoes {
-  opacity: 1;
-  /* "initial" equivale a "auto", mas é o valor aceito pelo validador do W3C */
-  pointer-events: initial;
+  background-color: var(--cor-cartao);
 }
 
 .prato__acao {
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
+  min-height: 44px;
   padding: 0 9px;
   border: 0;
   background: transparent;
   color: var(--cor-tinta);
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: var(--texto-14);
+  font-weight: 600;
+  -webkit-user-select: none;
+  user-select: none;
   text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s var(--curva), transform 0.12s var(--curva);
 }
 
-.prato__acao:hover {
-  color: var(--cor-tinta);
-  text-decoration: underline;
+.prato__acao:active {
+  transform: scale(0.96);
 }
 
 .prato__acao--perigo {
   margin-left: 10px;
   padding-left: 16px;
   border-left: 1px solid var(--cor-linha-forte);
-  color: var(--cor-pomodoro-escuro);
-}
-
-.prato__acao--perigo:hover {
   color: var(--cor-pomodoro-escuro);
 }
 
@@ -1660,7 +1612,7 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 .prato__codigo {
   flex: none;
   font-family: var(--fonte-serifa);
-  font-size: 1.125rem;
+  font-size: var(--texto-18);
   font-style: italic;
   white-space: nowrap;
   color: var(--cor-tinta-3);
@@ -1677,6 +1629,29 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   border-top: 1px solid var(--cor-tinta);
   border-bottom: 4px double var(--cor-tinta);
   text-align: center;
+}
+
+.vazio__gravura {
+  width: min(280px, 70%);
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
+}
+
+.vazio__codigo {
+  margin: 0;
+  font-size: var(--texto-14);
+  color: var(--cor-tinta-3);
+}
+
+.vazio__codigo-valor {
+  padding: 2px 6px;
+  border: 1px solid var(--cor-linha-forte);
+  background: var(--cor-cartao);
+  color: var(--cor-tinta);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: var(--texto-14);
+  overflow-wrap: anywhere;
 }
 
 .vazio__titulo {
@@ -1710,25 +1685,23 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   border-top: 1px solid var(--cor-tinta);
 }
 
+/* cada campo ocupa a linha inteira; os campos--metade dividem a linha quando cabem */
 .edicao__formulario {
   display: flex;
   flex: 999 1 480px;
-  flex-direction: column;
-  gap: 26px;
+  flex-wrap: wrap;
+  gap: 26px 28px;
   min-width: 0;
   max-width: 700px;
 }
 
-.edicao__linha {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 26px 28px;
-  margin: 0;
+.edicao__formulario > * {
+  flex: 1 1 100%;
+  min-width: 0;
 }
 
-.edicao__linha > .campo {
+.edicao__formulario > .campo--metade {
   flex: 1 1 220px;
-  min-width: 0;
 }
 
 .previa {
@@ -1747,14 +1720,12 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   margin: 0;
   padding-bottom: 12px;
   border-bottom: 4px double var(--cor-tinta);
-  font-family: var(--fonte-texto);
-  font-size: 0.71875rem;
-  font-weight: 700;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
 }
 
 .previa__grupo {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-3);
   margin: 0;
   font-family: var(--fonte-serifa);
   font-size: 1.875rem;
@@ -1781,14 +1752,21 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   color: var(--cor-tinta-2);
 }
 
+.previa__gravura {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
 /* ---------- Ficha do item (detalhes e exclusão) ---------- */
 
 .confirmacao {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: var(--espaco-6);
   max-width: 760px;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .ficha {
@@ -1812,6 +1790,9 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 }
 
 .ficha__grupo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-3);
   font-family: var(--fonte-serifa);
   font-size: 1.875rem;
   line-height: 1;
@@ -1819,17 +1800,22 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 
 .ficha__codigo {
   font-family: var(--fonte-serifa);
-  font-size: 1.125rem;
+  font-size: var(--texto-18);
   font-style: italic;
   color: var(--cor-tinta-3);
 }
 
-.ficha .prato__link {
-  padding-top: 0;
-  box-shadow: none;
+/* na ficha a própria linha alinha nome, pontinhos e preço pela base do texto */
+.ficha .prato {
+  flex-wrap: nowrap;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 14px;
 }
 
+/* na ficha o nome é o título (h2) do cartão */
 .ficha .prato__nome {
+  margin: 0;
   font-size: 1.875rem;
 }
 
@@ -1858,6 +1844,21 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   font-weight: 600;
 }
 
+.ficha__gravura {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+/* a prévia e a ficha são cartões de papel que se inclinam com o mouse (js/movimento.js) */
+
+.previa,
+.ficha {
+  box-shadow: var(--sombra-papel);
+  transform: perspective(1000px) rotateX(var(--giro-x, 0deg)) rotateY(var(--giro-y, 0deg));
+}
+
 .alerta {
   display: flex;
   align-items: flex-start;
@@ -1866,8 +1867,8 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   padding: 16px 18px;
   border: 1px solid var(--cor-ocra);
   background: var(--cor-creme);
-  color: #4a3006;
-  font-size: 1rem;
+  color: var(--cor-ocra-texto);
+  font-size: var(--texto-16);
   line-height: 1.5;
 }
 
@@ -1878,19 +1879,190 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 
 .alerta--erro {
   border-color: var(--cor-pomodoro-escuro);
-  background: #fbeee9;
+  background: var(--cor-pomodoro-fundo);
   color: var(--cor-pomodoro-escuro);
 }
 
-.titulo-pagina__sobretitulo--perigo {
-  color: var(--cor-pomodoro-escuro);
+/* ---------- Página inicial: cardápio dobrado em 3D ---------- */
+
+/* a cena dá a profundidade; o objeto gira com o mouse (variáveis --giro-x e --giro-y do js/movimento.js) */
+.cardapio {
+  flex: 0 1 680px;
+  min-width: 0;
+  perspective: 1600px;
 }
 
-/* ---------- Movimento ---------- */
+.cardapio__objeto {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  transform: rotateX(var(--giro-x, 0deg)) rotateY(var(--giro-y, 0deg));
+  transform-style: preserve-3d;
+}
+
+/* aba da esquerda: presa pela lombada (borda direita), aberta em leve "V" como um cardápio em pé */
+.cardapio__aba {
+  position: relative;
+  transform: rotateY(14deg);
+  transform-origin: right center;
+  transform-style: preserve-3d;
+}
+
+.cardapio__face {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  border: 1px solid var(--cor-tinta);
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-papel);
+  backface-visibility: hidden;
+}
+
+.cardapio__face--dentro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-4);
+  padding: var(--espaco-7) var(--espaco-5);
+  background: var(--cor-papel-gravura);
+  text-align: center;
+  /* filete duplo de cardápio impresso, desenhado por dentro da borda */
+  outline: 4px double var(--cor-tinta);
+  outline-offset: -14px;
+}
+
+.cardapio__gravura {
+  display: block;
+  width: 100%;
+}
+
+.cardapio__imagem {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
+}
+
+.cardapio__nome-carta {
+  font-family: var(--fonte-serifa);
+  font-size: var(--texto-36);
+  font-style: italic;
+  line-height: 1;
+}
+
+/* capa: o lado de fora da aba, visto só enquanto o cardápio está fechado */
+.cardapio__face--capa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-3);
+  background: var(--cor-pomodoro);
+  color: var(--cor-cartao);
+  text-align: center;
+  outline: 1px solid var(--cor-cartao);
+  outline-offset: -14px;
+  transform: rotateY(180deg);
+}
+
+.cardapio__capa-titulo {
+  font-family: var(--fonte-serifa);
+  font-size: var(--texto-48);
+  font-style: italic;
+  line-height: 1;
+}
+
+/* página da direita: o resumo do dia, levemente voltada para quem olha */
+.cardapio__pagina {
+  flex: none;
+  align-self: stretch;
+  min-width: 0;
+  transform: rotateY(-8deg);
+  transform-origin: left center;
+}
+
+/* na primeira visita da sessão a aba sai fechada e abre (classe posta pelo js/movimento.js) */
+.cardapio--abrindo .cardapio__aba {
+  animation: abrir-cardapio 0.9s 0.35s var(--curva-abrir) both;
+}
+
+@keyframes abrir-cardapio {
+  from {
+    transform: rotateY(-178deg);
+  }
+
+  to {
+    transform: rotateY(14deg);
+  }
+}
+
+/* ---------- Movimento: entradas em cascata e animações ---------- */
 
 .u-surge {
-  animation: surgir 0.8s var(--curva) both;
-  animation-delay: calc(var(--atraso, 0) * 70ms);
+  animation: surgir 0.4s var(--curva) both;
+}
+
+.u-surge--depois {
+  animation-delay: 120ms;
+}
+
+/* linhas das formas de pagamento: chegam uma depois da outra ao abrir a página */
+.lista-simples > .prato {
+  animation: surgir 0.4s var(--curva) both;
+}
+
+.lista-simples > .prato:nth-child(2) {
+  animation-delay: 40ms;
+}
+
+.lista-simples > .prato:nth-child(3) {
+  animation-delay: 80ms;
+}
+
+.lista-simples > .prato:nth-child(4) {
+  animation-delay: 120ms;
+}
+
+.lista-simples > .prato:nth-child(n + 5) {
+  animation-delay: 160ms;
+}
+
+/* linhas dos itens: só na primeira carga da tabela (o js tira a classe depois), nunca ao buscar ou paginar */
+.tabela-itens--chegando tbody tr {
+  animation: surgir 0.4s var(--curva) both;
+}
+
+.tabela-itens--chegando tbody tr:nth-child(2) {
+  animation-delay: 30ms;
+}
+
+.tabela-itens--chegando tbody tr:nth-child(3) {
+  animation-delay: 60ms;
+}
+
+.tabela-itens--chegando tbody tr:nth-child(4) {
+  animation-delay: 90ms;
+}
+
+.tabela-itens--chegando tbody tr:nth-child(5) {
+  animation-delay: 120ms;
+}
+
+.tabela-itens--chegando tbody tr:nth-child(n + 6) {
+  animation-delay: 150ms;
+}
+
+.indice > .capitulo:nth-child(2) {
+  animation-delay: 60ms;
+}
+
+.indice > .capitulo:nth-child(3) {
+  animation-delay: 120ms;
+}
+
+.indice > .capitulo:nth-child(n + 4) {
+  animation-delay: 180ms;
 }
 
 @keyframes surgir {
@@ -1905,6 +2077,17 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   }
 }
 
+/* versão sem deslocamento das entradas, para quem pediu menos movimento */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 /* só move, sem mexer na opacidade: o aviso continua legível mesmo se a animação não rodar */
 @keyframes deslizar {
   from {
@@ -1913,16 +2096,6 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 
   to {
     transform: none;
-  }
-}
-
-@keyframes encher {
-  from {
-    transform: scaleX(0);
-  }
-
-  to {
-    transform: scaleX(1);
   }
 }
 
@@ -1940,25 +2113,72 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 /* ---------- Telas menores ---------- */
 
 @media (max-width: 991.98px) {
-  .painel {
+  .cardapio {
     flex: 1 1 100%;
-    align-self: stretch;
+  }
+
+  .painel {
     min-width: 0;
   }
 }
 
-@media (max-width: 575.98px) {
-  .cabecalho__saudacao {
+/* celular e tablet: sem 3D, o cardápio vira um cartão plano */
+
+@media (max-width: 767.98px) {
+  /* a abertura ocupa a primeira tela inteira do celular (100svh não pula quando a barra do navegador some) */
+  .abertura {
+    min-height: calc(100svh - 132px);
+    align-content: flex-start;
+  }
+
+  .cardapio {
+    perspective: none;
+  }
+
+  .proverbio {
+    margin-top: var(--espaco-8);
+    padding: 44px var(--espaco-2) 56px;
+  }
+
+  .cardapio__objeto {
+    display: flex;
+    flex-direction: column;
+    transform: none;
+  }
+
+  .cardapio__aba,
+  .cardapio__pagina {
+    transform: none;
+  }
+
+  .cardapio__face {
+    position: static;
+    box-shadow: none;
+  }
+
+  .cardapio__face--dentro {
+    padding: var(--espaco-5);
+    border-bottom: 0;
+  }
+
+  .cardapio__casa,
+  .cardapio__nome-carta {
     display: none;
   }
 
-  .cabecalho__barra {
-    gap: 0;
+  .cardapio__face--capa {
+    display: none;
   }
 
-  /* o menu desliza para o lado; a borda direita esmaecida indica que há mais */
-  .capitulos {
-    mask-image: linear-gradient(to right, #000000 82%, transparent);
+  .previa,
+  .ficha {
+    transform: none;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .cabecalho__barra {
+    gap: 0;
   }
 
   .cabecalho--inicial .capitulos {
@@ -1966,7 +2186,9 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   }
 
   .capitulos__link {
-    padding: 0 12px;
+    gap: 5px;
+    padding: 0 6px;
+    letter-spacing: 0.08em;
   }
 
   .conteudo {
@@ -2024,6 +2246,7 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   }
 
   /* o seletor repete o da biblioteca, para o espaçamento dela não valer no celular */
+  table.tabela-itens > tbody > tr > th,
   table.tabela-itens > tbody > tr > td {
     display: block;
     padding: 0;
@@ -2040,7 +2263,7 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
     border-bottom: 4px double var(--cor-tinta);
   }
 
-  .tabela-itens tbody td:first-child,
+  .tabela-itens tbody th,
   .tabela-itens tbody td.tabela-itens__coluna-acoes {
     grid-column: 1 / -1;
   }
@@ -2066,40 +2289,100 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
     flex: 1;
     min-width: 0;
   }
-
-  .proverbio {
-    margin-top: 80px;
-    padding: 44px 8px 56px;
-  }
 }
 
-/* Em telas de toque não existe "passar o mouse": as ações ficam sempre visíveis */
-@media (hover: none) {
-  .prato__link {
-    box-shadow: none;
+/* ---------- Toque e mouse ---------- */
+
+/* estado de clique: o elemento "afunda" um pouco, como um botão de verdade */
+.btn:active,
+.atalho:active {
+  transform: scale(0.97);
+}
+
+a.entrada:active {
+  background: var(--cor-creme);
+}
+
+.aviso__fechar:active {
+  transform: scale(0.92);
+}
+
+/* o hover só vale para quem usa mouse; no toque ele "grudaria" depois do clique */
+@media (hover: hover) and (pointer: fine) {
+  .capitulos__link:hover::after {
+    transform: scaleX(1);
   }
 
-  .prato__acoes {
-    position: static;
-    flex: 1 1 100%;
-    flex-wrap: wrap;
-    padding: 0 0 6px;
-    background: none;
-    box-shadow: inset 0 -1px 0 var(--cor-linha);
-    opacity: 1;
-    pointer-events: initial;
+  .capitulos__link:hover .capitulos__numero {
+    color: var(--cor-pomodoro);
   }
 
-  .prato__acao {
-    min-height: 44px;
+  .btn--seta:hover svg {
+    transform: translateX(4px);
   }
 
-  .prato__acoes > li:first-child .prato__acao {
-    padding-left: 0;
+  .link-voltar:hover svg,
+  .btn--voltar:hover svg {
+    transform: translateX(-4px);
   }
 
   .atalho:hover {
-    transform: none;
+    background: var(--cor-tinta);
+    color: var(--cor-cartao);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-atalho);
+  }
+
+  .atalho:hover .atalho__mais {
+    color: var(--cor-pomodoro-claro);
+    transform: rotate(90deg);
+  }
+
+  .atalho:hover:active {
+    transform: translateY(0) scale(0.97);
+  }
+
+  a.entrada:hover {
+    background: var(--cor-cartao);
+  }
+
+  a.entrada:hover .entrada__titulo {
+    color: var(--cor-pomodoro);
+  }
+
+  a.entrada:hover .u-pontos {
+    border-bottom-color: var(--cor-pomodoro-claro);
+  }
+
+  a.entrada:hover .entrada__seta {
+    color: var(--cor-pomodoro);
+    transform: translateX(4px);
+  }
+
+  .tabela-itens__link:hover .prato__nome {
+    color: var(--cor-pomodoro);
+  }
+
+  .prato:hover {
+    background-color: var(--cor-cartao);
+  }
+
+  .prato__acao:hover {
+    color: var(--cor-tinta);
+    text-decoration: underline;
+  }
+
+  .prato__acao--perigo:hover {
+    color: var(--cor-pomodoro-escuro);
+  }
+}
+
+/* sem mouse, os botões do Bootstrap não trocam de cor ao toque (o :hover dele grudaria) */
+@media (hover: none) {
+  .btn.btn {
+    --bs-btn-hover-color: var(--bs-btn-color);
+    --bs-btn-hover-bg: var(--bs-btn-bg);
+    --bs-btn-hover-border-color: var(--bs-btn-border-color);
   }
 }
 
@@ -2108,10 +2391,24 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
     scroll-behavior: auto;
   }
 
+  .cardapio__objeto,
+  .cardapio__aba,
+  .cardapio__pagina,
+  [data-inclinar] {
+    transform: none !important;
+  }
+
   *,
   *::before,
   *::after {
-    animation: none !important;
     transition: none !important;
+  }
+
+  /* as entradas continuam, mas só como fade: nada se desloca nem gira */
+  .u-surge,
+  .lista-simples > .prato,
+  .tabela-itens--chegando tbody tr,
+  .aviso {
+    animation-name: aparecer !important;
   }
 }

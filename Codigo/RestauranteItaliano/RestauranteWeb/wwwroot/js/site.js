@@ -5,7 +5,7 @@
 document.querySelectorAll(".aviso").forEach((aviso) => {
   const fecharAviso = () => {
     aviso.classList.add("aviso--saindo");
-    setTimeout(() => aviso.remove(), 400);
+    setTimeout(() => aviso.remove(), 200);
   };
 
   aviso.querySelector("[data-fechar-aviso]")?.addEventListener("click", fecharAviso);
@@ -48,6 +48,11 @@ if (previa) {
     const apagado = !ativo?.checked || !disponivel?.checked;
 
     ver("grupo").textContent = nomeGrupo;
+    const gravura = ver("gravura");
+    if (gravura && window.gravuraDoGrupo) {
+      const novaGravura = window.gravuraDoGrupo(grupo?.selectedIndex > 0 ? nomeGrupo : "", previa);
+      if (!gravura.src.endsWith(novaGravura)) gravura.src = novaGravura;
+    }
     ver("nome").textContent = nome?.value.trim() || "Nome do item";
     ver("detalhes").textContent = detalhes?.value.trim() || "detalhes do item";
     ver("preco").textContent = preco?.value.trim() && !Number.isNaN(valor) ? reais.format(valor) : "R$ —";

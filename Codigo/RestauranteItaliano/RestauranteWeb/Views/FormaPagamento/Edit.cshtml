@@ -10,14 +10,15 @@
         Voltar para a lista
     </a>
     <hgroup class="titulo-pagina__texto">
-        <h1 class="titulo-pagina__titulo">Editar forma de pagamento<span class="u-acento">.</span></h1>
+        <h1 class="titulo-pagina__titulo">Editar forma de pagamento</h1>
         <p class="titulo-pagina__resumo">@Html.DisplayFor(model => model.Nome)</p>
     </hgroup>
 </header>
 
 <form class="edicao" asp-action="Edit" asp-route-id="@Model.Id" method="post" data-travar-envio>
     <input type="hidden" asp-for="Id">
-    <section class="edicao__formulario" aria-label="Dados da forma de pagamento">
+    <fieldset class="edicao__formulario">
+        <legend class="visually-hidden">Dados da forma de pagamento</legend>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <p class="campo campo--serifa campo--obrigatorio">
@@ -27,14 +28,16 @@
             <span class="campo__erro text-danger" asp-validation-for="Nome"></span>
         </p>
 
-        <p class="grupo-botoes">
-            <button class="btn btn--tinta" type="submit">
-                <svg class="icone" aria-hidden="true"><use href="#icone-confirmar"></use></svg>
-                Salvar alterações
-            </button>
-            <a class="btn btn--contorno" asp-action="Index">Cancelar</a>
-        </p>
-    </section>
+        <menu class="grupo-botoes u-lista-limpa">
+            <li>
+                <button class="btn btn--tinta" type="submit">
+                    <svg class="icone" aria-hidden="true"><use href="#icone-confirmar"></use></svg>
+                    Salvar alterações
+                </button>
+            </li>
+            <li><a class="btn btn--contorno" asp-action="Index">Cancelar</a></li>
+        </menu>
+    </fieldset>
 </form>
 
 @section Scripts {

@@ -19,6 +19,12 @@ namespace RestauranteWeb.Models
         public int FuncoesProntas => Capitulos.Sum(c => c.Entradas.Count(e => e.Pronta));
         public int FuncoesEmBreve => Capitulos.Sum(c => c.Entradas.Count(e => !e.Pronta));
 
+        /// <summary>Títulos das funções ainda não implementadas, mostrados numa única linha de texto.</summary>
+        public IEnumerable<string> TitulosEmBreve => Capitulos
+            .SelectMany(c => c.Entradas)
+            .Where(e => !e.Pronta)
+            .Select(e => e.Titulo);
+
         public int PercentualDisponivel => ItensNoCardapio > 0
             ? (int)Math.Round(ItensDisponiveis * 100.0 / ItensNoCardapio)
             : 0;

@@ -5,6 +5,25 @@
     {
       "library": "datatables.net@3.1.5",
       "destination": "wwwroot/lib/datatables.net/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "@fontsource/instrument-serif@5.3.0",
+      "destination": "wwwroot/lib/instrument-serif/",
+      "files": [
+        "LICENSE",
+        "files/instrument-serif-latin-400-normal.woff2",
+        "files/instrument-serif-latin-400-italic.woff2"
+      ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "@fontsource-variable/instrument-sans@5.3.0",
+      "destination": "wwwroot/lib/instrument-sans/",
+      "files": [
+        "LICENSE",
+        "files/instrument-sans-latin-wght-normal.woff2"
+      ]
     }
   ]
 }

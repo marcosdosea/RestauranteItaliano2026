@@ -7,25 +7,24 @@
     <span class="campo__erro text-danger" asp-validation-for="Nome"></span>
 </p>
 
-<p class="edicao__linha">
-    <span class="campo campo--obrigatorio">
-        <label class="campo__rotulo" asp-for="IdGrupoCardapio"></label>
-        <select class="form-select" asp-for="IdGrupoCardapio" asp-items="Model.GruposCardapio" aria-describedby="IdGrupoCardapio-ajuda">
-            <option value="">Selecione…</option>
-        </select>
-        <small class="campo__ajuda" id="IdGrupoCardapio-ajuda">Define em que parte do cardápio o item entra.</small>
-        <span class="campo__erro text-danger" asp-validation-for="IdGrupoCardapio"></span>
-    </span>
+@* grupo e preço ficam lado a lado quando cabem (campo--metade, no css) *@
+<p class="campo campo--metade campo--obrigatorio">
+    <label class="campo__rotulo" asp-for="IdGrupoCardapio"></label>
+    <select class="form-select" asp-for="IdGrupoCardapio" asp-items="Model.GruposCardapio" aria-describedby="IdGrupoCardapio-ajuda">
+        <option value="">Selecione…</option>
+    </select>
+    <small class="campo__ajuda" id="IdGrupoCardapio-ajuda">Define em que parte do cardápio o item entra.</small>
+    <span class="campo__erro text-danger" asp-validation-for="IdGrupoCardapio"></span>
+</p>
 
-    <span class="campo campo--serifa">
-        <label class="campo__rotulo" asp-for="Preco"></label>
-        <span class="input-group">
-            <span class="input-group-text" aria-hidden="true">R$</span>
-            <input class="form-control" asp-for="Preco" placeholder="0,00" inputmode="decimal" aria-describedby="Preco-ajuda">
-        </span>
-        <small class="campo__ajuda" id="Preco-ajuda">Use vírgula para os centavos: 29,90.</small>
-        <span class="campo__erro text-danger" asp-validation-for="Preco"></span>
+<p class="campo campo--metade campo--serifa">
+    <label class="campo__rotulo" asp-for="Preco"></label>
+    <span class="input-group">
+        <span class="input-group-text" aria-hidden="true">R$</span>
+        <input class="form-control" asp-for="Preco" placeholder="0,00" inputmode="decimal" aria-describedby="Preco-ajuda">
     </span>
+    <small class="campo__ajuda" id="Preco-ajuda">Use vírgula para os centavos: 29,90.</small>
+    <span class="campo__erro text-danger" asp-validation-for="Preco"></span>
 </p>
 
 <p class="campo campo--obrigatorio">

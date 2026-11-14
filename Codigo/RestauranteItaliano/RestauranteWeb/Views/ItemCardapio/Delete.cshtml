@@ -5,10 +5,7 @@
 }
 
 <section class="confirmacao" aria-labelledby="titulo-excluir">
-    <hgroup class="titulo-pagina__texto">
-        <p class="u-rotulo titulo-pagina__sobretitulo--perigo">Excluir item</p>
-        <h1 class="titulo-pagina__titulo" id="titulo-excluir">Tirar este item do cardápio de vez?</h1>
-    </hgroup>
+    <h1 class="titulo-pagina__titulo" id="titulo-excluir">Tirar este item do cardápio de vez?</h1>
 
     @* resumo de validação, como no padrão do professor; fica escondido enquanto não há erro *@
     <div asp-validation-summary="All" class="alerta alerta--erro" role="alert"></div>
@@ -24,17 +21,23 @@
         </span>
     </p>
 
-    <form class="grupo-botoes" asp-action="Delete" asp-route-id="@Model.Id" method="post">
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
         <input type="hidden" asp-for="Id">
         <input type="hidden" asp-for="Nome">
-        <a class="btn btn--tinta btn--voltar" asp-action="Index">
-            <svg class="icone" aria-hidden="true"><use href="#icone-voltar"></use></svg>
-            Manter o item
-        </a>
-        <button class="btn btn--perigo" type="submit">
-            <svg class="icone" aria-hidden="true"><use href="#icone-lixeira"></use></svg>
-            Excluir definitivamente
-        </button>
-        <a class="u-link-simples" asp-action="Edit" asp-route-id="@Model.Id">Editar em vez de excluir</a>
+        <menu class="grupo-botoes u-lista-limpa">
+            <li>
+                <a class="btn btn--tinta btn--voltar" asp-action="Index">
+                    <svg class="icone" aria-hidden="true"><use href="#icone-voltar"></use></svg>
+                    Manter o item
+                </a>
+            </li>
+            <li>
+                <button class="btn btn--perigo" type="submit">
+                    <svg class="icone" aria-hidden="true"><use href="#icone-lixeira"></use></svg>
+                    Excluir definitivamente
+                </button>
+            </li>
+            <li><a class="u-link-simples" asp-action="Edit" asp-route-id="@Model.Id">Editar em vez de excluir</a></li>
+        </menu>
     </form>
 </section>

@@ -5,10 +5,7 @@
 }
 
 <section class="confirmacao" aria-labelledby="titulo-excluir">
-    <hgroup class="titulo-pagina__texto">
-        <p class="u-rotulo titulo-pagina__sobretitulo--perigo">Excluir forma de pagamento</p>
-        <h1 class="titulo-pagina__titulo" id="titulo-excluir">Excluir esta forma de pagamento de vez?</h1>
-    </hgroup>
+    <h1 class="titulo-pagina__titulo" id="titulo-excluir">Excluir esta forma de pagamento de vez?</h1>
 
     <div asp-validation-summary="All" class="alerta alerta--erro" role="alert"></div>
 
@@ -22,17 +19,23 @@
         </span>
     </p>
 
-    <form class="grupo-botoes" asp-action="Delete" asp-route-id="@Model.Id" method="post">
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
         <input type="hidden" asp-for="Id">
         <input type="hidden" asp-for="Nome">
-        <a class="btn btn--tinta btn--voltar" asp-action="Index">
-            <svg class="icone" aria-hidden="true"><use href="#icone-voltar"></use></svg>
-            Manter a forma
-        </a>
-        <button class="btn btn--perigo" type="submit">
-            <svg class="icone" aria-hidden="true"><use href="#icone-lixeira"></use></svg>
-            Excluir definitivamente
-        </button>
-        <a class="u-link-simples" asp-action="Edit" asp-route-id="@Model.Id">Editar em vez de excluir</a>
+        <menu class="grupo-botoes u-lista-limpa">
+            <li>
+                <a class="btn btn--tinta btn--voltar" asp-action="Index">
+                    <svg class="icone" aria-hidden="true"><use href="#icone-voltar"></use></svg>
+                    Manter a forma
+                </a>
+            </li>
+            <li>
+                <button class="btn btn--perigo" type="submit">
+                    <svg class="icone" aria-hidden="true"><use href="#icone-lixeira"></use></svg>
+                    Excluir definitivamente
+                </button>
+            </li>
+            <li><a class="u-link-simples" asp-action="Edit" asp-route-id="@Model.Id">Editar em vez de excluir</a></li>
+        </menu>
     </form>
 </section>

@@ -1,4 +1,4 @@
-@model RestauranteWeb.Models.ItemCardapioViewModel
+﻿@model RestauranteWeb.Models.ItemCardapioViewModel
 
 @{
     ViewData["Title"] = "Itens do cardápio";
@@ -11,8 +11,7 @@
 
 <header class="titulo-pagina">
     <hgroup class="titulo-pagina__texto">
-        <p class="u-rotulo">Capítulo · Cardápio</p>
-        <h1 class="titulo-pagina__titulo">Itens do cardápio<span class="u-acento">.</span></h1>
+        <h1 class="titulo-pagina__titulo">Itens do cardápio</h1>
         <p class="titulo-pagina__resumo" aria-live="polite" data-resumo-itens></p>
     </hgroup>
     <a class="btn btn--tinta" asp-action="Create">
@@ -46,7 +45,9 @@
        data-url-editar="@Url.Action("Edit")"
        data-url-excluir="@Url.Action("Delete")"
        data-url-disponibilidade="@Url.Action("AlternarDisponivel")"
-       data-idioma="@Url.Content("~/lib/datatables.net/pt-BR.json")">
+       data-idioma="@Url.Content("~/lib/datatables.net/pt-BR.json")"
+       data-gravuras="@Gravuras.PalavrasChaveJson"
+       data-pasta-gravuras="@Url.Content(Gravuras.Pasta)">
     <caption class="visually-hidden">Itens do cardápio, com busca, filtro por grupo, ordenação e paginação</caption>
     <thead>
         <tr>

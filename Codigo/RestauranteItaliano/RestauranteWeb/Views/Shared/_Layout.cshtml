@@ -3,12 +3,9 @@
     var acaoAtual = ViewContext.RouteData.Values["action"]?.ToString();
     var paginaInicial = controllerAtual == "Home" && acaoAtual == "Index";
 
-    var capitulos = Navegacao.Capitulos();
+    // o menu mostra só os capítulos que já têm alguma tela pronta
+    var capitulos = Navegacao.Capitulos().Where(capitulo => capitulo.TemFuncaoPronta).ToList();
     var capituloAtual = Navegacao.CapituloDo(capitulos, controllerAtual);
-
-    // preenchidos pelo HomeController: só a página inicial mostra a data e a saudação no topo
-    var dataLonga = ViewData["DataLonga"] as string;
-    var saudacao = ViewData["Saudacao"] as string;
 
     var mensagem = TempData["Mensagem"] as string;
     var erro = TempData["Erro"] as string;
@@ -18,13 +15,13 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>@ViewData["Title"] — Restaurante Italiano</title>
     <meta name="description" content="Sistema de gestão do Restaurante Italiano: cardápio, equipe, salão, pedidos e pagamentos.">
-    <meta name="theme-color" content="#f5efe6">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=Instrument+Serif:ital@0;1&amp;display=swap">
+    <meta name="theme-color" content="#f3eada">
+    @* fontes servidas pelo próprio site (wwwroot/lib, pelo libman.json); as duas da primeira dobra são pré-carregadas *@
+    <link rel="preload" href="~/lib/instrument-serif/files/instrument-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="~/lib/instrument-sans/files/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
     @await RenderSectionAsync("Estilos", required: false)
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
@@ -36,22 +33,9 @@
     <partial name="_Icones" />
 
     <header class="cabecalho @(paginaInicial ? "cabecalho--inicial" : null)">
-        @if (paginaInicial)
-        {
-            <p class="cabecalho__topo">
-                <span>@dataLonga</span>
-                <span class="cabecalho__saudacao">@saudacao</span>
-                <a class="cabecalho__link-topo" asp-controller="Home" asp-action="Privacy">Privacidade</a>
-            </p>
-        }
-
         <nav class="cabecalho__barra" aria-label="Menu principal">
             <a class="cabecalho__marca" asp-controller="Home" asp-action="Index" aria-current="@(paginaInicial ? "page" : null)">
-                @if (paginaInicial)
-                {
-                    <span class="cabecalho__sobre-marca">Sistema de gestão</span>
-                }
-                <span class="cabecalho__nome">Restaurante <em class="cabecalho__nome-destaque">Italiano</em></span>
+                <span class="cabecalho__nome">Restaurante <span class="cabecalho__nome-destaque">Italiano</span></span>
             </a>
 
             <ul class="capitulos u-lista-limpa">
@@ -59,18 +43,9 @@
                 {
                     var atual = capitulo == capituloAtual;
                     <li>
-                        @if (capitulo.TemFuncaoPronta)
-                        {
-                            <a class="capitulos__link @(atual ? "capitulos__link--atual" : null)" asp-controller="@capitulo.ControllerInicial" asp-action="Index" aria-current="@(atual ? "true" : null)">
-                                <span class="capitulos__numero">@capitulo.Romano</span>@capitulo.Nome
-                            </a>
-                        }
-                        else
-                        {
-                            <a class="capitulos__link capitulos__link--em-breve" asp-controller="Home" asp-action="Index" asp-fragment="@capitulo.Ancora" title="Ainda não implementado">
-                                <span class="capitulos__numero">@capitulo.Romano</span>@capitulo.Nome
-                            </a>
-                        }
+                        <a class="capitulos__link @(atual ? "capitulos__link--atual" : null)" asp-controller="@capitulo.ControllerInicial" asp-action="Index" aria-current="@(atual ? "true" : null)">
+                            <span class="capitulos__numero">@capitulo.Romano</span>@capitulo.Nome
+                        </a>
                     </li>
                 }
             </ul>
@@ -80,18 +55,11 @@
         {
             <nav class="cabecalho__secoes" aria-label="Telas do capítulo">
                 <ul class="secoes u-lista-limpa">
-                    @foreach (var entrada in capituloAtual.Entradas)
+                    @foreach (var entrada in capituloAtual.Entradas.Where(entrada => entrada.Pronta))
                     {
                         var atual = string.Equals(entrada.Controller, controllerAtual, StringComparison.OrdinalIgnoreCase);
                         <li>
-                            @if (entrada.Pronta)
-                            {
-                                <a class="secoes__link @(atual ? "secoes__link--atual" : null)" asp-controller="@entrada.Controller" asp-action="Index" aria-current="@(atual ? "page" : null)">@entrada.Titulo</a>
-                            }
-                            else
-                            {
-                                <span class="secoes__link secoes__link--em-breve">@entrada.Titulo <small>em breve</small></span>
-                            }
+                            <a class="secoes__link @(atual ? "secoes__link--atual" : null)" asp-controller="@entrada.Controller" asp-action="Index" aria-current="@(atual ? "page" : null)">@entrada.Titulo</a>
                         </li>
                     }
                 </ul>
@@ -101,12 +69,12 @@
 
     @if (!string.IsNullOrEmpty(mensagem) || !string.IsNullOrEmpty(erro))
     {
-        <aside class="avisos" aria-label="Avisos">
+        <section class="avisos" aria-label="Avisos">
             @if (!string.IsNullOrEmpty(mensagem))
             {
                 <p class="aviso" role="status">
                     <svg class="icone" aria-hidden="true"><use href="#icone-confirmar"></use></svg>
-                    <span class="aviso__texto">@mensagem</span>
+                    <span>@mensagem</span>
                     <button class="aviso__fechar" type="button" aria-label="Fechar aviso" data-fechar-aviso>
                         <svg class="icone icone--pequeno" aria-hidden="true"><use href="#icone-fechar"></use></svg>
                     </button>
@@ -117,13 +85,13 @@
             {
                 <p class="aviso aviso--erro" role="alert">
                     <svg class="icone" aria-hidden="true"><use href="#icone-erro"></use></svg>
-                    <span class="aviso__texto">@erro</span>
+                    <span>@erro</span>
                     <button class="aviso__fechar" type="button" aria-label="Fechar aviso" data-fechar-aviso>
                         <svg class="icone icone--pequeno" aria-hidden="true"><use href="#icone-fechar"></use></svg>
                     </button>
                 </p>
             }
-        </aside>
+        </section>
     }
 
     <main id="conteudo" class="conteudo" tabindex="-1">
@@ -131,13 +99,14 @@
     </main>
 
     <footer class="rodape">
-        <p class="rodape__texto">&copy; @DateTime.Now.Year Restaurante Italiano</p>
+        <p><small>&copy; @DateTime.Now.Year Restaurante Italiano</small></p>
         <p class="rodape__colofao">Composto em Instrument Serif e Instrument Sans</p>
         <a class="rodape__link" asp-controller="Home" asp-action="Privacy">Privacidade</a>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/movimento.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

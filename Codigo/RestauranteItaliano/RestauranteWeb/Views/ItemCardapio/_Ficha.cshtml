@@ -4,24 +4,31 @@
     var emFalta = Model.Ativo && !Model.Disponivel;
 }
 
-<article class="ficha" aria-labelledby="ficha-nome">
+<article class="ficha" aria-labelledby="ficha-nome" data-inclinar>
     <header class="ficha__cabeca">
-        <span class="ficha__grupo">@Model.NomeGrupoCardapio</span>
+        <span class="ficha__grupo"><img class="ficha__gravura" src="@Url.Content(Gravuras.CaminhoDoGrupo(Model.NomeGrupoCardapio))" alt="">@Model.NomeGrupoCardapio</span>
         <span class="ficha__codigo">código @Model.Id</span>
     </header>
-    <p class="prato @(emFalta ? "prato--em-falta" : (!Model.Ativo ? "prato--inativo" : null))">
-        <span class="prato__link">
-            <span class="prato__texto">
-                <span class="prato__nome" id="ficha-nome">@Model.Nome</span>
-                @if (!string.IsNullOrWhiteSpace(Model.Detalhes))
-                {
-                    <span class="prato__detalhe">@Model.Detalhes</span>
-                }
-            </span>
-            <span class="u-pontos" aria-hidden="true"></span>
-            <span class="prato__preco">@if (Model.Preco.HasValue) { @Html.DisplayFor(m => m.Preco) } else { <text>—</text> }</span>
-        </span>
-    </p>
+    @* a linha do cardápio: nome e detalhes (título e subtítulo), os pontinhos e o preço *@
+    <div class="prato @(emFalta ? "prato--em-falta" : (!Model.Ativo ? "prato--inativo" : null))">
+        <hgroup class="prato__texto">
+            <h2 class="prato__nome" id="ficha-nome">@Model.Nome</h2>
+            @if (!string.IsNullOrWhiteSpace(Model.Detalhes))
+            {
+                <p class="prato__detalhe">@Model.Detalhes</p>
+            }
+        </hgroup>
+        <span class="u-pontos" aria-hidden="true"></span>
+        @if (Model.Preco.HasValue)
+        {
+            @* <data>: o preço formatado para quem lê e o número puro no value *@
+            <data class="prato__preco" value="@Model.Preco.Value.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)">@Html.DisplayFor(m => m.Preco)</data>
+        }
+        else
+        {
+            <span class="prato__preco">—</span>
+        }
+    </div>
     <dl class="ficha__dados">
         <div class="ficha__dado">
             <dt class="ficha__termo">@Html.DisplayNameFor(m => m.NomeRestaurante)</dt>
