@@ -57,7 +57,7 @@ if (previa) {
     ver("detalhes").textContent = detalhes?.value.trim() || "detalhes do item";
     ver("preco").textContent = preco?.value.trim() && !Number.isNaN(valor) ? reais.format(valor) : "R$ —";
     ver("selo").hidden = !(ativo?.checked && !disponivel?.checked);
-    ver("item").classList.toggle("prato--em-falta", apagado);
+    ver("item").classList.toggle("linha-carta--em-falta", apagado);
 
     if (!ativo?.checked) {
       ver("nota").textContent = "Item inativo: fica guardado, mas não aparece no cardápio.";

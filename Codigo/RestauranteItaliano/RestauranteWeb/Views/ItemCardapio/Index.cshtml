@@ -35,10 +35,10 @@
     </label>
 </search>
 
-@* token usado pelos botões "Marcar em falta" que a tabela monta a cada página *@
+@* token dos botões "Marcar em falta" montados pelo DataTables *@
 @Html.AntiForgeryToken()
 
-@* os endereços saem daqui, montados pelo ASP.NET, para o JavaScript não ter rotas escritas à mão *@
+@* rotas usadas pelo js/itens-cardapio.js *@
 <table class="tabela-itens" id="tabela-itens"
        data-url="@Url.Action("GetDataPage")"
        data-url-detalhes="@Url.Action("Details")"
