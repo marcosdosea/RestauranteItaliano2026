@@ -35,18 +35,16 @@ else
     <ul class="lista-simples u-lista-limpa" aria-label="Formas de pagamento cadastradas">
         @foreach (var item in formasPagamento)
         {
-            <li class="prato" id="forma-@item.Id">
-                <a class="prato__link" asp-action="Details" asp-route-id="@item.Id">
-                    <span class="prato__texto">
-                        <span class="prato__nome">@Html.DisplayFor(modelItem => item.Nome)</span>
-                    </span>
+            <li class="linha-carta" id="forma-@item.Id">
+                <a class="linha-carta__conteudo" asp-action="Details" asp-route-id="@item.Id">
+                    <span class="linha-carta__nome">@Html.DisplayFor(modelItem => item.Nome)</span>
                     <span class="u-pontos" aria-hidden="true"></span>
-                    <span class="prato__codigo">@Html.DisplayNameFor(model => model.Id) @Html.DisplayFor(modelItem => item.Id)</span>
+                    <span class="linha-carta__codigo">@Html.DisplayNameFor(model => model.Id) @Html.DisplayFor(modelItem => item.Id)</span>
                 </a>
 
-                <menu class="prato__acoes u-lista-limpa">
-                    <li><a class="prato__acao" asp-action="Edit" asp-route-id="@item.Id" aria-label="Editar @item.Nome">Editar</a></li>
-                    <li><a class="prato__acao prato__acao--perigo" asp-action="Delete" asp-route-id="@item.Id" aria-label="Excluir @item.Nome">Excluir</a></li>
+                <menu class="linha-carta__acoes u-lista-limpa">
+                    <li><a class="acao" asp-action="Edit" asp-route-id="@item.Id" aria-label="Editar @item.Nome">Editar</a></li>
+                    <li><a class="acao acao--perigo" asp-action="Delete" asp-route-id="@item.Id" aria-label="Excluir @item.Nome">Excluir</a></li>
                 </menu>
             </li>
         }

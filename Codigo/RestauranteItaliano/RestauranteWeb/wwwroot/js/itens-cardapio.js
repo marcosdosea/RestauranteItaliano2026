@@ -35,10 +35,10 @@ if (tabelaItens && window.jQuery) {
 
   const colunaNome = (dados, tipo, item) => {
     const detalhes = item.detalhes
-      ? `<span class="prato__detalhe">${escapar(item.detalhes)}</span>`
+      ? `<span class="tabela-itens__detalhe">${escapar(item.detalhes)}</span>`
       : "";
     return `<a class="tabela-itens__link" href="${url.detalhes}/${item.id}">
-      <span class="prato__nome">${escapar(item.nome)}</span>${detalhes}</a>`;
+      <span class="tabela-itens__nome">${escapar(item.nome)}</span>${detalhes}</a>`;
   };
 
   // grupo com a gravura dele; a gravura repete o nome, por isso é decorativa (alt vazio)
@@ -50,8 +50,8 @@ if (tabelaItens && window.jQuery) {
     preco === null || preco === undefined ? "—" : `<data value="${Number(preco).toFixed(2)}">${reais.format(preco)}</data>`;
 
   const colunaSituacao = (dados, tipo, item) => {
-    if (!item.ativo) return '<span class="prato__selo prato__selo--inativo">Fora do cardápio</span>';
-    if (!item.disponivel) return '<span class="prato__selo">Em falta</span>';
+    if (!item.ativo) return '<span class="selo selo--inativo">Fora do cardápio</span>';
+    if (!item.disponivel) return '<span class="selo">Em falta</span>';
     return '<span class="tabela-itens__disponivel">Disponível</span>';
   };
 
@@ -59,18 +59,18 @@ if (tabelaItens && window.jQuery) {
     const nome = escapar(item.nome);
     const alternar = item.ativo
       ? `<li>
-          <form class="prato__formulario" action="${url.disponibilidade}/${item.id}" method="post">
+          <form class="tabela-itens__formulario" action="${url.disponibilidade}/${item.id}" method="post">
             <input type="hidden" name="__RequestVerificationToken" value="${escapar(token)}">
             <input type="hidden" name="disponivel" value="${item.disponivel ? "false" : "true"}">
-            <button class="prato__acao" type="submit" aria-label="${item.disponivel ? "Marcar em falta" : "Marcar disponível"}: ${nome}">${item.disponivel ? "Marcar em falta" : "Marcar disponível"}</button>
+            <button class="acao" type="submit" aria-label="${item.disponivel ? "Marcar em falta" : "Marcar disponível"}: ${nome}">${item.disponivel ? "Marcar em falta" : "Marcar disponível"}</button>
           </form>
         </li>`
       : "";
     // <menu>: a lista de comandos que se pode fazer com o item
     return `<menu class="tabela-itens__acoes u-lista-limpa">
-        <li><a class="prato__acao" href="${url.editar}/${item.id}" aria-label="Editar ${nome}">Editar</a></li>
+        <li><a class="acao" href="${url.editar}/${item.id}" aria-label="Editar ${nome}">Editar</a></li>
         ${alternar}
-        <li><a class="prato__acao prato__acao--perigo" href="${url.excluir}/${item.id}" aria-label="Excluir ${nome}">Excluir</a></li>
+        <li><a class="acao acao--perigo" href="${url.excluir}/${item.id}" aria-label="Excluir ${nome}">Excluir</a></li>
       </menu>`;
   };
 
@@ -135,6 +135,12 @@ if (tabelaItens && window.jQuery) {
       lengthMenu: "_MENU_ itens por página",
       emptyTable: "Nenhum item cadastrado ainda.",
       zeroRecords: "Nenhum item encontrado. Confira a busca ou escolha outro grupo.",
+      // o DataTables junta o título da coluna com este texto (fica "Nome: ordenar")
+      aria: {
+        orderable: ": ordenar",
+        orderableReverse: ": inverter a ordenação",
+        orderableRemove: ": remover a ordenação",
+      },
     },
   });
 

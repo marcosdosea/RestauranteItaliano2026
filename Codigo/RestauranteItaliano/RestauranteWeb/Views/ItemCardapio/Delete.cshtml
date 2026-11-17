@@ -4,10 +4,9 @@
     ViewData["Title"] = "Excluir item";
 }
 
-<section class="confirmacao" aria-labelledby="titulo-excluir">
-    <h1 class="titulo-pagina__titulo" id="titulo-excluir">Tirar este item do cardápio de vez?</h1>
+<section class="registro" aria-labelledby="titulo-excluir">
+    <h1 class="registro__titulo" id="titulo-excluir">Tirar este item do cardápio de vez?</h1>
 
-    @* resumo de validação, como no padrão do professor; fica escondido enquanto não há erro *@
     <div asp-validation-summary="All" class="alerta alerta--erro" role="alert"></div>
 
     <partial name="_Ficha" model="Model" />
