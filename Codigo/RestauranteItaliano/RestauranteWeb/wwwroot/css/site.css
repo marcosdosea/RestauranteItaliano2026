@@ -232,7 +232,7 @@ h1:not([class]) {
 .cardapio__casa,
 .cardapio__capa-casa,
 .tabela-itens__disponivel,
-.prato__selo,
+.selo,
 .tabela-itens thead th,
 .table > thead th {
   font-family: var(--fonte-texto);
@@ -888,7 +888,8 @@ div.validation-summary-valid {
   min-width: 0;
 }
 
-.titulo-pagina__titulo {
+.titulo-pagina__titulo,
+.registro__titulo {
   margin: 0;
   font-size: clamp(2.75rem, 5.4vw, 4.75rem);
   line-height: 0.95;
@@ -931,7 +932,8 @@ div.validation-summary-valid {
   overflow-wrap: anywhere;
 }
 
-.abertura__lead {
+.abertura__lead,
+.texto-corrido {
   max-width: 560px;
   margin: 6px 0 0;
   font-size: var(--texto-18);
@@ -1131,6 +1133,128 @@ div.validation-summary-valid {
   background: var(--cor-basilico);
 }
 
+/* ---------- Página inicial: estampa de fundo (js/estampa.js) ---------- */
+
+/* gravuras dos ingredientes em tinta bem clara, presas atrás de todo o conteúdo, como a estampa
+   de um papel de embrulho de trattoria. A tinta clara mantém o contraste do texto como no papel liso */
+.estampa {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+/* cada peça flutua no próprio ritmo (transform) e se desloca com o mouse conforme a profundidade (translate):
+   são duas propriedades separadas, para os dois movimentos não brigarem */
+.estampa__peca {
+  position: absolute;
+  height: auto;
+  rotate: var(--giro, 0deg);
+  translate: calc(var(--estampa-x, 0) * var(--profundidade, 16px)) calc(var(--estampa-y, 0) * var(--profundidade, 16px));
+  animation: flutuar var(--duracao, 16s) ease-in-out var(--atraso, 0s) infinite;
+}
+
+.estampa__peca--vinho {
+  --profundidade: 34px;
+  --duracao: 21s;
+  top: 6%;
+  right: 4%;
+  width: clamp(120px, 13vw, 210px);
+}
+
+.estampa__peca--tomate {
+  --profundidade: 22px;
+  --duracao: 17s;
+  --atraso: -4s;
+  --giro: -8deg;
+  top: 72%;
+  left: 1%;
+  width: clamp(90px, 9vw, 150px);
+}
+
+.estampa__peca--tomate-cortado {
+  --profundidade: 12px;
+  --duracao: 15s;
+  --atraso: -9s;
+  --giro: 14deg;
+  top: 3%;
+  left: 38%;
+  width: clamp(70px, 7vw, 120px);
+}
+
+.estampa__peca--manjericao {
+  --profundidade: 26px;
+  --duracao: 19s;
+  --atraso: -2s;
+  --giro: -24deg;
+  top: 66%;
+  left: 31%;
+  width: clamp(80px, 8vw, 130px);
+}
+
+.estampa__peca--alho {
+  --profundidade: 16px;
+  --duracao: 18s;
+  --atraso: -11s;
+  --giro: 6deg;
+  top: 20%;
+  left: 3%;
+  width: clamp(80px, 8vw, 130px);
+}
+
+.estampa__peca--parmesao {
+  --profundidade: 18px;
+  --duracao: 16s;
+  --atraso: -6s;
+  --giro: -10deg;
+  top: 80%;
+  left: 57%;
+  width: clamp(80px, 8vw, 130px);
+}
+
+.estampa__peca--ramo {
+  --profundidade: 14px;
+  --duracao: 20s;
+  --atraso: -14s;
+  --giro: 18deg;
+  top: 34%;
+  left: 47%;
+  width: clamp(70px, 7vw, 115px);
+}
+
+.estampa__peca--tomate-pequeno {
+  --profundidade: 10px;
+  --duracao: 14s;
+  --atraso: -7s;
+  --giro: 22deg;
+  top: 74%;
+  right: 22%;
+  width: clamp(54px, 5vw, 84px);
+}
+
+.estampa__peca--folha-pequena {
+  --profundidade: 8px;
+  --duracao: 13s;
+  --atraso: -3s;
+  --giro: 52deg;
+  top: 12%;
+  left: 22%;
+  width: clamp(50px, 4.5vw, 76px);
+}
+
+@keyframes flutuar {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-12px) rotate(3deg);
+  }
+}
+
 /* ---------- Página inicial: índice ---------- */
 
 .titulo-secao {
@@ -1193,17 +1317,26 @@ div.validation-summary-valid {
   animation: realce 1.8s ease-out;
 }
 
+/* as telas de cada capítulo, empilhadas como os atalhos do "Começar por" */
+.capitulo__entradas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-3);
+  margin-top: var(--espaco-3);
+}
+
+/* cada tela é um cartão de papel com borda de tinta, no mesmo desenho dos atalhos */
 .entrada {
   position: relative;
   display: flex;
   align-items: baseline;
   gap: 12px;
-  margin: 0 -14px;
-  padding: 15px 14px 13px;
-  box-shadow: inset 0 -1px 0 var(--cor-linha);
+  padding: 14px 16px 12px;
+  border: 1px solid var(--cor-tinta);
+  background: var(--cor-cartao-veu);
   color: inherit;
   text-decoration: none;
-  transition: background-color 0.2s var(--curva);
+  transition: background-color 0.2s var(--curva), transform 0.2s var(--curva), box-shadow 0.2s var(--curva);
 }
 
 .entrada__texto {
@@ -1422,9 +1555,14 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   margin: 0;
 }
 
-.tabela-itens__linha--em-falta .prato__nome,
+.tabela-itens__formulario {
+  display: inline-flex;
+  margin: 0;
+}
+
+.tabela-itens__linha--em-falta .tabela-itens__nome,
 .tabela-itens__linha--em-falta .tabela-itens__preco,
-.tabela-itens__linha--inativa .prato__nome,
+.tabela-itens__linha--inativa .tabela-itens__nome,
 .tabela-itens__linha--inativa .tabela-itens__preco {
   color: var(--cor-tinta-3);
 }
@@ -1471,9 +1609,9 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   object-fit: contain;
 }
 
-/* ---------- Linhas de prato (formas de pagamento e prévia do item) ---------- */
+/* ---------- Linha do cardápio (formas de pagamento, ficha e prévia do item) ---------- */
 
-.prato {
+.linha-carta {
   position: relative;
   display: flex;
   flex-wrap: wrap;
@@ -1489,7 +1627,7 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   transition: background-color 0.15s var(--curva);
 }
 
-.prato__link {
+.linha-carta__conteudo {
   display: flex;
   flex: 1 1 320px;
   align-items: baseline;
@@ -1499,20 +1637,22 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   text-decoration: none;
 }
 
-.prato__texto {
+.linha-carta__texto {
   display: flex;
   flex-direction: column;
   gap: 3px;
   min-width: 0;
 }
 
-.prato__nome {
+.linha-carta__nome,
+.tabela-itens__nome {
   font-family: var(--fonte-serifa);
   font-size: 1.625rem;
   line-height: 1.1;
 }
 
-.prato__detalhe {
+.linha-carta__detalhe,
+.tabela-itens__detalhe {
   margin: 0;
   font-family: var(--fonte-serifa);
   font-size: 1.03125rem;
@@ -1521,21 +1661,7 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   color: var(--cor-tinta-3);
 }
 
-.prato__selo {
-  flex: none;
-  padding: 3px 8px;
-  border: 1px solid var(--cor-ocra);
-  background: var(--cor-creme);
-  color: var(--cor-ocra-texto);
-}
-
-.prato__selo--inativo {
-  border-color: var(--cor-tinta-3);
-  background: transparent;
-  color: var(--cor-tinta-2);
-}
-
-.prato__preco {
+.linha-carta__preco {
   flex: none;
   min-width: 92px;
   font-family: var(--fonte-serifa);
@@ -1544,20 +1670,29 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   font-variant-numeric: tabular-nums;
 }
 
-.prato--em-falta .prato__nome,
-.prato--em-falta .prato__preco,
-.prato--inativo .prato__nome,
-.prato--inativo .prato__preco {
+.linha-carta__codigo {
+  flex: none;
+  font-family: var(--fonte-serifa);
+  font-size: var(--texto-18);
+  font-style: italic;
+  white-space: nowrap;
   color: var(--cor-tinta-3);
 }
 
-.prato--em-falta .prato__preco,
-.prato--inativo .prato__preco {
+.linha-carta--em-falta .linha-carta__nome,
+.linha-carta--em-falta .linha-carta__preco,
+.linha-carta--inativo .linha-carta__nome,
+.linha-carta--inativo .linha-carta__preco {
+  color: var(--cor-tinta-3);
+}
+
+.linha-carta--em-falta .linha-carta__preco,
+.linha-carta--inativo .linha-carta__preco {
   text-decoration: line-through;
 }
 
 /* ações sempre visíveis: em telas de toque não existe "passar o mouse" */
-.prato__acoes {
+.linha-carta__acoes {
   display: flex;
   flex: none;
   align-items: center;
@@ -1565,11 +1700,29 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   margin: 0;
 }
 
-.prato:focus-within {
+.linha-carta:focus-within {
   background-color: var(--cor-cartao);
 }
 
-.prato__acao {
+/* ---------- Selo de situação (em falta, fora do cardápio) ---------- */
+
+.selo {
+  flex: none;
+  padding: 3px 8px;
+  border: 1px solid var(--cor-ocra);
+  background: var(--cor-creme);
+  color: var(--cor-ocra-texto);
+}
+
+.selo--inativo {
+  border-color: var(--cor-tinta-3);
+  background: transparent;
+  color: var(--cor-tinta-2);
+}
+
+/* ---------- Ações das linhas (editar, marcar em falta, excluir) ---------- */
+
+.acao {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
@@ -1586,20 +1739,15 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   transition: color 0.15s var(--curva), transform 0.12s var(--curva);
 }
 
-.prato__acao:active {
+.acao:active {
   transform: scale(0.96);
 }
 
-.prato__acao--perigo {
+.acao--perigo {
   margin-left: 10px;
   padding-left: 16px;
   border-left: 1px solid var(--cor-linha-forte);
   color: var(--cor-pomodoro-escuro);
-}
-
-.prato__formulario {
-  display: inline-flex;
-  margin: 0;
 }
 
 /* ---------- Lista simples (cadastros com poucos campos, como formas de pagamento) ---------- */
@@ -1607,15 +1755,6 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 .lista-simples {
   max-width: 760px;
   border-top: 4px double var(--cor-tinta);
-}
-
-.prato__codigo {
-  flex: none;
-  font-family: var(--fonte-serifa);
-  font-size: var(--texto-18);
-  font-style: italic;
-  white-space: nowrap;
-  color: var(--cor-tinta-3);
 }
 
 /* ---------- Estados vazios ---------- */
@@ -1732,14 +1871,14 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   line-height: 1;
 }
 
-.previa .prato,
-.ficha .prato {
+.previa .linha-carta,
+.ficha .linha-carta {
   margin: 0;
   padding: 0;
   background: none;
 }
 
-.previa .prato__link {
+.previa .linha-carta__conteudo {
   padding-top: 4px;
 }
 
@@ -1761,7 +1900,7 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 
 /* ---------- Ficha do item (detalhes e exclusão) ---------- */
 
-.confirmacao {
+.registro {
   display: flex;
   flex-direction: column;
   gap: var(--espaco-6);
@@ -1806,7 +1945,7 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 }
 
 /* na ficha a própria linha alinha nome, pontinhos e preço pela base do texto */
-.ficha .prato {
+.ficha .linha-carta {
   flex-wrap: nowrap;
   align-items: baseline;
   gap: 12px;
@@ -1814,7 +1953,7 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 }
 
 /* na ficha o nome é o título (h2) do cartão */
-.ficha .prato__nome {
+.ficha .linha-carta__nome {
   margin: 0;
   font-size: 1.875rem;
 }
@@ -2008,23 +2147,23 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 }
 
 /* linhas das formas de pagamento: chegam uma depois da outra ao abrir a página */
-.lista-simples > .prato {
+.lista-simples > .linha-carta {
   animation: surgir 0.4s var(--curva) both;
 }
 
-.lista-simples > .prato:nth-child(2) {
+.lista-simples > .linha-carta:nth-child(2) {
   animation-delay: 40ms;
 }
 
-.lista-simples > .prato:nth-child(3) {
+.lista-simples > .linha-carta:nth-child(3) {
   animation-delay: 80ms;
 }
 
-.lista-simples > .prato:nth-child(4) {
+.lista-simples > .linha-carta:nth-child(4) {
   animation-delay: 120ms;
 }
 
-.lista-simples > .prato:nth-child(n + 5) {
+.lista-simples > .linha-carta:nth-child(n + 5) {
   animation-delay: 160ms;
 }
 
@@ -2170,6 +2309,13 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
     display: none;
   }
 
+  /* no celular a estampa fica com menos peças, para não carregar a tela pequena */
+  .estampa__peca--ramo,
+  .estampa__peca--tomate-pequeno,
+  .estampa__peca--folha-pequena {
+    display: none;
+  }
+
   .previa,
   .ficha {
     transform: none;
@@ -2195,7 +2341,8 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
     padding-top: 28px;
   }
 
-  .abertura__lead {
+  .abertura__lead,
+  .texto-corrido {
     font-size: 1.0625rem;
   }
 
@@ -2219,12 +2366,12 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   }
 
   /* no celular o preço vai para a direita sem os pontinhos, que não caberiam */
-  .prato .u-pontos {
+  .linha-carta .u-pontos {
     display: none;
   }
 
-  .prato__preco,
-  .prato__codigo {
+  .linha-carta__preco,
+  .linha-carta__codigo {
     margin-left: auto;
   }
 
@@ -2277,7 +2424,7 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
     justify-content: flex-start;
   }
 
-  .tabela-itens__acoes > li:first-child .prato__acao {
+  .tabela-itens__acoes > li:first-child .acao {
     padding-left: 0;
   }
 
@@ -2300,7 +2447,8 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 }
 
 a.entrada:active {
-  background: var(--cor-creme);
+  background: var(--cor-cartao);
+  transform: scale(0.98);
 }
 
 .aviso__fechar:active {
@@ -2342,8 +2490,15 @@ a.entrada:active {
     transform: translateY(0) scale(0.97);
   }
 
+  /* o cartão sobe e ganha a sombra do atalho; o fundo fica claro, para os quatro textos continuarem legíveis */
   a.entrada:hover {
     background: var(--cor-cartao);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-atalho);
+  }
+
+  a.entrada:hover:active {
+    transform: translateY(0) scale(0.98);
   }
 
   a.entrada:hover .entrada__titulo {
@@ -2359,20 +2514,20 @@ a.entrada:active {
     transform: translateX(4px);
   }
 
-  .tabela-itens__link:hover .prato__nome {
+  .tabela-itens__link:hover .tabela-itens__nome {
     color: var(--cor-pomodoro);
   }
 
-  .prato:hover {
+  .linha-carta:hover {
     background-color: var(--cor-cartao);
   }
 
-  .prato__acao:hover {
+  .acao:hover {
     color: var(--cor-tinta);
     text-decoration: underline;
   }
 
-  .prato__acao--perigo:hover {
+  .acao--perigo:hover {
     color: var(--cor-pomodoro-escuro);
   }
 }
@@ -2406,9 +2561,14 @@ a.entrada:active {
 
   /* as entradas continuam, mas só como fade: nada se desloca nem gira */
   .u-surge,
-  .lista-simples > .prato,
+  .lista-simples > .linha-carta,
   .tabela-itens--chegando tbody tr,
   .aviso {
     animation-name: aparecer !important;
+  }
+
+  /* a estampa fica parada, sem flutuar */
+  .estampa__peca {
+    animation: none;
   }
 }

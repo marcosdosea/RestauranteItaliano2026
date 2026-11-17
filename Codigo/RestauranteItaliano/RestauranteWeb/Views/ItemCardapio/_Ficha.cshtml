@@ -9,24 +9,22 @@
         <span class="ficha__grupo"><img class="ficha__gravura" src="@Url.Content(Gravuras.CaminhoDoGrupo(Model.NomeGrupoCardapio))" alt="">@Model.NomeGrupoCardapio</span>
         <span class="ficha__codigo">código @Model.Id</span>
     </header>
-    @* a linha do cardápio: nome e detalhes (título e subtítulo), os pontinhos e o preço *@
-    <div class="prato @(emFalta ? "prato--em-falta" : (!Model.Ativo ? "prato--inativo" : null))">
-        <hgroup class="prato__texto">
-            <h2 class="prato__nome" id="ficha-nome">@Model.Nome</h2>
+    <div class="linha-carta @(emFalta ? "linha-carta--em-falta" : (!Model.Ativo ? "linha-carta--inativo" : null))">
+        <hgroup class="linha-carta__texto">
+            <h2 class="linha-carta__nome" id="ficha-nome">@Model.Nome</h2>
             @if (!string.IsNullOrWhiteSpace(Model.Detalhes))
             {
-                <p class="prato__detalhe">@Model.Detalhes</p>
+                <p class="linha-carta__detalhe">@Model.Detalhes</p>
             }
         </hgroup>
         <span class="u-pontos" aria-hidden="true"></span>
         @if (Model.Preco.HasValue)
         {
-            @* <data>: o preço formatado para quem lê e o número puro no value *@
-            <data class="prato__preco" value="@Model.Preco.Value.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)">@Html.DisplayFor(m => m.Preco)</data>
+            <data class="linha-carta__preco" value="@Model.Preco.Value.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)">@Html.DisplayFor(m => m.Preco)</data>
         }
         else
         {
-            <span class="prato__preco">—</span>
+            <span class="linha-carta__preco">—</span>
         }
     </div>
     <dl class="ficha__dados">

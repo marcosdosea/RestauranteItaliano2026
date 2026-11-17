@@ -4,13 +4,25 @@
     ViewData["Title"] = "Início";
     var cardapioVazio = Model.DadosDisponiveis && Model.ItensNoCardapio == 0;
     var capitulosProntos = Model.Capitulos.Where(capitulo => capitulo.TemFuncaoPronta);
-    // a data por extenso para as pessoas e no formato ISO para o <time>
     var hojeIso = DateTime.Today.ToString("yyyy-MM-dd");
 }
 
+@* estampa de fundo (js/estampa.js) *@
+<div class="estampa" aria-hidden="true" data-estampa>
+    <img class="estampa__peca estampa__peca--vinho" src="~/images/gravuras/estampa/vinho.svg" alt="">
+    <img class="estampa__peca estampa__peca--tomate" src="~/images/gravuras/estampa/tomate.svg" alt="">
+    <img class="estampa__peca estampa__peca--tomate-cortado" src="~/images/gravuras/estampa/tomate-cortado.svg" alt="">
+    <img class="estampa__peca estampa__peca--manjericao" src="~/images/gravuras/estampa/manjericao.svg" alt="">
+    <img class="estampa__peca estampa__peca--alho" src="~/images/gravuras/estampa/alho.svg" alt="">
+    <img class="estampa__peca estampa__peca--parmesao" src="~/images/gravuras/estampa/parmesao.svg" alt="">
+    <img class="estampa__peca estampa__peca--ramo" src="~/images/gravuras/estampa/ramo.svg" alt="">
+    <img class="estampa__peca estampa__peca--tomate-pequeno" src="~/images/gravuras/estampa/tomate.svg" alt="">
+    <img class="estampa__peca estampa__peca--folha-pequena" src="~/images/gravuras/estampa/manjericao.svg" alt="">
+</div>
+
 <section class="abertura" aria-labelledby="saudacao">
     <header class="abertura__texto u-surge">
-        <h1 class="abertura__saudacao" id="saudacao">@Model.Saudacao</h1>
+        <h1 class="abertura__saudacao" id="saudacao" lang="it">@Model.Saudacao</h1>
         <p class="abertura__lead"><time datetime="@hojeIso">@Model.DataLonga</time>.</p>
 
         <nav class="atalhos" aria-labelledby="atalhos-titulo">
@@ -23,12 +35,9 @@
         </nav>
     </header>
 
-    @* Cardápio dobrado em 3D: a aba da esquerda tem a capa por fora e a gravura do forno por dentro;
-       a página da direita é o resumo do dia. O movimento fica no js/movimento.js e no CSS. *@
+    @* cardápio dobrado em 3D (js/movimento.js) *@
     <div class="cardapio u-surge u-surge--depois" data-cardapio>
         <div class="cardapio__objeto" data-inclinar>
-            @* a gravura do forno é a imagem da página; os nomes impressos na aba repetem a marca do cabeçalho
-               e a capa só aparece com o cardápio fechado, por isso ficam escondidos do leitor de tela *@
             <div class="cardapio__aba">
                 <figure class="cardapio__face cardapio__face--dentro">
                     <span class="cardapio__casa" aria-hidden="true">Restaurante Italiano</span>
@@ -68,7 +77,6 @@
                         @foreach (var grupo in Model.Grupos)
                         {
                             <li class="painel__grupo">
-                                @* a gravura repete o nome que vem ao lado: é decorativa, por isso o alt vazio *@
                                 <img class="painel__gravura" src="@Url.Content(Gravuras.CaminhoDoGrupo(grupo.Nome))" alt="">
                                 <span class="painel__grupo-nome">@grupo.Nome</span>
                                 <span class="u-pontos" aria-hidden="true"></span>
@@ -78,7 +86,6 @@
                     </ul>
                 }
 
-                @* <div> dentro de <dl> é o jeito válido de agrupar cada termo com o seu valor *@
                 <dl class="numeros">
                     <div class="numeros__item">
                         <dt class="numeros__rotulo">Itens</dt>
@@ -118,8 +125,6 @@
     </div>
 </section>
 
-@* índice do sistema: os capítulos são numerados (I, II, III), por isso <ol>;
-   as telas de cada capítulo são uma lista de links, por isso <ul> *@
 <nav class="sumario" aria-labelledby="indice-titulo">
     <header class="titulo-secao">
         <h2 class="titulo-secao__titulo" id="indice-titulo">Índice</h2>
@@ -135,7 +140,7 @@
                     <span class="capitulo__nome">@capitulo.Nome</span>
                 </h3>
 
-                <ul class="u-lista-limpa">
+                <ul class="capitulo__entradas u-lista-limpa">
                     @foreach (var entrada in capitulo.Entradas.Where(entrada => entrada.Pronta))
                     {
                         <li>
@@ -161,9 +166,12 @@
     }
 </nav>
 
-@* citação com a sua origem: figure + blockquote + figcaption *@
 <figure class="proverbio">
     <svg class="proverbio__ornamento" aria-hidden="true"><use href="#ornamento-ramo"></use></svg>
     <blockquote class="proverbio__frase" lang="it">«A tavola non s’invecchia.»</blockquote>
     <figcaption class="u-rotulo">À mesa não se envelhece · provérbio italiano</figcaption>
 </figure>
+
+@section Scripts {
+    <script src="~/js/estampa.js" asp-append-version="true"></script>
+}
