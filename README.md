@@ -4,6 +4,8 @@ Sistema web de gestão de restaurantes, desenvolvido em **ASP.NET Core MVC** com
 
 O sistema cobre o dia a dia de um restaurante: cadastros básicos (restaurantes, funcionários, cardápio, mesas e formas de pagamento) e a operação do salão (abrir o atendimento de uma mesa, registrar pedidos, receber pagamentos e fechar a conta).
 
+Além do site, uma **Web API** publica o cardápio e as formas de pagamento para aplicações externas, como um aplicativo de celular.
+
 ---
 
 ## 📋 Funcionalidades
@@ -32,6 +34,7 @@ O sistema cobre o dia a dia de um restaurante: cadastros básicos (restaurantes,
 O visual do sistema, chamado **La Carta · Trattoria**, imita o cardápio impresso de uma trattoria: papel de algodão, títulos com serifa, linhas pontilhadas ligando o nome ao preço e detalhes em vermelho pomodoro.
 
 - **Gravuras próprias:** as imagens do site são linogravuras em duas tintas (preto e vermelho), geradas para o projeto e vetorizadas em SVG (`wwwroot/images/gravuras`): uma para cada grupo do cardápio, o prato vazio e o erro. A foto do forno da página inicial vai em AVIF e WebP, com JPG de reserva, e o fundo é uma textura de papel (`wwwroot/images`).
+- **Estampa de fundo:** na página inicial, gravuras de ingredientes (vinho, tomate, manjericão, alho, parmesão e ramos) ficam espalhadas pelo fundo em tinta bem clara, flutuam devagar e se deslocam com o mouse em profundidades diferentes (`wwwroot/js/estampa.js`). No celular aparecem menos peças, e para quem pediu menos movimento elas ficam paradas.
 - **Cardápio em 3D:** na página inicial, o resumo do dia é um cardápio dobrado feito só com CSS 3D (`perspective` e `rotateY`). Ele abre na primeira visita e se inclina com o mouse (`wwwroot/js/movimento.js`); no celular e para quem pediu menos movimento ele fica plano e parado.
 - **Fontes locais:** Instrument Serif e Instrument Sans são servidas pelo próprio site, registradas no `libman.json`.
 
@@ -43,7 +46,7 @@ O visual do sistema, chamado **La Carta · Trattoria**, imita o cardápio impres
 - **Celular:** todas as telas se adaptam a telas pequenas, e as ações ficam sempre visíveis em telas de toque.
 - **Acessibilidade e validação:** HTML semântico, navegação por teclado, atributos `aria-*` e respeito à opção de reduzir animações. As páginas passam sem erros nos validadores de [HTML](https://validator.w3.org/nu/) e de [CSS](https://jigsaw.w3.org/css-validator/) do W3C.
 
-O estilo fica todo em `RestauranteWeb/wwwroot/css/site.css`, com variáveis de cor em português (`--cor-tinta`, `--cor-papel`…) e classes no padrão BEM (`prato__nome`, `aviso--erro`). O layout único das páginas é `Views/Shared/_Layout.cshtml`.
+O estilo fica todo em `RestauranteWeb/wwwroot/css/site.css`, com variáveis de cor em português (`--cor-tinta`, `--cor-papel`…) e classes no padrão BEM em português (`linha-carta__nome`, `aviso--erro`): cada elemento fica dentro do próprio bloco, e o CSS é dividido em seções, uma por bloco. O layout único das páginas é `Views/Shared/_Layout.cshtml`.
 
 Os ícones são desenhados uma única vez em `Views/Shared/_Icones.cshtml`. Cada tela usa um deles com `<svg class="icone" aria-hidden="true"><use href="#icone-voltar"></use></svg>`, e o tamanho, a cor e o traço vêm do CSS, sem `width`, `height` nem `style` no HTML.
 
@@ -57,6 +60,7 @@ Os ícones são desenhados uma única vez em `Views/Shared/_Icones.cshtml`. Cada
 - [Mapster](https://github.com/MapsterMapper/Mapster) para converter entidades em modelos de tela
 - Bootstrap 5 e jQuery Validation (validação no navegador)
 - [DataTables](https://datatables.net/) 3.1.5 nas listas com muitos registros (busca, ordenação e paginação no servidor)
+- [Swagger](https://github.com/domaindrivendev/Swashbuckle.AspNetCore) (Swashbuckle) para documentar e testar a Web API
 - [MSTest](https://learn.microsoft.com/dotnet/core/testing/unit-testing-mstest-intro), [Moq](https://github.com/devlooped/moq) e o provedor **InMemory** do Entity Framework Core nos testes unitários
 
 ---
@@ -72,7 +76,9 @@ Codigo/RestauranteItaliano
 ├── ServiceTest        → testes unitários dos serviços (MSTest + banco em memória)
 ├── Util               → atributos de validação reutilizáveis (CPF, CEP, telefones)
 ├── RestauranteWeb     → aplicação MVC: Controllers, Models (ViewModels), Mapper e Views
-└── RestauranteWebTest → testes unitários dos controllers (MSTest + Moq)
+├── RestauranteWebTest → testes unitários dos controllers (MSTest + Moq)
+├── RestauranteAPI     → Web API: Controllers, Models, Mappers e filtro de erros
+└── RestauranteAPITest → testes unitários da Web API (MSTest + Moq)
 ```
 
 Como uma funcionalidade é organizada (exemplo do CS07):
@@ -101,6 +107,26 @@ Listas com muitos registros usam o **DataTables** com processamento no servidor,
 | RestauranteWeb | `ItemCardapioController.GetDataPage` | Action `[HttpPost]` chamada pela tabela; devolve a página em JSON |
 | RestauranteWeb | `Views/ItemCardapio/Index.cshtml`, `wwwroot/js/itens-cardapio.js` | Monta a tabela e liga a busca e o filtro por grupo |
 | RestauranteWeb | `wwwroot/lib/datatables.net/` | Biblioteca DataTables e a tradução `pt-BR.json` (registrada no `libman.json`) |
+
+### Web API
+
+O projeto `RestauranteAPI` segue o modelo da aula de Web API: controladores `[ApiController]` que herdam de `ControllerBase` e usam os **mesmos services** do site, sem repetir regra de negócio. As respostas são em JSON, com `200 OK`, `201 Created`, `400 Bad Request` ou `404 Not Found`, e erros do banco podem devolver `409` ou `500`.
+
+| Método | Rota | O que faz |
+|---|---|---|
+| GET | `/api/FormasPagamento` | Lista as formas de pagamento |
+| GET | `/api/FormasPagamento/{id}` | Busca uma forma de pagamento |
+| POST | `/api/FormasPagamento` | Cadastra uma forma de pagamento |
+| PUT | `/api/FormasPagamento/{id}` | Edita uma forma de pagamento |
+| DELETE | `/api/FormasPagamento/{id}` | Exclui uma forma de pagamento |
+| GET | `/api/ItensCardapio` | Lista os itens do cardápio |
+| GET | `/api/ItensCardapio/{id}` | Busca um item |
+| POST | `/api/ItensCardapio` | Cadastra um item |
+| PUT | `/api/ItensCardapio/{id}` | Edita um item |
+| PUT | `/api/ItensCardapio/{id}/disponibilidade` | Marca o item em falta ou disponível |
+| DELETE | `/api/ItensCardapio/{id}` | Exclui um item |
+
+O filtro `Filter/HttpResponseExceptionFilter.cs` transforma os erros em respostas com mensagem em português: regra violada no serviço (`ServiceException`) vira `400`, e os erros do MySQL viram `409` (registro vinculado ou repetido), `400` (chave estrangeira inválida) ou `500`. O arquivo `RestauranteAPI.http` traz exemplos prontos de cada chamada.
 
 ---
 
@@ -153,6 +179,19 @@ cd Codigo/RestauranteItaliano/RestauranteWeb
 dotnet run
 ```
 
+### 5. Rode a Web API (opcional)
+
+**Visual Studio:** defina **RestauranteAPI** como projeto de inicialização e clique em ▶ **https**. O navegador abre o **Swagger** em `https://localhost:7300/swagger`, onde dá para testar cada rota.
+
+**Linha de comando:**
+
+```bash
+cd Codigo/RestauranteItaliano/RestauranteAPI
+dotnet run
+```
+
+A API usa a mesma string de conexão, em `RestauranteAPI/appsettings.json`, e por linha de comando fica em `http://localhost:5160/swagger`.
+
 ### Dados para testar a aplicação
 
 Enquanto o CS05 (Restaurantes) não estiver pronto, cadastre um restaurante direto no banco para poder criar itens do cardápio:
@@ -188,16 +227,17 @@ INSERT INTO restaurante.FormaPagamento (nome) VALUES ('Dinheiro'), ('Pix'), ('Ca
 
 ## 🧪 Testes
 
-A solução tem dois projetos de teste, no mesmo formato do projeto de referência da disciplina:
+A solução tem três projetos de teste, no mesmo formato do projeto de referência da disciplina:
 
 | Projeto | O que testa | Como |
 |---|---|---|
 | `ServiceTest` | Regras de negócio dos serviços | Banco em memória (`Microsoft.EntityFrameworkCore.InMemory`), criado do zero a cada teste |
-| `RestauranteWebTest` | Controllers | Serviços simulados com Moq |
+| `RestauranteWebTest` | Controllers do site | Serviços simulados com Moq |
+| `RestauranteAPITest` | Controllers da Web API | Serviços simulados com Moq |
 
 Os testes não usam o MySQL, então rodam mesmo sem o banco instalado.
 
-Situação atual: **93 testes, todos aprovados**.
+Situação atual: **135 testes, todos aprovados**.
 
 | Arquivo | Testes | O que cobre |
 |---|---|---|
@@ -208,6 +248,10 @@ Situação atual: **93 testes, todos aprovados**.
 | `RestauranteWebTest/Controllers/ItemCardapioControllerTests.cs` | 21 | Todas as ações do controller, incluindo a página em JSON para o DataTables, listas do formulário, aviso de erro ao marcar em falta e páginas inexistentes (404) |
 | `RestauranteWebTest/Controllers/HomeControllerTests.cs` | 3 | Resumo da página inicial e funcionamento com o banco fora do ar |
 | `RestauranteWebTest/Filter/CustomExceptionFilterTests.cs` | 8 | Tela de erro com a mensagem certa para erro inesperado, regra de negócio e erros do MySQL |
+| `RestauranteWebTest/Models/GravurasTests.cs` | 18 | Gravura certa para cada grupo do cardápio, pelas palavras-chave do nome |
+| `RestauranteAPITest/Controllers/FormasPagamentoControllerTests.cs` | 9 | Todas as rotas: listagem, busca, cadastro (201), edição, exclusão, dados inválidos (400) e registro inexistente (404) |
+| `RestauranteAPITest/Controllers/ItensCardapioControllerTests.cs` | 11 | Todas as rotas, incluindo marcar em falta ou disponível |
+| `RestauranteAPITest/Filter/HttpResponseExceptionFilterTests.cs` | 4 | Resposta 400 com a mensagem da regra de negócio, status próprio de `HttpResponseException` e erros inesperados sem tratamento |
 
 **Visual Studio:** menu **Teste → Executar Todos os Testes** (ou `Ctrl+R, A`). O resultado aparece no **Gerenciador de Testes**.
 

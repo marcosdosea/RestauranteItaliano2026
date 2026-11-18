@@ -10,7 +10,7 @@
         <h1 class="titulo-pagina__titulo">Formas de pagamento</h1>
         @if (formasPagamento.Any())
         {
-            <p class="titulo-pagina__resumo">@formasPagamento.Count @(formasPagamento.Count == 1 ? "forma cadastrada" : "formas cadastradas")</p>
+            <p class="titulo-pagina__resumo" aria-live="polite" data-resumo-lista data-plural="formas">@formasPagamento.Count @(formasPagamento.Count == 1 ? "forma cadastrada" : "formas cadastradas")</p>
         }
     </hgroup>
     <a class="btn btn--tinta" asp-action="Create">
@@ -32,21 +32,32 @@
 }
 else
 {
-    <ul class="lista-simples u-lista-limpa" aria-label="Formas de pagamento cadastradas">
+    <search class="ferramentas ferramentas--larga">
+        <label class="busca">
+            <svg class="icone" aria-hidden="true"><use href="#icone-busca"></use></svg>
+            <span class="visually-hidden">Buscar forma de pagamento pelo nome</span>
+            <input class="busca__campo" type="search" placeholder="Buscar forma de pagamento…" autocomplete="off" data-busca-lista="lista-cadastros">
+        </label>
+    </search>
+
+    <ul class="recibos u-lista-limpa" id="lista-cadastros" aria-label="Formas de pagamento cadastradas" data-lista-cadastro="FormaPagamento">
         @foreach (var item in formasPagamento)
         {
-            <li class="linha-carta" id="forma-@item.Id">
-                <a class="linha-carta__conteudo" asp-action="Details" asp-route-id="@item.Id">
-                    <span class="linha-carta__nome">@Html.DisplayFor(modelItem => item.Nome)</span>
-                    <span class="u-pontos" aria-hidden="true"></span>
-                    <span class="linha-carta__codigo">@Html.DisplayNameFor(model => model.Id) @Html.DisplayFor(modelItem => item.Id)</span>
-                </a>
-
-                <menu class="linha-carta__acoes u-lista-limpa">
-                    <li><a class="acao" asp-action="Edit" asp-route-id="@item.Id" aria-label="Editar @item.Nome">Editar</a></li>
-                    <li><a class="acao acao--perigo" asp-action="Delete" asp-route-id="@item.Id" aria-label="Excluir @item.Nome">Excluir</a></li>
-                </menu>
+            <li id="forma-@item.Id">
+                <article class="recibo" aria-labelledby="forma-@item.Id-nome" data-carimbo data-inclinar>
+                    <p class="recibo__casa">Restaurante Italiano</p>
+                    <p class="recibo__rotulo">pago com</p>
+                    <h2 class="recibo__nome" id="forma-@item.Id-nome"><a class="recibo__link" asp-action="Details" asp-route-id="@item.Id" data-busca-nome>@item.Nome</a></h2>
+                    <p class="recibo__codigo">nº @(item.Id?.ToString("000"))</p>
+                    <span class="recibo__barras" aria-hidden="true"></span>
+                    <menu class="recibo__acoes u-lista-limpa">
+                        <li><a class="acao" asp-action="Edit" asp-route-id="@item.Id" aria-label="Editar @item.Nome">Editar</a></li>
+                        <li><a class="acao acao--perigo" asp-action="Delete" asp-route-id="@item.Id" aria-label="Excluir @item.Nome">Excluir</a></li>
+                    </menu>
+                </article>
             </li>
         }
     </ul>
+
+    <p class="sem-resultado" data-sem-resultado hidden>Nenhuma forma com esse nome.</p>
 }

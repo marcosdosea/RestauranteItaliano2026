@@ -1,29 +1,57 @@
 @model RestauranteWeb.Models.GrupoCardapioModel
 
 @{
-    ViewData["Title"] = "Criar Grupo do Cardápio";
+    ViewData["Title"] = "Novo grupo do cardápio";
 }
 
-<h1>Criar Grupo do Cardápio</h1>
+<header class="titulo-pagina titulo-pagina--empilhado">
+    <a class="link-voltar" asp-action="Index">
+        <svg class="icone" aria-hidden="true"><use href="#icone-voltar"></use></svg>
+        Voltar para a lista
+    </a>
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">Novo grupo do cardápio</h1>
+        <p class="titulo-pagina__resumo">Os campos com asterisco são obrigatórios.</p>
+    </hgroup>
+</header>
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form class="edicao" asp-action="Create" method="post" data-travar-envio data-lembrar-novo="GrupoCardapio">
+    <fieldset class="edicao__formulario">
+        <legend class="visually-hidden">Dados do grupo do cardápio</legend>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="mb-3">
-                <label asp-for="Nome" class="form-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Salvar</button>
-                <a asp-action="Index" class="btn btn-secondary">Voltar</a>
-            </div>
-        </form>
-    </div>
-</div>
+        <p class="campo campo--serifa campo--obrigatorio">
+            <span class="campo__cabeca">
+                <label class="campo__rotulo" asp-for="Nome"></label>
+                <span class="campo__contador" data-contador></span>
+            </span>
+            <input class="form-control" asp-for="Nome" maxlength="50" placeholder="Ex.: Massas" autocomplete="off" aria-describedby="Nome-ajuda">
+            <small class="campo__ajuda" id="Nome-ajuda">Nome que separa os itens no cardápio, como Entradas ou Sobremesas. Entre 3 e 50 caracteres.</small>
+            <span class="campo__erro text-danger" asp-validation-for="Nome"></span>
+        </p>
+
+        <menu class="grupo-botoes u-lista-limpa">
+            <li>
+                <button class="btn btn--tinta" type="submit">
+                    <svg class="icone" aria-hidden="true"><use href="#icone-confirmar"></use></svg>
+                    Salvar grupo
+                </button>
+            </li>
+            <li><a class="btn btn--contorno" asp-action="Index">Cancelar</a></li>
+        </menu>
+    </fieldset>
+
+    <aside class="previa previa--objeto" aria-labelledby="previa-titulo" data-previa-cadastro data-pasta-gravuras="@Url.Content(Gravuras.Pasta)" data-gravuras="@Gravuras.PalavrasChaveJson">
+        <h2 class="previa__titulo" id="previa-titulo">Como vai aparecer</h2>
+        <div class="folha folha--destaque" data-inclinar>
+            <p class="folha__capitulo">@(Model?.Id > 0 ? "folha do cardápio" : "nova folha")</p>
+            <img class="folha__gravura" src="@Url.Content(Gravuras.CaminhoDoGrupo(Model?.Nome))" alt="" data-previa-gravura>
+            <p class="folha__nome"><span data-previa-nome data-previa-vazio="Nome do grupo">@(string.IsNullOrWhiteSpace(Model?.Nome) ? "Nome do grupo" : Model.Nome)</span></p>
+            <p class="folha__codigo">@(Model?.Id > 0 ? $"Código {Model.Id}" : "Código novo")</p>
+        </div>
+        <p class="previa__nota">A gravura acompanha o nome: entradas, massas, pizzas, carnes, sobremesas e bebidas têm a sua; os outros grupos usam a gravura do prato.</p>
+    </aside>
+</form>
 
 @section Scripts {
     @{

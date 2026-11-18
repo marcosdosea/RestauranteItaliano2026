@@ -1,34 +1,58 @@
-﻿@model RestauranteWeb.Models.TipoFuncionarioViewModel
+@model RestauranteWeb.Models.TipoFuncionarioViewModel
 
 @{
-    ViewData["Title"] = "Criar Tipo Funcionario";
+    ViewData["Title"] = "Novo tipo de funcionário";
 }
 
-<h1>Criar Tipo Funcionario</h1>
+<header class="titulo-pagina titulo-pagina--empilhado">
+    <a class="link-voltar" asp-action="Index">
+        <svg class="icone" aria-hidden="true"><use href="#icone-voltar"></use></svg>
+        Voltar para a lista
+    </a>
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">Novo tipo de funcionário</h1>
+        <p class="titulo-pagina__resumo">Os campos com asterisco são obrigatórios.</p>
+    </hgroup>
+</header>
 
-<h4>TipoFuncionarioViewModel</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form class="edicao" asp-action="Create" method="post" data-travar-envio data-lembrar-novo="TipoFuncionario">
+    <fieldset class="edicao__formulario">
+        <legend class="visually-hidden">Dados do tipo de funcionário</legend>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
-            </div>
+        <p class="campo campo--serifa campo--obrigatorio">
+            <span class="campo__cabeca">
+                <label class="campo__rotulo" asp-for="Nome"></label>
+                <span class="campo__contador" data-contador></span>
+            </span>
+            <input class="form-control" asp-for="Nome" maxlength="50" placeholder="Ex.: Garçom" autocomplete="off" aria-describedby="Nome-ajuda">
+            <small class="campo__ajuda" id="Nome-ajuda">A função na equipe, como garçom, cozinheiro ou gerente. Entre 3 e 50 caracteres.</small>
+            <span class="campo__erro text-danger" asp-validation-for="Nome"></span>
+        </p>
 
-            <div class="form-group">
-                <input type="submit" value="Criar" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+        <menu class="grupo-botoes u-lista-limpa">
+            <li>
+                <button class="btn btn--tinta" type="submit">
+                    <svg class="icone" aria-hidden="true"><use href="#icone-confirmar"></use></svg>
+                    Salvar tipo
+                </button>
+            </li>
+            <li><a class="btn btn--contorno" asp-action="Index">Cancelar</a></li>
+        </menu>
+    </fieldset>
 
-<div>
-    <a asp-action="Index">Voltar para lista</a>
-</div>
+    <aside class="previa previa--objeto" aria-labelledby="previa-titulo" data-previa-cadastro>
+        <h2 class="previa__titulo" id="previa-titulo">Como vai aparecer</h2>
+        <div class="cracha cracha--destaque" data-inclinar>
+            <span class="cracha__monograma" aria-hidden="true" data-previa-iniciais>@Monograma.DoNome(Model?.Nome)</span>
+            <p class="cracha__nome"><span data-previa-nome data-previa-vazio="Nome do tipo">@(string.IsNullOrWhiteSpace(Model?.Nome) ? "Nome do tipo" : Model.Nome)</span></p>
+            <p class="cracha__rotulo">Equipe</p>
+            <p class="cracha__codigo">nº @(Model?.Id > 0 ? ((uint?)Model.Id)?.ToString("000") : "novo")</p>
+        </div>
+        <p class="previa__nota">As iniciais do crachá saem do nome: a primeira e a última palavra, sem “de”, “da” e “do”.</p>
+    </aside>
+</form>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
