@@ -20,6 +20,18 @@
     </a>
 </header>
 
+<section class="conta" aria-labelledby="conta-titulo" hidden data-conta>
+    <h2 class="visually-hidden" id="conta-titulo">Situação do cardápio hoje</h2>
+    <p class="conta__item conta__item--disponivel"><span class="conta__valor" data-conta="disponiveis"></span><span class="conta__rotulo">disponíveis hoje</span></p>
+    <p class="conta__item conta__item--falta"><span class="conta__valor" data-conta="falta"></span><span class="conta__rotulo">em falta</span></p>
+    <p class="conta__item"><span class="conta__valor" data-conta="fora"></span><span class="conta__rotulo">fora do cardápio</span></p>
+    <p class="conta__item"><span class="conta__valor" data-conta="preco"></span><span class="conta__rotulo">preço médio</span></p>
+    <span class="conta__barra" aria-hidden="true">
+        <span class="conta__barra-parte conta__barra-parte--disponivel" data-conta-barra="disponiveis"></span>
+        <span class="conta__barra-parte conta__barra-parte--falta" data-conta-barra="falta"></span>
+    </span>
+</section>
+
 <search class="ferramentas">
     <label class="busca">
         <svg class="icone" aria-hidden="true"><use href="#icone-busca"></use></svg>
@@ -27,15 +39,35 @@
         <input class="busca__campo" type="search" placeholder="Buscar prato, bebida ou grupo…" autocomplete="off" data-busca-itens>
     </label>
 
-    <label class="filtro-grupo">
-        <span class="filtro-grupo__rotulo">@Html.DisplayNameFor(model => model.IdGrupoCardapio)</span>
-        <select class="form-select filtro-grupo__campo" asp-items="gruposCardapio" data-grupo-itens>
-            <option value="">Todos os grupos</option>
-        </select>
-    </label>
+    <div class="vistas" role="group" aria-label="Ver os itens como">
+        <button class="vistas__opcao" type="button" aria-pressed="true" data-vista="tabela">Tabela</button>
+        <button class="vistas__opcao" type="button" aria-pressed="false" data-vista="carta">Cardápio</button>
+    </div>
+
+    <fieldset class="fichas">
+        <legend class="visually-hidden">@Html.DisplayNameFor(model => model.IdGrupoCardapio)</legend>
+        <label class="ficha-grupo">
+            <input class="ficha-grupo__campo" type="radio" name="grupo" value="" checked data-grupo-itens>
+            <span class="ficha-grupo__nome">Todos</span>
+            <span class="ficha-grupo__quantidade" data-quantidade-grupo=""></span>
+        </label>
+        @foreach (var grupo in gruposCardapio ?? Enumerable.Empty<SelectListItem>())
+        {
+            <label class="ficha-grupo">
+                <input class="ficha-grupo__campo" type="radio" name="grupo" value="@grupo.Value" data-grupo-itens>
+                <img class="ficha-grupo__gravura" src="@Url.Content(Gravuras.CaminhoDoGrupo(grupo.Text))" alt="">
+                <span class="ficha-grupo__nome">@grupo.Text</span>
+                <span class="ficha-grupo__quantidade" data-quantidade-grupo="@grupo.Value"></span>
+            </label>
+        }
+    </fieldset>
 </search>
 
-@* token dos botões "Marcar em falta" montados pelo DataTables *@
+<div class="faixa-grupo" aria-live="polite" hidden data-faixa-grupo></div>
+
+<section class="carta" aria-label="Itens como aparecem no cardápio" hidden data-carta></section>
+
+@* token dos interruptores "Disponível" montados pelo DataTables *@
 @Html.AntiForgeryToken()
 
 @* rotas usadas pelo js/itens-cardapio.js *@

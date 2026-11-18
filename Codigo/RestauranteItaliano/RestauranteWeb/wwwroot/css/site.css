@@ -80,8 +80,15 @@
   /* papel apoiado na mesa: sombra curta e uma longa, as duas deslocadas para baixo */
   --sombra-papel: 0 1px 1px rgba(28, 26, 23, 0.08), 0 18px 36px -22px rgba(28, 26, 23, 0.45);
   --sombra-atalho: 0 10px 22px -14px rgba(28, 26, 23, 0.55);
-  --curva-abrir: cubic-bezier(0.22, 1, 0.36, 1);
-  --curva: cubic-bezier(0.23, 1, 0.32, 1);
+  /* objeto de papel erguido da mesa pelo mouse */
+  --cor-janela-acesa: #f6d27a; /* janela da fachada com a luz acesa */
+  --sombra-erguida: 0 2px 2px rgba(28, 26, 23, 0.08), 0 30px 44px -26px rgba(28, 26, 23, 0.55);
+  /* ritmo do movimento: todo o site usa estes três tempos e estas duas curvas, para tudo andar junto */
+  --tempo-curto: 0.16s; /* cor, borda, fundo e o "afundar" do clique */
+  --tempo-medio: 0.3s; /* deslocamentos pequenos: erguer no hover, setas, interruptor */
+  --tempo-longo: 0.45s; /* entradas, trocas de conteúdo e aberturas */
+  --curva: cubic-bezier(0.22, 1, 0.36, 1); /* começa rápido e pousa devagar */
+  --curva-dupla: cubic-bezier(0.65, 0, 0.35, 1); /* acelera e freia: capa e balanço */
 
   --bs-body-font-family: var(--fonte-texto);
   --bs-body-font-size: var(--texto-16);
@@ -196,7 +203,7 @@ h1:not([class]) {
 
 .u-pular-conteudo {
   position: absolute;
-  top: -60px;
+  top: 12px;
   left: 16px;
   z-index: 1100;
   min-height: 44px;
@@ -206,11 +213,13 @@ h1:not([class]) {
   font-size: 0.8125rem;
   font-weight: 600;
   text-decoration: none;
-  transition: top 0.2s var(--curva);
+  /* fica escondido acima da tela (a própria altura mais a distância do topo) até receber o foco */
+  transform: translateY(calc(-100% - 16px));
+  transition: transform var(--tempo-medio) var(--curva);
 }
 
 .u-pular-conteudo:focus {
-  top: 12px;
+  transform: none;
   color: var(--cor-cartao);
 }
 
@@ -227,11 +236,15 @@ h1:not([class]) {
 .previa__titulo,
 .form-label,
 .campo__rotulo,
-.filtro-grupo__rotulo,
 .capitulo__nome,
 .cardapio__casa,
 .cardapio__capa-casa,
-.tabela-itens__disponivel,
+.conta__rotulo,
+.interruptor-item__texto,
+.livro__titulo,
+.cracha__rotulo,
+.recibo__casa,
+.fachada__rotulo,
 .selo,
 .tabela-itens thead th,
 .table > thead th {
@@ -252,7 +265,7 @@ h1:not([class]) {
   min-width: 20px;
   border-bottom: 2px dotted var(--cor-pontilhado);
   transform: translateY(-5px);
-  transition: border-color 0.2s var(--curva);
+  transition: border-color var(--tempo-curto) var(--curva);
 }
 
 .u-link-simples {
@@ -409,7 +422,7 @@ h1:not([class]) {
   background: currentColor;
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.2s var(--curva);
+  transition: transform var(--tempo-medio) var(--curva);
 }
 
 .capitulos__link--atual::after {
@@ -425,7 +438,7 @@ h1:not([class]) {
   letter-spacing: 0;
   text-transform: none;
   color: var(--cor-tinta-3);
-  transition: color 0.2s var(--curva);
+  transition: color var(--tempo-curto) var(--curva);
 }
 
 .capitulos__link--atual .capitulos__numero {
@@ -485,7 +498,7 @@ h1:not([class]) {
   box-shadow: var(--sombra-painel);
   color: var(--cor-basilico-texto);
   font-size: 0.90625rem;
-  animation: deslizar 0.25s var(--curva);
+  animation: deslizar var(--tempo-medio) var(--curva);
 }
 
 .aviso--erro {
@@ -510,7 +523,7 @@ h1:not([class]) {
 .aviso--saindo {
   opacity: 0;
   transform: translateY(-4px);
-  transition: opacity 0.2s var(--curva), transform 0.2s var(--curva);
+  transition: opacity var(--tempo-curto) var(--curva), transform var(--tempo-medio) var(--curva);
 }
 
 /* ---------- Conteúdo e rodapé ---------- */
@@ -585,12 +598,12 @@ h1:not([class]) {
   letter-spacing: 0.01em;
   -webkit-user-select: none;
   user-select: none;
-  transition: color 0.15s var(--curva), background-color 0.15s var(--curva), border-color 0.15s var(--curva), transform 0.12s var(--curva);
+  transition: color var(--tempo-curto) var(--curva), background-color var(--tempo-curto) var(--curva), border-color var(--tempo-curto) var(--curva), transform var(--tempo-curto) var(--curva);
 }
 
 .btn svg,
 .link-voltar svg {
-  transition: transform 0.2s var(--curva);
+  transition: transform var(--tempo-medio) var(--curva);
 }
 
 .btn--tinta,
@@ -831,7 +844,7 @@ div.validation-summary-valid {
   background-image: var(--bolinha);
   background-position: left center;
   cursor: pointer;
-  transition: background-position 0.15s var(--curva), background-color 0.15s var(--curva);
+  transition: background-position var(--tempo-curto) var(--curva), background-color var(--tempo-curto) var(--curva);
 }
 
 .interruptor .form-check-input:checked {
@@ -967,7 +980,7 @@ div.validation-summary-valid {
   -webkit-user-select: none;
   user-select: none;
   text-decoration: none;
-  transition: background-color 0.2s var(--curva), color 0.2s var(--curva), transform 0.2s var(--curva), box-shadow 0.2s var(--curva);
+  transition: background-color var(--tempo-curto) var(--curva), color var(--tempo-curto) var(--curva), transform var(--tempo-medio) var(--curva), box-shadow var(--tempo-medio) var(--curva);
 }
 
 .atalho__mais {
@@ -976,7 +989,7 @@ div.validation-summary-valid {
   font-weight: 400;
   line-height: 1;
   color: var(--cor-pomodoro);
-  transition: color 0.2s var(--curva), transform 0.2s var(--curva);
+  transition: color var(--tempo-curto) var(--curva), transform var(--tempo-medio) var(--curva);
 }
 
 /* ---------- Página inicial: painel "Na carta hoje" ---------- */
@@ -1336,7 +1349,7 @@ div.validation-summary-valid {
   background: var(--cor-cartao-veu);
   color: inherit;
   text-decoration: none;
-  transition: background-color 0.2s var(--curva), transform 0.2s var(--curva), box-shadow 0.2s var(--curva);
+  transition: background-color var(--tempo-curto) var(--curva), transform var(--tempo-medio) var(--curva), box-shadow var(--tempo-medio) var(--curva);
 }
 
 .entrada__texto {
@@ -1350,7 +1363,7 @@ div.validation-summary-valid {
   font-family: var(--fonte-serifa);
   font-size: 1.6875rem;
   line-height: 1.1;
-  transition: color 0.2s var(--curva);
+  transition: color var(--tempo-curto) var(--curva);
 }
 
 .entrada__descricao {
@@ -1377,7 +1390,7 @@ div.validation-summary-valid {
   width: 16px;
   height: 16px;
   color: var(--cor-tinta-3);
-  transition: transform 0.2s var(--curva), color 0.2s var(--curva);
+  transition: transform var(--tempo-medio) var(--curva), color var(--tempo-curto) var(--curva);
 }
 
 .em-breve {
@@ -1420,7 +1433,7 @@ div.validation-summary-valid {
   color: var(--cor-tinta);
 }
 
-/* ---------- Cardápio: busca e filtro por grupo ---------- */
+/* ---------- Busca (itens do cardápio, livro, quadro de crachás e rua) ---------- */
 
 .ferramentas {
   display: flex;
@@ -1431,6 +1444,12 @@ div.validation-summary-valid {
   padding: 14px 0;
   border-top: 1px solid var(--cor-tinta);
   border-bottom: 1px solid var(--cor-tinta);
+}
+
+/* no livro, no quadro e na rua a busca tem a largura deles */
+.ferramentas--larga {
+  max-width: 1080px;
+  margin-bottom: 28px;
 }
 
 .busca {
@@ -1470,27 +1489,371 @@ div.validation-summary-valid {
   opacity: 1;
 }
 
-.filtro-grupo {
-  display: flex;
-  flex: 0 1 auto;
-  align-items: center;
-  gap: 12px;
-  margin: 0;
+/* ---------- Alternador de vistas dos itens (tabela ou cardápio) ---------- */
+
+.vistas {
+  display: inline-flex;
+  flex: none;
+  border: 1px solid var(--cor-tinta);
 }
 
-.filtro-grupo__rotulo {
+.vistas__opcao {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  background: var(--cor-cartao);
+  color: var(--cor-tinta);
+  font-family: var(--fonte-texto);
+  font-size: var(--texto-14);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--tempo-curto) var(--curva), color var(--tempo-curto) var(--curva);
+}
+
+.vistas__opcao[aria-pressed="true"] {
+  background: var(--cor-tinta);
+  color: var(--cor-cartao);
+}
+
+/* ---------- Fichas de grupo (filtro dos itens por grupo do cardápio) ---------- */
+
+.fichas {
+  display: flex;
+  flex: 1 1 100%;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.ficha-grupo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  margin: 0;
+  padding: 4px 14px;
+  border: 1px solid var(--cor-pontilhado);
+  background: var(--cor-cartao);
+  font-family: var(--fonte-serifa);
+  font-size: 1.1875rem;
+  cursor: pointer;
+  transition: border-color var(--tempo-curto) var(--curva), background-color var(--tempo-curto) var(--curva);
+}
+
+.ficha-grupo:has(.ficha-grupo__gravura) {
+  padding-left: 8px;
+}
+
+/* o rádio fica escondido, mas continua no teclado: as setas trocam de grupo */
+.ficha-grupo__campo {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.ficha-grupo:has(.ficha-grupo__campo:checked) {
+  border-color: var(--cor-pomodoro);
+  background: var(--cor-pomodoro-fundo);
+  color: var(--cor-pomodoro-escuro);
+  box-shadow: inset 0 0 0 1px var(--cor-pomodoro);
+}
+
+.ficha-grupo:has(.ficha-grupo__campo:focus-visible) {
+  outline: 2px solid var(--cor-pomodoro);
+  outline-offset: 3px;
+}
+
+.ficha-grupo__gravura {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.ficha-grupo__quantidade {
+  font-family: var(--fonte-texto);
+  font-size: var(--texto-12);
+  font-weight: 700;
+  color: var(--cor-tinta-3);
+}
+
+.ficha-grupo:has(.ficha-grupo__campo:checked) .ficha-grupo__quantidade {
+  color: var(--cor-pomodoro-escuro);
+}
+
+/* ---------- Conta do dia (números do cardápio acima dos itens) ---------- */
+
+.conta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0 0 28px;
+  border-top: 4px double var(--cor-tinta);
+  border-bottom: 1px solid var(--cor-tinta);
+}
+
+.conta[hidden] {
+  display: none;
+}
+
+.conta__item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 16px 20px;
+  border-left: 1px solid var(--cor-linha);
+}
+
+.conta__item:first-of-type {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.conta__valor {
+  font-family: var(--fonte-serifa);
+  font-size: 2.5rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.conta__item--disponivel .conta__valor {
+  color: var(--cor-basilico-texto);
+}
+
+.conta__item--falta .conta__valor {
+  color: var(--cor-ocra-texto);
+}
+
+.conta__rotulo {
+  color: var(--cor-tinta-3);
+}
+
+/* a barra mostra de relance quanto do cardápio está disponível e quanto está em falta */
+.conta__barra {
+  display: flex;
+  grid-column: 1 / -1;
+  height: 8px;
+  margin-bottom: 14px;
+  background: var(--cor-linha);
+}
+
+.conta__barra-parte {
+  flex: var(--parte, 0) 1 0;
+  transition: flex-grow var(--tempo-longo) var(--curva);
+}
+
+.conta__barra-parte--disponivel {
+  background: var(--cor-basilico);
+}
+
+.conta__barra-parte--falta {
+  background: var(--cor-ocra);
+}
+
+/* ---------- Faixa do grupo escolhido nas fichas ---------- */
+
+.faixa-grupo {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0 0 20px;
+  padding: 14px 20px;
+  border: 1px solid var(--cor-tinta);
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-papel);
+}
+
+.faixa-grupo[hidden] {
+  display: none;
+}
+
+.faixa-grupo__gravura {
   flex: none;
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+}
+
+.faixa-grupo__nome {
+  margin: 0;
+  font-family: var(--fonte-serifa);
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.faixa-grupo__dados {
+  margin: 6px 0 0;
+  font-family: var(--fonte-serifa);
+  font-size: var(--texto-18);
+  font-style: italic;
   color: var(--cor-tinta-2);
 }
 
-.filtro-grupo__campo {
-  min-width: 200px;
-  min-height: 46px;
-  border-color: var(--cor-pontilhado);
-  border-radius: 0;
-  background-color: var(--cor-cartao);
+/* ---------- Carta (os itens como aparecem no cardápio impresso) ---------- */
+
+.carta {
+  columns: 2 420px;
+  column-gap: 56px;
+  padding: 30px 34px 10px;
+  border: 1px solid var(--cor-tinta);
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-papel);
+}
+
+.carta[hidden] {
+  display: none;
+}
+
+.carta__grupo {
+  margin: 0 0 30px;
+  break-inside: avoid;
+}
+
+.carta__cabeca {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 10px;
+  border-bottom: 4px double var(--cor-tinta);
+}
+
+.carta__gravura {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.carta__titulo {
+  margin: 0;
   font-family: var(--fonte-serifa);
-  font-size: 1.1875rem;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.carta__pratos {
+  margin: 0;
+}
+
+.carta__prato {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--cor-linha);
+  font-family: var(--fonte-serifa);
+}
+
+.carta__texto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+}
+
+.carta__nome {
+  font-size: 1.3125rem;
+  line-height: 1.1;
+}
+
+.carta__detalhe {
+  font-size: var(--texto-16);
+  font-style: italic;
+  line-height: 1.3;
+  color: var(--cor-tinta-3);
+}
+
+.carta__preco {
+  flex: none;
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.carta__prato--em-falta .carta__nome,
+.carta__prato--em-falta .carta__preco {
+  color: var(--cor-tinta-3);
+}
+
+.carta__prato--em-falta .carta__preco {
+  text-decoration: line-through;
+}
+
+.carta__vazia {
+  margin: 0 0 24px;
+  font-family: var(--fonte-serifa);
+  font-size: 1.3125rem;
+  font-style: italic;
+  color: var(--cor-tinta-2);
+}
+
+/* ---------- Interruptor de disponibilidade (coluna "Situação" da tabela) ---------- */
+
+.interruptor-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cor-basilico-texto);
+  cursor: pointer;
+}
+
+.interruptor-item__trilho {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--cor-basilico);
+  transition: background-color var(--tempo-medio) var(--curva);
+}
+
+.interruptor-item__trilho::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--cor-cartao);
+  box-shadow: 0 1px 2px rgba(28, 26, 23, 0.35);
+  transform: translateX(20px);
+  transition: transform var(--tempo-medio) var(--curva);
+}
+
+.interruptor-item[aria-checked="false"] {
+  color: var(--cor-ocra-texto);
+}
+
+.interruptor-item[aria-checked="false"] .interruptor-item__trilho {
+  background: var(--cor-ocra);
+}
+
+.interruptor-item[aria-checked="false"] .interruptor-item__trilho::after {
+  transform: none;
+}
+
+.interruptor-item[aria-busy="true"] {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+/* ---------- Realce do termo buscado ---------- */
+
+.realce {
+  padding: 0 2px;
+  background: var(--cor-pomodoro-fundo);
+  color: var(--cor-pomodoro-escuro);
+  box-shadow: inset 0 -2px 0 var(--cor-pomodoro-claro);
 }
 
 /* ---------- Cardápio: tabela com DataTables (busca, ordenação e paginação no servidor) ---------- */
@@ -1540,10 +1903,6 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   font-size: var(--texto-22);
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
-}
-
-.tabela-itens__disponivel {
-  color: var(--cor-basilico-texto);
 }
 
 .tabela-itens__acoes {
@@ -1624,7 +1983,7 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   background-repeat: no-repeat;
   background-position: 12px 100%;
   background-size: calc(100% - 24px) 1px;
-  transition: background-color 0.15s var(--curva);
+  transition: background-color var(--tempo-curto) var(--curva);
 }
 
 .linha-carta__conteudo {
@@ -1670,15 +2029,6 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   font-variant-numeric: tabular-nums;
 }
 
-.linha-carta__codigo {
-  flex: none;
-  font-family: var(--fonte-serifa);
-  font-size: var(--texto-18);
-  font-style: italic;
-  white-space: nowrap;
-  color: var(--cor-tinta-3);
-}
-
 .linha-carta--em-falta .linha-carta__nome,
 .linha-carta--em-falta .linha-carta__preco,
 .linha-carta--inativo .linha-carta__nome,
@@ -1689,19 +2039,6 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 .linha-carta--em-falta .linha-carta__preco,
 .linha-carta--inativo .linha-carta__preco {
   text-decoration: line-through;
-}
-
-/* ações sempre visíveis: em telas de toque não existe "passar o mouse" */
-.linha-carta__acoes {
-  display: flex;
-  flex: none;
-  align-items: center;
-  gap: 2px;
-  margin: 0;
-}
-
-.linha-carta:focus-within {
-  background-color: var(--cor-cartao);
 }
 
 /* ---------- Selo de situação (em falta, fora do cardápio) ---------- */
@@ -1736,7 +2073,7 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   user-select: none;
   text-decoration: none;
   cursor: pointer;
-  transition: color 0.15s var(--curva), transform 0.12s var(--curva);
+  transition: color var(--tempo-curto) var(--curva), transform var(--tempo-curto) var(--curva);
 }
 
 .acao:active {
@@ -1750,11 +2087,17 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   color: var(--cor-pomodoro-escuro);
 }
 
-/* ---------- Lista simples (cadastros com poucos campos, como formas de pagamento) ---------- */
+/* ---------- Busca sem resultado (livro, quadro de crachás e rua) ---------- */
 
-.lista-simples {
-  max-width: 760px;
-  border-top: 4px double var(--cor-tinta);
+.sem-resultado {
+  max-width: 1080px;
+  margin: 0;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--cor-linha);
+  font-family: var(--fonte-serifa);
+  font-size: 1.3125rem;
+  font-style: italic;
+  color: var(--cor-tinta-2);
 }
 
 /* ---------- Estados vazios ---------- */
@@ -2022,6 +2365,910 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
   color: var(--cor-pomodoro-escuro);
 }
 
+/* ---------- Livro do cardápio aberto (grupos do cardápio) ---------- */
+
+/* à esquerda o sumário; à direita a folha do capítulo, que vira quando outro grupo é escolhido */
+.livro {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  max-width: 1080px;
+  margin: 0;
+  border: 1px solid var(--cor-tinta);
+  /* a dobra do meio do livro */
+  background:
+    linear-gradient(90deg, transparent calc(50% - 22px), rgba(28, 26, 23, 0.09) 50%, transparent calc(50% + 22px)),
+    var(--cor-cartao);
+  box-shadow: var(--sombra-papel);
+  perspective: 1800px;
+}
+
+/* a fita marcadora pende do alto do livro até o capítulo aberto (a altura vem do js/site.js) */
+.livro__fita {
+  position: absolute;
+  top: -8px;
+  left: 16px;
+  z-index: 2;
+  width: 16px;
+  height: var(--fita-altura, 96px);
+  border: 1px solid var(--cor-pomodoro-escuro);
+  border-top: 0;
+  background: var(--cor-pomodoro);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 8px), 0 100%);
+  transition: height var(--tempo-longo) var(--curva);
+}
+
+.livro__sumario {
+  padding: 30px 36px 26px 56px;
+}
+
+.livro__titulo {
+  margin: 0 0 14px;
+  padding-bottom: 12px;
+  border-bottom: 4px double var(--cor-tinta);
+  color: var(--cor-tinta-3);
+}
+
+.livro__lista {
+  margin: 0;
+  counter-reset: capitulo;
+}
+
+.livro__lista > li {
+  counter-increment: capitulo;
+}
+
+.livro__entrada {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--cor-linha);
+  font-family: var(--fonte-serifa);
+  font-size: 1.625rem;
+  line-height: 1.1;
+  color: var(--cor-tinta);
+  text-decoration: none;
+  transition: color var(--tempo-longo) var(--curva), translate var(--tempo-longo) var(--curva);
+}
+
+.livro__entrada::before {
+  content: counter(capitulo, lower-roman) ".";
+  flex: none;
+  min-width: 2.4rem;
+  font-size: 1.125rem;
+  font-style: italic;
+  color: var(--cor-tinta-3);
+}
+
+.livro__entrada--atual,
+.livro__entrada--atual::before {
+  color: var(--cor-pomodoro);
+}
+
+.livro__entrada--atual {
+  translate: 6px 0;
+}
+
+/* quantos pratos ativos o grupo tem (o js/site.js conta pela tabela dos itens) */
+.livro__quantidade {
+  flex: none;
+  font-size: var(--texto-16);
+  font-style: italic;
+  color: var(--cor-tinta-3);
+}
+
+/* capa do cardápio: aparece fechada só na primeira visita da sessão e abre sozinha */
+.livro__capa {
+  position: absolute;
+  inset: -1px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid var(--cor-tinta);
+  background: var(--cor-pomodoro);
+  color: var(--cor-cartao);
+  transform-origin: left center;
+  backface-visibility: hidden;
+  transition: transform 1.4s var(--curva-dupla);
+}
+
+.livro__capa::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(28, 26, 23, 0), rgba(28, 26, 23, 0.4));
+  opacity: 0;
+  transition: opacity 1.4s var(--curva-dupla);
+}
+
+.livro__capa--aberta::after {
+  opacity: 1;
+}
+
+.livro__capa[hidden] {
+  display: none;
+}
+
+.livro__capa--aberta {
+  transform: rotateY(-180deg);
+}
+
+.livro__capa-casa {
+  font-family: var(--fonte-texto);
+  font-size: var(--texto-12);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.livro__capa-titulo {
+  font-family: var(--fonte-serifa);
+  font-size: 4.5rem;
+  font-style: italic;
+  line-height: 1;
+}
+
+.livro__capa-fio {
+  width: 120px;
+  border-top: 4px double var(--cor-cartao);
+}
+
+.livro__capa-subtitulo {
+  font-family: var(--fonte-serifa);
+  font-size: 1.25rem;
+  font-style: italic;
+}
+
+/* ---------- Folha do cardápio (capítulo de um grupo) ---------- */
+
+.folha {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  text-align: center;
+}
+
+.folha__capitulo {
+  margin: 0;
+  font-family: var(--fonte-serifa);
+  font-size: 1.25rem;
+  font-style: italic;
+  color: var(--cor-pomodoro);
+}
+
+.folha__gravura {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+}
+
+.folha__nome {
+  margin: 0;
+  font-family: var(--fonte-serifa);
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  line-height: 1;
+}
+
+.folha__codigo {
+  margin: 0;
+  font-family: var(--fonte-serifa);
+  font-size: var(--texto-18);
+  font-style: italic;
+  color: var(--cor-tinta-3);
+}
+
+/* página do capítulo no livro: gravura pequena e título lado a lado, e os pratos do grupo */
+.folha__cabeca {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 14px;
+  border-bottom: 4px double var(--cor-tinta);
+}
+
+.folha__gravura--miniatura {
+  flex: none;
+  width: 92px;
+  height: 92px;
+}
+
+.folha__titulos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+}
+
+.folha__pratos {
+  margin: 0;
+}
+
+.folha__prato {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--cor-linha);
+  font-family: var(--fonte-serifa);
+}
+
+.folha__prato-texto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+}
+
+.folha__prato-nome {
+  font-size: 1.375rem;
+  line-height: 1.1;
+}
+
+.folha__prato-detalhe {
+  font-size: var(--texto-16);
+  font-style: italic;
+  line-height: 1.3;
+  color: var(--cor-tinta-3);
+}
+
+.folha__prato-preco {
+  flex: none;
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.folha__prato--em-falta .folha__prato-nome,
+.folha__prato--em-falta .folha__prato-preco {
+  color: var(--cor-tinta-3);
+}
+
+.folha__prato--em-falta .folha__prato-preco {
+  text-decoration: line-through;
+}
+
+.folha__prato--aviso {
+  font-size: var(--texto-18);
+  font-style: italic;
+  color: var(--cor-tinta-3);
+}
+
+.folha__rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.folha__virar {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--cor-tinta);
+  background: transparent;
+  color: var(--cor-tinta);
+  font-family: var(--fonte-serifa);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform var(--tempo-curto) var(--curva);
+}
+
+.folha__virar:active {
+  transform: scale(0.94);
+}
+
+.folha__virar:disabled {
+  border-color: var(--cor-linha-forte);
+  color: var(--cor-tinta-3);
+  cursor: default;
+}
+
+.folha__pagina {
+  margin: 0;
+  font-family: var(--fonte-serifa);
+  font-style: italic;
+  color: var(--cor-tinta-2);
+}
+
+.folha__acoes {
+  display: flex;
+  justify-content: center;
+  align-self: stretch;
+  gap: 2px;
+  margin: 8px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--cor-linha);
+}
+
+/* folha solta: nos detalhes, na exclusão e na prévia do formulário */
+.folha--destaque {
+  max-width: 420px;
+  padding: 30px 32px 28px;
+  border: 1px solid var(--cor-tinta);
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-papel);
+  transform: perspective(1000px) rotateX(var(--giro-x, 0deg)) rotateY(var(--giro-y, 0deg));
+}
+
+/* na exclusão a folha já está saindo do livro */
+.folha--despedida {
+  translate: 18px 0;
+  rotate: 3deg;
+  box-shadow: var(--sombra-erguida);
+}
+
+/* no livro a folha é a página da direita: gira pela lombada e ocupa a página toda (vem depois de .folha para valer sobre ela) */
+.livro__folha {
+  align-items: stretch;
+  padding: 30px 36px 26px;
+  text-align: left;
+  transform-origin: left center;
+}
+
+/* ---------- Quadro de crachás (tipos de funcionário) ---------- */
+
+/* cada linha do quadro tem a sua régua; os crachás pendem dela por fitas de comprimentos diferentes */
+.quadro {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  align-items: start;
+  gap: 44px 28px;
+  max-width: 1080px;
+  margin: 0;
+  padding-top: 24px;
+}
+
+.quadro > li {
+  position: relative;
+  padding-top: 8px;
+}
+
+.quadro > li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -14px;
+  right: -14px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--cor-tinta);
+}
+
+.quadro > :nth-child(4n + 1) {
+  --fita: 22px;
+}
+
+.quadro > :nth-child(4n + 2) {
+  --fita: 46px;
+}
+
+.quadro > :nth-child(4n + 3) {
+  --fita: 14px;
+}
+
+.quadro > :nth-child(4n) {
+  --fita: 34px;
+}
+
+/* o gancho que sobra no fim da régua leva ao cadastro de um novo tipo */
+.quadro__novo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--fonte-serifa);
+  font-size: 1.1875rem;
+  font-style: italic;
+  color: var(--cor-tinta-2);
+  text-decoration: none;
+}
+
+.quadro__gancho {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--cor-tinta);
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+}
+
+/* quadro sem nenhum crachá: só a régua com os ganchos livres, no lugar da gravura do estado vazio */
+.quadro--vazio {
+  grid-template-columns: repeat(3, 72px);
+  justify-content: center;
+  justify-items: center;
+  gap: 0 28px;
+  padding-top: 0;
+}
+
+/* ---------- Crachá (tipo de funcionário) ---------- */
+
+/* o crachá fica pendurado pela fita: o giro do balanço parte do gancho, acima do cartão */
+.cracha {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: var(--fita, 24px) 0 0;
+  padding: 34px 20px 16px;
+  border: 1px solid var(--cor-tinta);
+  border-radius: 14px;
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-papel);
+  text-align: center;
+  transform-origin: 50% calc(var(--fita, 24px) * -1);
+  transform: perspective(1000px) rotateX(var(--giro-x, 0deg)) rotateY(var(--giro-y, 0deg));
+  transition: translate var(--tempo-medio) var(--curva), box-shadow var(--tempo-medio) var(--curva);
+}
+
+/* o furo do crachá */
+.cracha::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 44px;
+  height: 8px;
+  margin-left: -22px;
+  border-radius: 4px;
+  background: var(--cor-papel);
+  box-shadow: inset 0 1px 2px rgba(28, 26, 23, 0.35);
+}
+
+/* a fita listrada que sai do gancho e passa pelo furo */
+.cracha::after {
+  content: "";
+  position: absolute;
+  bottom: calc(100% - 16px);
+  left: 50%;
+  width: 18px;
+  height: calc(var(--fita, 24px) + 16px);
+  margin-left: -9px;
+  border: 1px solid var(--cor-tinta);
+  border-radius: 3px;
+  background: repeating-linear-gradient(90deg, var(--cor-pomodoro) 0 4px, var(--cor-cartao) 4px 7px);
+}
+
+.cracha__monograma {
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  border: 2px solid var(--cor-pomodoro);
+  border-radius: 50%;
+  outline: 1px solid var(--cor-tinta);
+  outline-offset: 4px;
+  background: var(--cor-pomodoro-fundo);
+  color: var(--cor-pomodoro-escuro);
+  font-family: var(--fonte-serifa);
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.cracha__nome {
+  margin: 10px 0 0;
+  font-family: var(--fonte-serifa);
+  font-size: 1.875rem;
+  line-height: 1.05;
+}
+
+.cracha__rotulo {
+  margin: 0;
+  color: var(--cor-tinta-3);
+}
+
+.cracha__codigo {
+  margin: 0;
+  font-family: var(--fonte-serifa);
+  font-size: var(--texto-18);
+  font-style: italic;
+  color: var(--cor-tinta-3);
+}
+
+.cracha--destaque {
+  max-width: 340px;
+}
+
+.cracha--destaque .cracha__monograma {
+  width: 112px;
+  height: 112px;
+  font-size: 3.25rem;
+}
+
+.cracha--destaque .cracha__nome {
+  font-size: 2.375rem;
+}
+
+/* na exclusão o crachá já soltou de um lado e pende torto */
+.cracha--despedida {
+  rotate: 8deg;
+  transform-origin: 20% -24px;
+}
+
+/* ---------- Rua da trattoria (tipos de restaurante) ---------- */
+
+/* as fachadas ficam lado a lado, com alturas e toldos diferentes, sobre a mesma calçada */
+.rua {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  align-items: end;
+  gap: 48px 16px;
+  max-width: 1080px;
+  margin: 0;
+  padding-top: 24px;
+}
+
+.rua > li {
+  position: relative;
+  padding-bottom: 16px;
+}
+
+.rua > li::after {
+  content: "";
+  position: absolute;
+  left: -8px;
+  right: -8px;
+  bottom: 0;
+  height: 16px;
+  border-top: 3px double var(--cor-tinta);
+  background: var(--cor-linha);
+}
+
+.rua > :nth-child(3n + 2) {
+  --toldo: var(--cor-basilico);
+  --recuo: 28px;
+}
+
+.rua > :nth-child(3n) {
+  --toldo: var(--cor-ocra);
+  --recuo: 14px;
+}
+
+.rua__fachada {
+  min-height: calc(340px - var(--recuo, 0px));
+  border-bottom: 0;
+}
+
+/* ---------- Fachada com toldo (tipo de restaurante) ---------- */
+
+.fachada {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0 20px;
+  border: 1px solid var(--cor-tinta);
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-papel);
+  text-align: center;
+  transform: perspective(1000px) rotateX(var(--giro-x, 0deg)) rotateY(var(--giro-y, 0deg));
+  transition: translate var(--tempo-medio) var(--curva), box-shadow var(--tempo-medio) var(--curva);
+}
+
+/* toldo listrado com a barra recortada em meias-luas; a cor muda de uma fachada para a outra */
+.fachada__toldo {
+  position: relative;
+  align-self: stretch;
+  height: 56px;
+  margin: -1px -21px 22px;
+  border: 1px solid var(--cor-tinta);
+  background: repeating-linear-gradient(90deg, var(--toldo, var(--cor-pomodoro)) 0 22px, var(--cor-cartao) 22px 44px);
+  transform-origin: top;
+  transition: scale var(--tempo-longo) var(--curva);
+}
+
+.fachada__toldo::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 11px;
+  background: radial-gradient(circle at 11px 0, var(--toldo, var(--cor-pomodoro)) 10px, transparent 10.5px) 0 0 / 44px 11px repeat-x;
+}
+
+.fachada__nome {
+  margin: 0;
+  padding: 8px 18px 6px;
+  border-top: 4px double var(--cor-tinta);
+  border-bottom: 4px double var(--cor-tinta);
+  font-family: var(--fonte-serifa);
+  font-size: 1.875rem;
+  line-height: 1.05;
+}
+
+.fachada__rotulo {
+  margin: 4px 0 0;
+  color: var(--cor-tinta-3);
+}
+
+.fachada__codigo {
+  margin: 0;
+  font-family: var(--fonte-serifa);
+  font-size: var(--texto-18);
+  font-style: italic;
+  color: var(--cor-tinta-3);
+}
+
+/* a frente da casa: duas janelas e a porta, apoiadas na calçada */
+.fachada__frente {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  align-self: stretch;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 14px;
+}
+
+.fachada__janela {
+  width: 44px;
+  height: 52px;
+  margin-bottom: 22px;
+  border: 1px solid var(--cor-tinta);
+  background:
+    linear-gradient(var(--cor-tinta), var(--cor-tinta)) 50% 0 / 1px 100% no-repeat,
+    linear-gradient(var(--cor-tinta), var(--cor-tinta)) 0 50% / 100% 1px no-repeat,
+    var(--cor-janela, var(--cor-linha));
+  transition: background-color var(--tempo-longo) var(--curva);
+}
+
+.fachada__porta {
+  width: 40px;
+  height: 74px;
+  border: 1px solid var(--cor-tinta);
+  border-bottom: 0;
+  border-radius: 20px 20px 0 0;
+  background: var(--cor-creme);
+}
+
+.fachada--destaque {
+  max-width: 380px;
+}
+
+.fachada--destaque .fachada__toldo {
+  height: 72px;
+}
+
+.fachada--destaque .fachada__nome {
+  font-size: 2.5rem;
+}
+
+/* na exclusão o toldo está recolhido e as janelas, apagadas */
+.fachada--despedida .fachada__toldo {
+  scale: 1 0.35;
+}
+
+.fachada--despedida {
+  --cor-janela: var(--cor-linha-forte);
+}
+
+/* ---------- Recibos de caixa (formas de pagamento) ---------- */
+
+/* os recibos ficam soltos sobre a mesa, cada um um pouco torto */
+.recibos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  align-items: start;
+  gap: 40px 28px;
+  max-width: 1080px;
+  margin: 0;
+  padding-top: 16px;
+}
+
+.recibos > :nth-child(4n + 1) {
+  --giro: -1.4deg;
+}
+
+.recibos > :nth-child(4n + 2) {
+  --giro: 0.9deg;
+}
+
+.recibos > :nth-child(4n + 3) {
+  --giro: -0.5deg;
+}
+
+.recibos > :nth-child(4n) {
+  --giro: 1.6deg;
+}
+
+/* ---------- Recibo (forma de pagamento) ---------- */
+
+/* papel de bobina: sem borda, com a ponta de baixo serrilhada pelo corte da impressora */
+.recibo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  padding: 22px 20px 26px;
+  background: var(--cor-cartao);
+  box-shadow: var(--sombra-papel);
+  text-align: center;
+  rotate: var(--giro, 0deg);
+  transform: perspective(1000px) rotateX(var(--giro-x, 0deg)) rotateY(var(--giro-y, 0deg));
+  transition: rotate var(--tempo-medio) var(--curva), translate var(--tempo-medio) var(--curva), box-shadow var(--tempo-medio) var(--curva);
+}
+
+.recibo::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background:
+    linear-gradient(135deg, var(--cor-cartao) 50%, transparent 50%) 0 0 / 12px 10px repeat-x,
+    linear-gradient(225deg, var(--cor-cartao) 50%, transparent 50%) 0 0 / 12px 10px repeat-x;
+}
+
+.recibo__casa {
+  margin: 0;
+  color: var(--cor-tinta-3);
+}
+
+.recibo__rotulo {
+  margin: 6px 0 0;
+  font-family: var(--fonte-serifa);
+  font-size: var(--texto-18);
+  font-style: italic;
+  color: var(--cor-tinta-2);
+}
+
+/* o nome fica entre os tracejados, como o total do recibo */
+.recibo__nome {
+  align-self: stretch;
+  margin: 0;
+  padding: 10px 0;
+  border-top: 1px dashed var(--cor-tinta-3);
+  border-bottom: 1px dashed var(--cor-tinta-3);
+  font-family: var(--fonte-serifa);
+  font-size: 2rem;
+  line-height: 1.05;
+}
+
+.recibo__codigo {
+  margin: 0;
+  font-family: var(--fonte-serifa);
+  font-size: var(--texto-18);
+  font-style: italic;
+  color: var(--cor-tinta-3);
+}
+
+.recibo__barras {
+  width: 70%;
+  height: 34px;
+  background: repeating-linear-gradient(90deg, var(--cor-tinta) 0 2px, transparent 2px 4px, var(--cor-tinta) 4px 5px, transparent 5px 8px, var(--cor-tinta) 8px 11px, transparent 11px 13px);
+  opacity: 0.8;
+}
+
+.recibo--destaque {
+  max-width: 340px;
+  rotate: none;
+}
+
+.recibo--destaque .recibo__nome {
+  font-size: 2.5rem;
+}
+
+/* na exclusão o recibo aparece cancelado: torto e com o carimbo vermelho por cima */
+.recibo--despedida {
+  rotate: 3deg;
+}
+
+.recibo--despedida::before {
+  content: "Cancelado";
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  z-index: 1;
+  padding: 4px 14px;
+  border: 4px double var(--cor-pomodoro);
+  background: var(--cor-cartao-veu);
+  color: var(--cor-pomodoro);
+  font-family: var(--fonte-texto);
+  font-size: var(--texto-18);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  translate: -50% -50%;
+  rotate: -14deg;
+}
+
+/* ---------- Partes comuns ao crachá, à fachada e ao recibo: link do nome e ações ---------- */
+
+.cracha__link,
+.recibo__link,
+.fachada__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* o nome é o link, mas o objeto inteiro responde ao clique */
+.cracha__link::after,
+.recibo__link::after,
+.fachada__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.cracha:has(:focus-visible),
+.recibo:has(:focus-visible),
+.fachada:has(:focus-visible) {
+  outline: 2px solid var(--cor-pomodoro);
+  outline-offset: 4px;
+}
+
+.cracha__acoes,
+.recibo__acoes,
+.fachada__acoes {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-self: stretch;
+  gap: 2px;
+  margin: 4px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--cor-linha);
+}
+
+.cracha__acoes {
+  margin-top: auto;
+}
+
+/* na prévia do formulário o próprio objeto já é o cartão */
+.previa--objeto {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* ---------- Carimbo "Novo" no cadastro que acabou de ser criado (js/site.js) ---------- */
+
+.carimbo {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  z-index: 2;
+  padding: 4px 10px 3px;
+  border: 2px solid var(--cor-pomodoro);
+  background: var(--cor-cartao);
+  color: var(--cor-pomodoro);
+  font-family: var(--fonte-texto);
+  font-size: var(--texto-12);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  rotate: -8deg;
+  pointer-events: none;
+  animation: carimbar var(--tempo-longo) var(--curva) 0.3s both;
+}
+
+@keyframes carimbar {
+  from {
+    opacity: 0;
+    scale: 1.6;
+  }
+}
+
 /* ---------- Página inicial: cardápio dobrado em 3D ---------- */
 
 /* a cena dá a profundidade; o objeto gira com o mouse (variáveis --giro-x e --giro-y do js/movimento.js) */
@@ -2123,7 +3370,7 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 
 /* na primeira visita da sessão a aba sai fechada e abre (classe posta pelo js/movimento.js) */
 .cardapio--abrindo .cardapio__aba {
-  animation: abrir-cardapio 0.9s 0.35s var(--curva-abrir) both;
+  animation: abrir-cardapio 0.9s 0.35s var(--curva) both;
 }
 
 @keyframes abrir-cardapio {
@@ -2139,69 +3386,84 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 /* ---------- Movimento: entradas em cascata e animações ---------- */
 
 .u-surge {
-  animation: surgir 0.4s var(--curva) both;
+  animation: surgir var(--tempo-longo) var(--curva) both;
 }
 
 .u-surge--depois {
   animation-delay: 120ms;
 }
 
-/* linhas das formas de pagamento: chegam uma depois da outra ao abrir a página */
-.lista-simples > .linha-carta {
-  animation: surgir 0.4s var(--curva) both;
+/* recibos das formas de pagamento, linhas do sumário, crachás e fachadas: chegam um depois do outro ao abrir a página */
+.recibos > li,
+.livro__lista > li,
+.quadro > li,
+.rua > li {
+  animation: surgir var(--tempo-longo) var(--curva) both;
 }
 
-.lista-simples > .linha-carta:nth-child(2) {
+.recibos > li:nth-child(2),
+.livro__lista > li:nth-child(2),
+.quadro > li:nth-child(2),
+.rua > li:nth-child(2) {
   animation-delay: 40ms;
 }
 
-.lista-simples > .linha-carta:nth-child(3) {
+.recibos > li:nth-child(3),
+.livro__lista > li:nth-child(3),
+.quadro > li:nth-child(3),
+.rua > li:nth-child(3) {
   animation-delay: 80ms;
 }
 
-.lista-simples > .linha-carta:nth-child(4) {
+.recibos > li:nth-child(4),
+.livro__lista > li:nth-child(4),
+.quadro > li:nth-child(4),
+.rua > li:nth-child(4) {
   animation-delay: 120ms;
 }
 
-.lista-simples > .linha-carta:nth-child(n + 5) {
+.recibos > li:nth-child(n + 5),
+.livro__lista > li:nth-child(n + 5),
+.quadro > li:nth-child(n + 5),
+.rua > li:nth-child(n + 5) {
   animation-delay: 160ms;
 }
 
 /* linhas dos itens: só na primeira carga da tabela (o js tira a classe depois), nunca ao buscar ou paginar */
 .tabela-itens--chegando tbody tr {
-  animation: surgir 0.4s var(--curva) both;
+  animation: surgir var(--tempo-longo) var(--curva) both;
 }
 
 .tabela-itens--chegando tbody tr:nth-child(2) {
-  animation-delay: 30ms;
+  animation-delay: 40ms;
 }
 
 .tabela-itens--chegando tbody tr:nth-child(3) {
-  animation-delay: 60ms;
+  animation-delay: 80ms;
 }
 
 .tabela-itens--chegando tbody tr:nth-child(4) {
-  animation-delay: 90ms;
+  animation-delay: 120ms;
 }
 
 .tabela-itens--chegando tbody tr:nth-child(5) {
-  animation-delay: 120ms;
+  animation-delay: 160ms;
 }
 
 .tabela-itens--chegando tbody tr:nth-child(n + 6) {
-  animation-delay: 150ms;
+  animation-delay: 200ms;
 }
 
 .indice > .capitulo:nth-child(2) {
-  animation-delay: 60ms;
+  animation-delay: 40ms;
 }
 
 .indice > .capitulo:nth-child(3) {
-  animation-delay: 120ms;
+  animation-delay: 80ms;
 }
 
 .indice > .capitulo:nth-child(n + 4) {
-  animation-delay: 180ms;
+  animation-delay: 120ms;
 }
 
 @keyframes surgir {
@@ -2264,6 +3526,41 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
 /* celular e tablet: sem 3D, o cardápio vira um cartão plano */
 
 @media (max-width: 767.98px) {
+  /* no celular o livro tem uma coluna: o sumário e, embaixo, a página do capítulo */
+  .livro {
+    grid-template-columns: minmax(0, 1fr);
+    background: var(--cor-cartao);
+  }
+
+  .livro__sumario {
+    padding: 22px 20px 18px 48px;
+  }
+
+  /* no celular a página do capítulo fica embaixo do sumário, e a capa não aparece */
+  .livro__folha {
+    padding: 22px 20px 18px;
+    border-top: 4px double var(--cor-tinta);
+  }
+
+  .livro__capa {
+    display: none;
+  }
+
+  .folha__gravura--miniatura {
+    width: 72px;
+    height: 72px;
+  }
+
+  /* inclinados, a folha que sai do livro e o recibo cancelado passariam da largura do celular */
+  .recibo--despedida {
+    rotate: none;
+  }
+
+  .folha--despedida {
+    translate: none;
+    rotate: none;
+  }
+
   /* a abertura ocupa a primeira tela inteira do celular (100svh não pula quando a barra do navegador some) */
   .abertura {
     min-height: calc(100svh - 132px);
@@ -2370,8 +3667,7 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
     display: none;
   }
 
-  .linha-carta__preco,
-  .linha-carta__codigo {
+  .linha-carta__preco {
     margin-left: auto;
   }
 
@@ -2428,13 +3724,30 @@ table.tabela-itens thead > tr > th div.dt-column-header .dt-column-title {
     padding-left: 0;
   }
 
-  .filtro-grupo {
-    flex: 1 1 100%;
+  .conta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .filtro-grupo__campo {
-    flex: 1;
-    min-width: 0;
+  .conta__item:nth-of-type(3) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .conta__valor {
+    font-size: 2rem;
+  }
+
+  .carta {
+    padding: 22px 20px 4px;
+  }
+
+  .faixa-grupo__gravura {
+    width: 56px;
+    height: 56px;
+  }
+
+  .faixa-grupo__nome {
+    font-size: 1.75rem;
   }
 }
 
@@ -2457,6 +3770,11 @@ a.entrada:active {
 
 /* o hover só vale para quem usa mouse; no toque ele "grudaria" depois do clique */
 @media (hover: hover) and (pointer: fine) {
+  /* o cardápio da página inicial inclina com o mouse: a camada 3D já fica pronta, sem tranco no primeiro movimento */
+  .cardapio__objeto {
+    will-change: transform;
+  }
+
   .capitulos__link:hover::after {
     transform: scaleX(1);
   }
@@ -2518,10 +3836,6 @@ a.entrada:active {
     color: var(--cor-pomodoro);
   }
 
-  .linha-carta:hover {
-    background-color: var(--cor-cartao);
-  }
-
   .acao:hover {
     color: var(--cor-tinta);
     text-decoration: underline;
@@ -2529,6 +3843,53 @@ a.entrada:active {
 
   .acao--perigo:hover {
     color: var(--cor-pomodoro-escuro);
+  }
+
+  .livro__entrada:hover,
+  .livro__entrada:hover::before {
+    color: var(--cor-pomodoro);
+  }
+
+  .livro__entrada:hover {
+    translate: 6px 0;
+  }
+
+  .ficha-grupo:hover {
+    border-color: var(--cor-tinta);
+  }
+
+  .vistas__opcao[aria-pressed="false"]:hover {
+    background: var(--cor-pomodoro-fundo);
+  }
+
+  .folha__virar:not(:disabled):hover {
+    background: var(--cor-tinta);
+    color: var(--cor-cartao);
+  }
+
+  .cracha:hover,
+  .recibo:hover,
+  .fachada:hover {
+    translate: 0 -6px;
+    box-shadow: var(--sombra-erguida);
+  }
+
+  .recibo:hover {
+    rotate: 0deg;
+  }
+
+  .fachada:hover {
+    --cor-janela: var(--cor-janela-acesa);
+  }
+
+  .cracha__link:hover,
+  .recibo__link:hover,
+  .fachada__link:hover {
+    color: var(--cor-pomodoro);
+  }
+
+  .fachada:hover .fachada__toldo {
+    scale: 1 1.18;
   }
 }
 
@@ -2561,10 +3922,19 @@ a.entrada:active {
 
   /* as entradas continuam, mas só como fade: nada se desloca nem gira */
   .u-surge,
-  .lista-simples > .linha-carta,
+  .recibos > li,
+  .livro__lista > li,
+  .quadro > li,
+  .rua > li,
+  .carimbo,
   .tabela-itens--chegando tbody tr,
   .aviso {
     animation-name: aparecer !important;
+  }
+
+  .livro__entrada--atual,
+  .livro__entrada:hover {
+    translate: none;
   }
 
   /* a estampa fica parada, sem flutuar */

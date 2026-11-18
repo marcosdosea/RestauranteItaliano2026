@@ -1,27 +1,41 @@
-﻿@model RestauranteWeb.Models.TipoFuncionarioViewModel
+@model RestauranteWeb.Models.TipoFuncionarioViewModel
 
 @{
-    ViewData["Title"] = "Deletar Tipo Funcionario";
+    ViewData["Title"] = "Excluir tipo de funcionário";
+    ViewData["Despedida"] = true;
 }
 
-<h1>Deletar Tipo Funcionario</h1>
+<section class="registro" aria-labelledby="titulo-excluir">
+    <h1 class="registro__titulo" id="titulo-excluir">Excluir este tipo de funcionário de vez?</h1>
 
-<h3>Você realmente quer deletar isso?</h3>
-<div>
-    <h4>RestauranteWeb.Models.TipoFuncionarioViewModel</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
-    </dl>
+    <div asp-validation-summary="All" class="alerta alerta--erro" role="alert"></div>
 
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Deletar" class="btn btn-danger" /> |
-        <a asp-action="Index">Voltar para lista</a>
+    <partial name="_Ficha" model="Model" />
+
+    <p class="alerta">
+        <svg class="icone icone--grande" aria-hidden="true"><use href="#icone-atencao"></use></svg>
+        <span>
+            <strong>Excluir não tem volta.</strong> O tipo some da lista. Se algum funcionário já é deste tipo, o sistema não deixa excluir.
+        </span>
+    </p>
+
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+        <input type="hidden" asp-for="Id">
+        <input type="hidden" asp-for="Nome">
+        <menu class="grupo-botoes u-lista-limpa">
+            <li>
+                <a class="btn btn--tinta btn--voltar" asp-action="Index">
+                    <svg class="icone" aria-hidden="true"><use href="#icone-voltar"></use></svg>
+                    Manter o tipo
+                </a>
+            </li>
+            <li>
+                <button class="btn btn--perigo" type="submit">
+                    <svg class="icone" aria-hidden="true"><use href="#icone-lixeira"></use></svg>
+                    Excluir definitivamente
+                </button>
+            </li>
+            <li><a class="u-link-simples" asp-action="Edit" asp-route-id="@Model.Id">Editar em vez de excluir</a></li>
+        </menu>
     </form>
-</div>
+</section>

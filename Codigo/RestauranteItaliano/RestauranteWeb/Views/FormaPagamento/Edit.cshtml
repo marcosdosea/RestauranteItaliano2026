@@ -22,8 +22,11 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <p class="campo campo--serifa campo--obrigatorio">
-            <label class="campo__rotulo" asp-for="Nome"></label>
-            <input class="form-control" asp-for="Nome" placeholder="Ex.: Cartão de crédito" autocomplete="off" aria-describedby="Nome-ajuda">
+            <span class="campo__cabeca">
+                <label class="campo__rotulo" asp-for="Nome"></label>
+                <span class="campo__contador" data-contador></span>
+            </span>
+            <input class="form-control" asp-for="Nome" maxlength="50" placeholder="Ex.: Cartão de crédito" autocomplete="off" aria-describedby="Nome-ajuda">
             <small class="campo__ajuda" id="Nome-ajuda">Como aparece na hora do pagamento. Entre 3 e 50 caracteres.</small>
             <span class="campo__erro text-danger" asp-validation-for="Nome"></span>
         </p>
@@ -38,6 +41,18 @@
             <li><a class="btn btn--contorno" asp-action="Index">Cancelar</a></li>
         </menu>
     </fieldset>
+
+    <aside class="previa previa--objeto" aria-labelledby="previa-titulo" data-previa-cadastro>
+        <h2 class="previa__titulo" id="previa-titulo">Como vai aparecer</h2>
+        <div class="recibo recibo--destaque" data-inclinar>
+            <p class="recibo__casa">Restaurante Italiano</p>
+            <p class="recibo__rotulo">pago com</p>
+            <p class="recibo__nome"><span data-previa-nome data-previa-vazio="Nome da forma">@(string.IsNullOrWhiteSpace(Model?.Nome) ? "Nome da forma" : Model.Nome)</span></p>
+            <p class="recibo__codigo">nº @(Model?.Id > 0 ? Model.Id?.ToString("000") : "novo")</p>
+            <span class="recibo__barras" aria-hidden="true"></span>
+        </div>
+        <p class="previa__nota">É assim que a forma aparece nos recibos da lista e na hora do pagamento.</p>
+    </aside>
 </form>
 
 @section Scripts {

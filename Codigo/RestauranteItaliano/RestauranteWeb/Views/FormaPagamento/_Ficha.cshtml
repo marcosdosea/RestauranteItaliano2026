@@ -1,9 +1,9 @@
 @model RestauranteWeb.Models.FormaPagamentoViewModel
 
-<article class="ficha" aria-labelledby="ficha-nome" data-inclinar>
-    <div class="linha-carta">
-        <h2 class="linha-carta__nome" id="ficha-nome">@Html.DisplayFor(model => model.Nome)</h2>
-        <span class="u-pontos" aria-hidden="true"></span>
-        <span class="linha-carta__codigo">@Html.DisplayNameFor(model => model.Id) @Html.DisplayFor(model => model.Id)</span>
-    </div>
+<article class="recibo recibo--destaque@(ViewData["Despedida"] is true ? " recibo--despedida" : "")" aria-labelledby="ficha-nome" data-inclinar>
+    <p class="recibo__casa">Restaurante Italiano</p>
+    <p class="recibo__rotulo">pago com</p>
+    <h2 class="recibo__nome" id="ficha-nome">@Model.Nome</h2>
+    <p class="recibo__codigo">nº @(Model.Id?.ToString("000"))</p>
+    <span class="recibo__barras" aria-hidden="true"></span>
 </article>
