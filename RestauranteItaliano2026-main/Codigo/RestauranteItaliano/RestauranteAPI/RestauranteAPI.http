@@ -1,0 +1,69 @@
+@RestauranteAPI_HostAddress = http://localhost:5160
+
+### Formas de pagamento
+
+GET {{RestauranteAPI_HostAddress}}/api/FormasPagamento
+Accept: application/json
+
+###
+
+GET {{RestauranteAPI_HostAddress}}/api/FormasPagamento/1
+Accept: application/json
+
+###
+
+POST {{RestauranteAPI_HostAddress}}/api/FormasPagamento
+Content-Type: application/json
+
+{
+  "nome": "Vale-refeição"
+}
+
+###
+
+PUT {{RestauranteAPI_HostAddress}}/api/FormasPagamento/1
+Content-Type: application/json
+
+{
+  "nome": "Dinheiro"
+}
+
+###
+
+DELETE {{RestauranteAPI_HostAddress}}/api/FormasPagamento/1
+
+### Itens do cardápio
+
+GET {{RestauranteAPI_HostAddress}}/api/ItensCardapio
+Accept: application/json
+
+###
+
+GET {{RestauranteAPI_HostAddress}}/api/ItensCardapio/1
+Accept: application/json
+
+###
+
+POST {{RestauranteAPI_HostAddress}}/api/ItensCardapio
+Content-Type: application/json
+
+{
+  "nome": "Risotto ai funghi",
+  "detalhes": "arroz arbóreo, cogumelos e parmesão",
+  "preco": 64.90,
+  "ativo": true,
+  "disponivel": true,
+  "idRestaurante": 1,
+  "idGrupoCardapio": 1
+}
+
+###
+
+PUT {{RestauranteAPI_HostAddress}}/api/ItensCardapio/1/disponibilidade
+Content-Type: application/json
+
+false
+
+###
+
+DELETE {{RestauranteAPI_HostAddress}}/api/ItensCardapio/1
