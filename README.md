@@ -19,7 +19,7 @@ Além do site, uma **Web API** publica o cardápio e as formas de pagamento para
 | **CS05** – Manter Restaurante | Cadastra os restaurantes que usam a plataforma | ⏳ Pendente | — |
 | **CS06** – Manter Funcionários | Cadastra os funcionários de cada restaurante | ⏳ Pendente | — |
 | **CS07** – Manter Itens do Cardápio | Cadastra os itens oferecidos pelo restaurante | ✅ Concluído | [José Matheus](https://github.com/jmatheus-dev) |
-| **CS08** – Manter Mesas do Restaurante | Cadastra as mesas gerenciadas pelo restaurante | ✅ Concluído | KaiDark0 (https://github.com/KaiDark0) |
+| **CS08** – Manter Mesas do Restaurante | Cadastra as mesas gerenciadas pelo restaurante | ✅ Concluído | [KaiDark0](https://github.com/KaiDark0) |
 | **CS09** – Iniciar Atendimento | Abre o atendimento de uma mesa e registra os pedidos | ⏳ Pendente | — |
 | **CS10** – Manter Pedido | Registra os itens pedidos durante o atendimento | ⏳ Pendente | — |
 | **CS11** – Fazer Pagamento de um Atendimento | Registra pagamentos parciais ou totais da conta | ⏳ Pendente | — |
