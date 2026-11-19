@@ -1,0 +1,26 @@
+﻿@model RestauranteWeb.Models.RestauranteViewModel
+@{
+    ViewData["Title"] = Model.Nome;
+}
+
+<section class="confirmacao" aria-labelledby="titulo-detalhes">
+    <header class="titulo-pagina titulo-pagina--empilhado">
+        <a class="link-voltar" asp-action="Index">
+            <svg class="icone" aria-hidden="true"><use href="#icone-voltar"></use></svg>
+            Voltar para a lista
+        </a>
+        <hgroup class="titulo-pagina__texto">
+            <p class="u-rotulo">Restaurante</p>
+            <h1 class="titulo-pagina__titulo" id="titulo-detalhes">@Html.DisplayFor(model => model.Nome)<span class="u-acento">.</span></h1>
+        </hgroup>
+    </header>
+
+    <partial name="_Ficha" model="Model" />
+
+    <p class="grupo-botoes">
+        <a class="btn btn--tinta" asp-action="Edit" asp-route-id="@Model.Id">Editar restaurante</a>
+        <a class="btn btn--contorno" asp-action="Index">Voltar</a>
+        <a class="btn btn--perigo" asp-action="Delete" asp-route-id="@Model.Id">Excluir</a>
+    </p>
+</section>
+

@@ -21,5 +21,7 @@ namespace Core.DTO
         public int QuantidadeTiposRestaurante { get; set; }
 
         public int QuantidadeFormasPagamento { get; set; }
+
+        public int QuantidadeRestaurantes { get; set; }
     }
 }
