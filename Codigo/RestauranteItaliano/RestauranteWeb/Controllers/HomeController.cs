@@ -50,7 +50,8 @@ namespace RestauranteWeb.Controllers
                     ["TipoFuncionario"] = resumo.QuantidadeTiposFuncionario,
                     ["TipoRestaurante"] = resumo.QuantidadeTiposRestaurante,
                     ["FormaPagamento"] = resumo.QuantidadeFormasPagamento,
-                    ["Restaurante"] = resumo.QuantidadeRestaurantes
+                    ["Restaurante"] = resumo.QuantidadeRestaurantes,
+                    ["Mesa"] = resumo.QuantidadeMesas
                 };
 
                 foreach (var entrada in homeViewModel.Capitulos.SelectMany(capitulo => capitulo.Entradas))

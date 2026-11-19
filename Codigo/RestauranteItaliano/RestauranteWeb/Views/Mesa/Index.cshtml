@@ -1,0 +1,56 @@
+@model IEnumerable<RestauranteWeb.Models.MesaViewModel>
+@{
+    ViewData["Title"] = "Mesas";
+    var mesas = Model.ToList();
+}
+
+<header class="titulo-pagina">
+    <hgroup class="titulo-pagina__texto">
+        <p class="u-rotulo">Capítulo · Salão</p>
+        <h1 class="titulo-pagina__titulo">Mesas<span class="u-acento">.</span></h1>
+        @if (mesas.Any())
+        {
+            <p class="titulo-pagina__resumo">@mesas.Count @(mesas.Count == 1 ? "mesa cadastrada" : "mesas cadastradas")</p>
+        }
+    </hgroup>
+    <a class="btn btn--tinta" asp-action="Create">
+        <svg class="icone" aria-hidden="true"><use href="#icone-mais"></use></svg>
+        Nova mesa
+    </a>
+</header>
+
+@if (!mesas.Any())
+{
+    <section class="vazio" aria-labelledby="vazio-titulo">
+        <h2 class="vazio__titulo" id="vazio-titulo">Nenhuma mesa cadastrada.</h2>
+        <p class="vazio__texto">Cadastre as mesas do salão. É por elas que os atendimentos são abertos.</p>
+        <p class="grupo-botoes">
+            <a class="btn btn--tinta" asp-action="Create">Cadastrar a primeira mesa</a>
+        </p>
+    </section>
+}
+else
+{
+    <ul class="lista-simples u-lista-limpa" aria-label="Mesas cadastradas">
+        @foreach (var item in mesas)
+        {
+            <li class="prato" id="mesa-@item.Id">
+                <a class="prato__link" asp-action="Details" asp-route-id="@item.Id">
+                    <span class="prato__texto">
+                        <span class="prato__nome">@Html.DisplayFor(modelItem => item.Identificacao)</span>
+                        @if (!string.IsNullOrWhiteSpace(item.NomeRestaurante))
+                        {
+                            <span class="prato__detalhe">@item.NomeRestaurante</span>
+                        }
+                    </span>
+                    <span class="u-pontos" aria-hidden="true"></span>
+                    <span class="prato__codigo">@Html.DisplayNameFor(model => model.Id) @Html.DisplayFor(modelItem => item.Id)</span>
+                </a>
+                <ul class="prato__acoes u-lista-limpa">
+                    <li><a class="prato__acao" asp-action="Edit" asp-route-id="@item.Id" aria-label="Editar @item.Identificacao">Editar</a></li>
+                    <li><a class="prato__acao prato__acao--perigo" asp-action="Delete" asp-route-id="@item.Id" aria-label="Excluir @item.Identificacao">Excluir</a></li>
+                </ul>
+            </li>
+        }
+    </ul>
+}

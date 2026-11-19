@@ -96,6 +96,7 @@ public class ResumoServiceTests
         Assert.AreEqual(0, resumo.QuantidadeFormasPagamento);
         Assert.AreEqual(0, resumo.QuantidadeTiposFuncionario);
         Assert.AreEqual(0, resumo.QuantidadeTiposRestaurante);
+        Assert.AreEqual(0, resumo.QuantidadeMesas);
     }
 
     private void ArmazenarDadosDeTeste()

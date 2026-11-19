@@ -84,6 +84,7 @@ public class HomeControllerTests
         Assert.AreEqual(3, entradas.Single(entrada => entrada.Controller == "TipoFuncionario").Quantidade);
         Assert.AreEqual(1, entradas.Single(entrada => entrada.Controller == "TipoRestaurante").Quantidade);
         Assert.AreEqual(4, entradas.Single(entrada => entrada.Controller == "FormaPagamento").Quantidade);
+        Assert.AreEqual(6, entradas.Single(entrada => entrada.Controller == "Mesa").Quantidade);
 
         // funções que ainda não foram implementadas ficam sem quantidade
         Assert.IsTrue(entradas
@@ -136,7 +137,8 @@ public class HomeControllerTests
             QuantidadeGruposCardapio = 5,
             QuantidadeTiposFuncionario = 3,
             QuantidadeTiposRestaurante = 1,
-            QuantidadeFormasPagamento = 4
+            QuantidadeFormasPagamento = 4,
+            QuantidadeMesas = 6
         };
     }
 }

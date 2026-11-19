@@ -23,5 +23,7 @@ namespace Core.DTO
         public int QuantidadeFormasPagamento { get; set; }
 
         public int QuantidadeRestaurantes { get; set; }
+
+        public int QuantidadeMesas { get; set; }
     }
 }

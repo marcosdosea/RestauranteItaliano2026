@@ -1,0 +1,35 @@
+@model RestauranteWeb.Models.MesaViewModel
+@{
+    ViewData["Title"] = "Nova mesa";
+}
+
+<header class="titulo-pagina titulo-pagina--empilhado">
+    <a class="link-voltar" asp-action="Index">
+        <svg class="icone" aria-hidden="true"><use href="#icone-voltar"></use></svg>
+        Voltar para a lista
+    </a>
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">Nova mesa<span class="u-acento">.</span></h1>
+        <p class="titulo-pagina__resumo">Os campos com asterisco são obrigatórios.</p>
+    </hgroup>
+</header>
+
+<form class="edicao" asp-action="Create" method="post" data-travar-envio>
+    <section class="edicao__formulario" aria-label="Dados da mesa">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <partial name="_Formulario" model="Model" />
+        <p class="grupo-botoes">
+            <button class="btn btn--tinta" type="submit">
+                <svg class="icone" aria-hidden="true"><use href="#icone-confirmar"></use></svg>
+                Salvar mesa
+            </button>
+            <a class="btn btn--contorno" asp-action="Index">Cancelar</a>
+        </p>
+    </section>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

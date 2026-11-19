@@ -1,0 +1,17 @@
+@model RestauranteWeb.Models.MesaViewModel
+
+<p class="edicao__linha">
+    <span class="campo campo--serifa campo--obrigatorio">
+        <label class="campo__rotulo" asp-for="Identificacao"></label>
+        <input class="form-control" asp-for="Identificacao" placeholder="Ex.: Mesa 12, Varanda 3" autocomplete="off" aria-describedby="Identificacao-ajuda">
+        <small class="campo__ajuda" id="Identificacao-ajuda">Como a mesa é chamada no salão. Não pode repetir no mesmo restaurante.</small>
+        <span class="campo__erro text-danger" asp-validation-for="Identificacao"></span>
+    </span>
+    <span class="campo campo--obrigatorio">
+        <label class="campo__rotulo" asp-for="IdRestaurante"></label>
+        <select class="form-select" asp-for="IdRestaurante" asp-items="Model.Restaurantes">
+            <option value="">Selecione…</option>
+        </select>
+        <span class="campo__erro text-danger" asp-validation-for="IdRestaurante"></span>
+    </span>
+</p>

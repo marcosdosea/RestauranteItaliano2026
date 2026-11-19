@@ -47,7 +47,7 @@ namespace RestauranteWeb.Models
                 new CapituloModel { Nome = "Salão", Ancora = "salao", Entradas = new List<EntradaIndiceModel>
                 {
                     new EntradaIndiceModel { Titulo = "Mapa do salão", Descricao = "iniciar, acompanhar e finalizar atendimentos", CasoDeUso = "CS09 · CS12" },
-                    new EntradaIndiceModel { Titulo = "Mesas", Descricao = "as mesas que o restaurante gerencia", CasoDeUso = "CS08" }
+                    new EntradaIndiceModel { Titulo = "Mesas", Descricao = "as mesas que o restaurante gerencia", CasoDeUso = "CS08", Controller = "Mesa", Singular = "mesa", Plural = "mesas" }
                 }},
                 new CapituloModel { Nome = "Pedidos", Ancora = "pedidos", Entradas = new List<EntradaIndiceModel>
                 {
