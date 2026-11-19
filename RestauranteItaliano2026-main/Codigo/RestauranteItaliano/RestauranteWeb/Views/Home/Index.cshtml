@@ -1,0 +1,177 @@
+﻿@model RestauranteWeb.Models.HomeViewModel
+
+@{
+    ViewData["Title"] = "Início";
+    var cardapioVazio = Model.DadosDisponiveis && Model.ItensNoCardapio == 0;
+    var capitulosProntos = Model.Capitulos.Where(capitulo => capitulo.TemFuncaoPronta);
+    var hojeIso = DateTime.Today.ToString("yyyy-MM-dd");
+}
+
+@* estampa de fundo (js/estampa.js) *@
+<div class="estampa" aria-hidden="true" data-estampa>
+    <img class="estampa__peca estampa__peca--vinho" src="~/images/gravuras/estampa/vinho.svg" alt="">
+    <img class="estampa__peca estampa__peca--tomate" src="~/images/gravuras/estampa/tomate.svg" alt="">
+    <img class="estampa__peca estampa__peca--tomate-cortado" src="~/images/gravuras/estampa/tomate-cortado.svg" alt="">
+    <img class="estampa__peca estampa__peca--manjericao" src="~/images/gravuras/estampa/manjericao.svg" alt="">
+    <img class="estampa__peca estampa__peca--alho" src="~/images/gravuras/estampa/alho.svg" alt="">
+    <img class="estampa__peca estampa__peca--parmesao" src="~/images/gravuras/estampa/parmesao.svg" alt="">
+    <img class="estampa__peca estampa__peca--ramo" src="~/images/gravuras/estampa/ramo.svg" alt="">
+    <img class="estampa__peca estampa__peca--tomate-pequeno" src="~/images/gravuras/estampa/tomate.svg" alt="">
+    <img class="estampa__peca estampa__peca--folha-pequena" src="~/images/gravuras/estampa/manjericao.svg" alt="">
+</div>
+
+<section class="abertura" aria-labelledby="saudacao">
+    <header class="abertura__texto u-surge">
+        <h1 class="abertura__saudacao" id="saudacao" lang="it">@Model.Saudacao</h1>
+        <p class="abertura__lead"><time datetime="@hojeIso">@Model.DataLonga</time>.</p>
+
+        <nav class="atalhos" aria-labelledby="atalhos-titulo">
+            <h2 class="u-rotulo" id="atalhos-titulo">Começar por</h2>
+            <ul class="atalhos__lista u-lista-limpa">
+                <li><a class="atalho" asp-controller="ItemCardapio" asp-action="Create"><span class="atalho__mais" aria-hidden="true">+</span>Novo prato</a></li>
+                <li><a class="atalho" asp-controller="GrupoCardapio" asp-action="Create"><span class="atalho__mais" aria-hidden="true">+</span>Novo grupo</a></li>
+                <li><a class="atalho" asp-controller="FormaPagamento" asp-action="Create"><span class="atalho__mais" aria-hidden="true">+</span>Forma de pagamento</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    @* cardápio dobrado em 3D (js/movimento.js) *@
+    <div class="cardapio u-surge u-surge--depois" data-cardapio>
+        <div class="cardapio__objeto" data-inclinar>
+            <div class="cardapio__aba">
+                <figure class="cardapio__face cardapio__face--dentro">
+                    <span class="cardapio__casa" aria-hidden="true">Restaurante Italiano</span>
+                    <picture class="cardapio__gravura">
+                        <source type="image/avif" srcset="@Url.Content("~/images/forno-768.avif") 768w, @Url.Content("~/images/forno-1536.avif") 1536w" sizes="(max-width: 767px) 92vw, 340px">
+                        <source type="image/webp" srcset="@Url.Content("~/images/forno-768.webp") 768w, @Url.Content("~/images/forno-1536.webp") 1536w" sizes="(max-width: 767px) 92vw, 340px">
+                        <img class="cardapio__imagem" src="~/images/forno-1536.jpg" alt="Gravura de um forno a lenha de tijolos aceso, com a pá de pizza ao lado, lenha amarrada e folhas de manjericão sobre a bancada" fetchpriority="high">
+                    </picture>
+                    <span class="cardapio__nome-carta" aria-hidden="true">La Carta</span>
+                </figure>
+                <div class="cardapio__face cardapio__face--capa" aria-hidden="true">
+                    <span class="cardapio__capa-titulo">La Carta</span>
+                    <span class="cardapio__capa-casa">Restaurante Italiano</span>
+                </div>
+            </div>
+
+            <section class="painel cardapio__pagina" aria-labelledby="painel-titulo">
+                <header class="painel__cabeca">
+                    <h2 class="painel__titulo" id="painel-titulo">Na carta hoje</h2>
+                    <time class="painel__hora" datetime="@Model.HoraAgora">@Model.HoraAgora</time>
+                </header>
+
+                @if (!Model.DadosDisponiveis)
+                {
+                    <p class="painel__vazio">Não foi possível consultar o cardápio agora. Verifique se o banco de dados está ligado.</p>
+                }
+                else if (cardapioVazio)
+                {
+                    <p class="painel__vazio">
+                        <img class="painel__ilustracao" src="~/images/gravuras/vazio.svg" alt="Gravura de um prato vazio com garfo e faca sobre um guardanapo xadrez">
+                        O cardápio ainda está em branco. Cadastre o primeiro prato e ele aparece aqui.
+                    </p>
+                }
+                else
+                {
+                    <ul class="u-lista-limpa" aria-label="Itens por grupo do cardápio">
+                        @foreach (var grupo in Model.Grupos)
+                        {
+                            <li class="painel__grupo">
+                                <img class="painel__gravura" src="@Url.Content(Gravuras.CaminhoDoGrupo(grupo.Nome))" alt="">
+                                <span class="painel__grupo-nome">@grupo.Nome</span>
+                                <span class="u-pontos" aria-hidden="true"></span>
+                                <span class="painel__grupo-qtd">@grupo.QuantidadeItens @(grupo.QuantidadeItens == 1 ? "item" : "itens")</span>
+                            </li>
+                        }
+                    </ul>
+                }
+
+                <dl class="numeros">
+                    <div class="numeros__item">
+                        <dt class="numeros__rotulo">Itens</dt>
+                        <dd class="numeros__valor">@(Model.DadosDisponiveis ? Model.ItensNoCardapio.ToString() : "—")</dd>
+                    </div>
+                    <div class="numeros__item">
+                        <dt class="numeros__rotulo numeros__rotulo--verde">Disponíveis</dt>
+                        <dd class="numeros__valor">@(Model.DadosDisponiveis ? Model.ItensDisponiveis.ToString() : "—")</dd>
+                    </div>
+                    <div class="numeros__item">
+                        <dt class="numeros__rotulo numeros__rotulo--ocra">Em falta</dt>
+                        <dd class="numeros__valor">@(Model.DadosDisponiveis ? Model.ItensEmFalta.ToString() : "—")</dd>
+                    </div>
+                </dl>
+
+                @if (Model.ItensNoCardapio > 0)
+                {
+                    <meter class="barra" min="0" max="@Model.ItensNoCardapio" value="@Model.ItensDisponiveis" aria-label="@Model.PercentualDisponivel% dos itens disponíveis para pedido">@Model.PercentualDisponivel%</meter>
+                }
+
+                @if (cardapioVazio)
+                {
+                    <a class="btn btn--tinta btn--seta" asp-controller="ItemCardapio" asp-action="Create">
+                        Cadastrar o primeiro prato
+                        <svg class="icone" aria-hidden="true"><use href="#icone-mais"></use></svg>
+                    </a>
+                }
+                else
+                {
+                    <a class="btn btn--tinta btn--seta" asp-controller="ItemCardapio" asp-action="Index">
+                        Abrir o cardápio
+                        <svg class="icone" aria-hidden="true"><use href="#icone-seta"></use></svg>
+                    </a>
+                }
+            </section>
+        </div>
+    </div>
+</section>
+
+<nav class="sumario" aria-labelledby="indice-titulo">
+    <header class="titulo-secao">
+        <h2 class="titulo-secao__titulo" id="indice-titulo">Índice</h2>
+        <p class="titulo-secao__resumo">@Model.FuncoesProntas @(Model.FuncoesProntas == 1 ? "função pronta" : "funções prontas")</p>
+    </header>
+
+    <ol class="indice u-lista-limpa">
+        @foreach (var capitulo in capitulosProntos)
+        {
+            <li class="capitulo u-surge" id="@capitulo.Ancora">
+                <h3 class="capitulo__titulo">
+                    <span class="capitulo__romano">@capitulo.Romano.ToUpper()</span>
+                    <span class="capitulo__nome">@capitulo.Nome</span>
+                </h3>
+
+                <ul class="capitulo__entradas u-lista-limpa">
+                    @foreach (var entrada in capitulo.Entradas.Where(entrada => entrada.Pronta))
+                    {
+                        <li>
+                            <a class="entrada" asp-controller="@entrada.Controller" asp-action="Index" title="@entrada.CasoDeUso">
+                                <span class="entrada__texto">
+                                    <span class="entrada__titulo">@entrada.Titulo</span>
+                                    <span class="entrada__descricao">@entrada.Descricao</span>
+                                </span>
+                                <span class="u-pontos" aria-hidden="true"></span>
+                                <span class="entrada__resumo">@entrada.Resumo</span>
+                                <svg class="icone entrada__seta" aria-hidden="true"><use href="#icone-seta"></use></svg>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
+    </ol>
+
+    @if (Model.TitulosEmBreve.Any())
+    {
+        <p class="em-breve">Ainda por vir: @string.Join(", ", Model.TitulosEmBreve.Select(titulo => titulo.ToLower())).</p>
+    }
+</nav>
+
+<figure class="proverbio">
+    <svg class="proverbio__ornamento" aria-hidden="true"><use href="#ornamento-ramo"></use></svg>
+    <blockquote class="proverbio__frase" lang="it">«A tavola non s’invecchia.»</blockquote>
+    <figcaption class="u-rotulo">À mesa não se envelhece · provérbio italiano</figcaption>
+</figure>
+
+@section Scripts {
+    <script src="~/js/estampa.js" asp-append-version="true"></script>
+}

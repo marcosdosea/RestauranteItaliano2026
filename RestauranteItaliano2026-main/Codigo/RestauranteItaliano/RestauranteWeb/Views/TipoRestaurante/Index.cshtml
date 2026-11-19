@@ -1,0 +1,67 @@
+@model IEnumerable<RestauranteWeb.Models.TipoRestauranteModel>
+
+@{
+    ViewData["Title"] = "Tipos de restaurante";
+    var cadastros = Model.ToList();
+}
+
+<header class="titulo-pagina">
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">Tipos de restaurante</h1>
+        @if (cadastros.Any())
+        {
+            <p class="titulo-pagina__resumo" aria-live="polite" data-resumo-lista data-plural="tipos">@cadastros.Count @(cadastros.Count == 1 ? "tipo cadastrado" : "tipos cadastrados")</p>
+        }
+    </hgroup>
+    <a class="btn btn--tinta" asp-action="Create">
+        <svg class="icone" aria-hidden="true"><use href="#icone-mais"></use></svg>
+        Novo tipo
+    </a>
+</header>
+
+@if (!cadastros.Any())
+{
+    <section class="vazio" aria-labelledby="vazio-titulo">
+        <img class="vazio__gravura" src="~/images/gravuras/vazio.svg" alt="Gravura de um prato vazio com garfo e faca sobre um guardanapo xadrez">
+        <h2 class="vazio__titulo" id="vazio-titulo">Nenhum tipo de restaurante cadastrado.</h2>
+        <p class="vazio__texto">Cadastre os estilos de restaurante, como pizzaria, churrascaria e comida brasileira. Cada restaurante tem um tipo.</p>
+        <menu class="grupo-botoes u-lista-limpa">
+            <li><a class="btn btn--tinta" asp-action="Create">Cadastrar o primeiro tipo</a></li>
+        </menu>
+    </section>
+}
+else
+{
+    <search class="ferramentas ferramentas--larga">
+        <label class="busca">
+            <svg class="icone" aria-hidden="true"><use href="#icone-busca"></use></svg>
+            <span class="visually-hidden">Buscar tipo pelo nome</span>
+            <input class="busca__campo" type="search" placeholder="Buscar tipo…" autocomplete="off" data-busca-lista="lista-cadastros">
+        </label>
+    </search>
+
+    <ul class="rua u-lista-limpa" id="lista-cadastros" aria-label="Tipos de restaurante cadastrados" data-lista-cadastro="TipoRestaurante">
+        @foreach (var item in cadastros)
+        {
+            <li id="tipo-@item.Id">
+                <article class="fachada rua__fachada" aria-labelledby="tipo-@item.Id-nome" data-carimbo data-inclinar>
+                    <span class="fachada__toldo" aria-hidden="true"></span>
+                    <h2 class="fachada__nome" id="tipo-@item.Id-nome"><a class="fachada__link" asp-action="Details" asp-route-id="@item.Id" data-busca-nome>@item.Nome</a></h2>
+                    <p class="fachada__rotulo">Tipo de restaurante</p>
+                    <p class="fachada__codigo">nº @(((uint?)item.Id)?.ToString("000"))</p>
+                    <menu class="fachada__acoes u-lista-limpa">
+                        <li><a class="acao" asp-action="Edit" asp-route-id="@item.Id" aria-label="Editar @item.Nome">Editar</a></li>
+                        <li><a class="acao acao--perigo" asp-action="Delete" asp-route-id="@item.Id" aria-label="Excluir @item.Nome">Excluir</a></li>
+                    </menu>
+                    <span class="fachada__frente" aria-hidden="true">
+                        <span class="fachada__janela"></span>
+                        <span class="fachada__porta"></span>
+                        <span class="fachada__janela"></span>
+                    </span>
+                </article>
+            </li>
+        }
+    </ul>
+
+    <p class="sem-resultado" data-sem-resultado hidden>Nenhum tipo com esse nome.</p>
+}

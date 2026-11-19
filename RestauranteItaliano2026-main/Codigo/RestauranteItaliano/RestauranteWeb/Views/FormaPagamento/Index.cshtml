@@ -1,0 +1,63 @@
+﻿@model IEnumerable<RestauranteWeb.Models.FormaPagamentoViewModel>
+
+@{
+    ViewData["Title"] = "Formas de pagamento";
+    var formasPagamento = Model.ToList();
+}
+
+<header class="titulo-pagina">
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">Formas de pagamento</h1>
+        @if (formasPagamento.Any())
+        {
+            <p class="titulo-pagina__resumo" aria-live="polite" data-resumo-lista data-plural="formas">@formasPagamento.Count @(formasPagamento.Count == 1 ? "forma cadastrada" : "formas cadastradas")</p>
+        }
+    </hgroup>
+    <a class="btn btn--tinta" asp-action="Create">
+        <svg class="icone" aria-hidden="true"><use href="#icone-mais"></use></svg>
+        Nova forma
+    </a>
+</header>
+
+@if (!formasPagamento.Any())
+{
+    <section class="vazio" aria-labelledby="vazio-titulo">
+        <img class="vazio__gravura" src="~/images/gravuras/vazio.svg" alt="Gravura de um prato vazio com garfo e faca sobre um guardanapo xadrez">
+        <h2 class="vazio__titulo" id="vazio-titulo">Nenhuma forma de pagamento cadastrada.</h2>
+        <p class="vazio__texto">Cadastre as formas que o restaurante aceita, como dinheiro, Pix e cartão. Elas serão usadas no pagamento dos atendimentos.</p>
+        <menu class="grupo-botoes u-lista-limpa">
+            <li><a class="btn btn--tinta" asp-action="Create">Cadastrar a primeira forma</a></li>
+        </menu>
+    </section>
+}
+else
+{
+    <search class="ferramentas ferramentas--larga">
+        <label class="busca">
+            <svg class="icone" aria-hidden="true"><use href="#icone-busca"></use></svg>
+            <span class="visually-hidden">Buscar forma de pagamento pelo nome</span>
+            <input class="busca__campo" type="search" placeholder="Buscar forma de pagamento…" autocomplete="off" data-busca-lista="lista-cadastros">
+        </label>
+    </search>
+
+    <ul class="recibos u-lista-limpa" id="lista-cadastros" aria-label="Formas de pagamento cadastradas" data-lista-cadastro="FormaPagamento">
+        @foreach (var item in formasPagamento)
+        {
+            <li id="forma-@item.Id">
+                <article class="recibo" aria-labelledby="forma-@item.Id-nome" data-carimbo data-inclinar>
+                    <p class="recibo__casa">Restaurante Italiano</p>
+                    <p class="recibo__rotulo">pago com</p>
+                    <h2 class="recibo__nome" id="forma-@item.Id-nome"><a class="recibo__link" asp-action="Details" asp-route-id="@item.Id" data-busca-nome>@item.Nome</a></h2>
+                    <p class="recibo__codigo">nº @(item.Id?.ToString("000"))</p>
+                    <span class="recibo__barras" aria-hidden="true"></span>
+                    <menu class="recibo__acoes u-lista-limpa">
+                        <li><a class="acao" asp-action="Edit" asp-route-id="@item.Id" aria-label="Editar @item.Nome">Editar</a></li>
+                        <li><a class="acao acao--perigo" asp-action="Delete" asp-route-id="@item.Id" aria-label="Excluir @item.Nome">Excluir</a></li>
+                    </menu>
+                </article>
+            </li>
+        }
+    </ul>
+
+    <p class="sem-resultado" data-sem-resultado hidden>Nenhuma forma com esse nome.</p>
+}

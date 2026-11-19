@@ -1,0 +1,52 @@
+﻿@model RestauranteWeb.Models.RestauranteViewModel
+@{
+    var rua = string.IsNullOrWhiteSpace(Model.Rua) ? "—" : Model.Rua;
+    var bairro = string.IsNullOrWhiteSpace(Model.Bairro) ? "—" : Model.Bairro;
+    var cep = string.IsNullOrWhiteSpace(Model.Cep) ? "—" : Model.Cep;
+    var cidade = string.Join(" - ", new[] { Model.Cidade, Model.Estado }.Where(texto => !string.IsNullOrWhiteSpace(texto)));
+    if (cidade.Length == 0) cidade = "—";
+}
+
+<article class="ficha" aria-labelledby="ficha-nome">
+    <header class="ficha__cabeca">
+        <span class="ficha__grupo">@Model.NomeTipoRestaurante</span>
+        <span class="ficha__codigo">código @Model.Id</span>
+    </header>
+    <p class="prato">
+        <span class="prato__link">
+            <span class="prato__texto">
+                <span class="prato__nome" id="ficha-nome">@Model.Nome</span>
+            </span>
+        </span>
+    </p>
+    <dl class="ficha__dados">
+        <div class="ficha__dado">
+            <dt class="ficha__termo">@Html.DisplayNameFor(m => m.Cnpj)</dt>
+            <dd class="ficha__valor">@Model.Cnpj</dd>
+        </div>
+        <div class="ficha__dado">
+            <dt class="ficha__termo">@Html.DisplayNameFor(m => m.Rua)</dt>
+            <dd class="ficha__valor">@rua</dd>
+        </div>
+        <div class="ficha__dado">
+            <dt class="ficha__termo">@Html.DisplayNameFor(m => m.Bairro)</dt>
+            <dd class="ficha__valor">@bairro</dd>
+        </div>
+        <div class="ficha__dado">
+            <dt class="ficha__termo">@Html.DisplayNameFor(m => m.Cidade)</dt>
+            <dd class="ficha__valor">@cidade</dd>
+        </div>
+        <div class="ficha__dado">
+            <dt class="ficha__termo">@Html.DisplayNameFor(m => m.Cep)</dt>
+            <dd class="ficha__valor">@cep</dd>
+        </div>
+        <div class="ficha__dado">
+            <dt class="ficha__termo">@Html.DisplayNameFor(m => m.Telefone1)</dt>
+            <dd class="ficha__valor">@(string.IsNullOrWhiteSpace(Model.Telefone1) ? "—" : Model.Telefone1)</dd>
+        </div>
+        <div class="ficha__dado">
+            <dt class="ficha__termo">@Html.DisplayNameFor(m => m.Telefone2)</dt>
+            <dd class="ficha__valor">@(string.IsNullOrWhiteSpace(Model.Telefone2) ? "—" : Model.Telefone2)</dd>
+        </div>
+    </dl>
+</article>

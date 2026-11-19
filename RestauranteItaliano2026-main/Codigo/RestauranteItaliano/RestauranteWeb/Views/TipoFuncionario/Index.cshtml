@@ -1,0 +1,69 @@
+@model IEnumerable<RestauranteWeb.Models.TipoFuncionarioViewModel>
+
+@{
+    ViewData["Title"] = "Tipos de funcionário";
+    var cadastros = Model.ToList();
+}
+
+<header class="titulo-pagina">
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">Tipos de funcionário</h1>
+        @if (cadastros.Any())
+        {
+            <p class="titulo-pagina__resumo" aria-live="polite" data-resumo-lista data-plural="tipos">@cadastros.Count @(cadastros.Count == 1 ? "tipo cadastrado" : "tipos cadastrados")</p>
+        }
+    </hgroup>
+    <a class="btn btn--tinta" asp-action="Create">
+        <svg class="icone" aria-hidden="true"><use href="#icone-mais"></use></svg>
+        Novo tipo
+    </a>
+</header>
+
+@if (!cadastros.Any())
+{
+    <section class="vazio" aria-labelledby="vazio-titulo">
+        <ul class="quadro quadro--vazio u-lista-limpa" aria-hidden="true">
+            <li><span class="quadro__gancho"></span></li>
+            <li><span class="quadro__gancho"></span></li>
+            <li><span class="quadro__gancho"></span></li>
+        </ul>
+        <h2 class="vazio__titulo" id="vazio-titulo">Nenhum tipo de funcionário cadastrado.</h2>
+        <p class="vazio__texto">Cadastre as funções da equipe, como garçom, cozinheiro e gerente. Cada funcionário tem um tipo.</p>
+        <menu class="grupo-botoes u-lista-limpa">
+            <li><a class="btn btn--tinta" asp-action="Create">Cadastrar o primeiro tipo</a></li>
+        </menu>
+    </section>
+}
+else
+{
+    <search class="ferramentas ferramentas--larga">
+        <label class="busca">
+            <svg class="icone" aria-hidden="true"><use href="#icone-busca"></use></svg>
+            <span class="visually-hidden">Buscar tipo pelo nome</span>
+            <input class="busca__campo" type="search" placeholder="Buscar tipo…" autocomplete="off" data-busca-lista="lista-cadastros">
+        </label>
+    </search>
+
+    <ul class="quadro u-lista-limpa" id="lista-cadastros" aria-label="Tipos de funcionário cadastrados" data-lista-cadastro="TipoFuncionario">
+        @foreach (var item in cadastros)
+        {
+            <li id="tipo-@item.Id">
+                <article class="cracha" aria-labelledby="tipo-@item.Id-nome" data-carimbo data-inclinar>
+                    <span class="cracha__monograma" aria-hidden="true">@Monograma.DoNome(item.Nome)</span>
+                    <h2 class="cracha__nome" id="tipo-@item.Id-nome"><a class="cracha__link" asp-action="Details" asp-route-id="@item.Id" data-busca-nome>@item.Nome</a></h2>
+                    <p class="cracha__rotulo">Equipe</p>
+                    <p class="cracha__codigo">nº @(((uint?)item.Id)?.ToString("000"))</p>
+                    <menu class="cracha__acoes u-lista-limpa">
+                        <li><a class="acao" asp-action="Edit" asp-route-id="@item.Id" aria-label="Editar @item.Nome">Editar</a></li>
+                        <li><a class="acao acao--perigo" asp-action="Delete" asp-route-id="@item.Id" aria-label="Excluir @item.Nome">Excluir</a></li>
+                    </menu>
+                </article>
+            </li>
+        }
+        <li aria-hidden="true">
+            <a class="quadro__novo" asp-action="Create" tabindex="-1"><span class="quadro__gancho"></span>Pendurar um novo tipo</a>
+        </li>
+    </ul>
+
+    <p class="sem-resultado" data-sem-resultado hidden>Nenhum tipo com esse nome.</p>
+}

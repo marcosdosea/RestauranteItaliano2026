@@ -1,0 +1,8 @@
+@model RestauranteWeb.Models.GrupoCardapioModel
+
+<article class="folha folha--destaque@(ViewData["Despedida"] is true ? " folha--despedida" : "")" aria-labelledby="ficha-nome" data-inclinar>
+    <p class="folha__capitulo">folha do cardápio</p>
+    <img class="folha__gravura" src="@Url.Content(Gravuras.CaminhoDoGrupo(Model.Nome))" alt="">
+    <h2 class="folha__nome" id="ficha-nome">@Model.Nome</h2>
+    <p class="folha__codigo">Código @Model.Id</p>
+</article>

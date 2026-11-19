@@ -1,0 +1,94 @@
+@model IEnumerable<RestauranteWeb.Models.GrupoCardapioModel>
+
+@{
+    ViewData["Title"] = "Grupos do cardápio";
+    var cadastros = Model.ToList();
+}
+
+<header class="titulo-pagina">
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">Grupos do cardápio</h1>
+        @if (cadastros.Any())
+        {
+            <p class="titulo-pagina__resumo" aria-live="polite" data-resumo-lista data-plural="grupos">@cadastros.Count @(cadastros.Count == 1 ? "grupo cadastrado" : "grupos cadastrados")</p>
+        }
+    </hgroup>
+    <a class="btn btn--tinta" asp-action="Create">
+        <svg class="icone" aria-hidden="true"><use href="#icone-mais"></use></svg>
+        Novo grupo
+    </a>
+</header>
+
+@if (!cadastros.Any())
+{
+    <section class="vazio" aria-labelledby="vazio-titulo">
+        <img class="vazio__gravura" src="~/images/gravuras/vazio.svg" alt="Gravura de um prato vazio com garfo e faca sobre um guardanapo xadrez">
+        <h2 class="vazio__titulo" id="vazio-titulo">Nenhum grupo do cardápio cadastrado.</h2>
+        <p class="vazio__texto">Cadastre os grupos que organizam o cardápio, como entradas, massas e sobremesas. Cada item do cardápio pertence a um grupo.</p>
+        <menu class="grupo-botoes u-lista-limpa">
+            <li><a class="btn btn--tinta" asp-action="Create">Cadastrar o primeiro grupo</a></li>
+        </menu>
+    </section>
+}
+else
+{
+    <search class="ferramentas ferramentas--larga">
+        <label class="busca">
+            <svg class="icone" aria-hidden="true"><use href="#icone-busca"></use></svg>
+            <span class="visually-hidden">Buscar grupo pelo nome</span>
+            <input class="busca__campo" type="search" placeholder="Buscar grupo…" autocomplete="off" data-busca-lista="lista-cadastros">
+        </label>
+    </search>
+
+    var primeiro = cadastros[0];
+
+    <div class="livro" data-livro data-url-itens="@Url.Action("GetDataPage", "ItemCardapio")">
+        <span class="livro__fita" aria-hidden="true"></span>
+        <div class="livro__capa" hidden data-livro-capa>
+            <span class="livro__capa-casa">Restaurante Italiano</span>
+            <span class="livro__capa-titulo" lang="it">Il Menù</span>
+            <span class="livro__capa-fio"></span>
+            <span class="livro__capa-subtitulo">grupos do cardápio</span>
+        </div>
+        <section class="livro__sumario" aria-labelledby="sumario-titulo">
+            <h2 class="livro__titulo" id="sumario-titulo">Sumário</h2>
+            <ol class="livro__lista u-lista-limpa" id="lista-cadastros" data-lista-cadastro="GrupoCardapio">
+                @foreach (var item in cadastros)
+                {
+                    <li id="grupo-@item.Id">
+                        <a class="livro__entrada @(item == primeiro ? "livro__entrada--atual" : null)" asp-action="Details" asp-route-id="@item.Id" data-carimbo
+                           data-nome="@item.Nome" data-codigo="@item.Id" data-gravura="@Url.Content(Gravuras.CaminhoDoGrupo(item.Nome))"
+                           data-editar="@Url.Action("Edit", new { id = item.Id })" data-excluir="@Url.Action("Delete", new { id = item.Id })">
+                            <span data-busca-nome>@item.Nome</span>
+                            <span class="u-pontos" aria-hidden="true"></span>
+                            <span class="livro__quantidade" data-livro-quantidade></span>
+                        </a>
+                    </li>
+                }
+            </ol>
+        </section>
+
+        <article class="folha livro__folha" aria-labelledby="folha-nome" data-livro-folha>
+            <header class="folha__cabeca">
+                <img class="folha__gravura folha__gravura--miniatura" src="@Url.Content(Gravuras.CaminhoDoGrupo(primeiro.Nome))" alt="" data-folha-gravura>
+                <hgroup class="folha__titulos">
+                    <p class="folha__capitulo" data-folha-capitulo>capítulo i</p>
+                    <h2 class="folha__nome" id="folha-nome" data-folha-nome>@primeiro.Nome</h2>
+                </hgroup>
+            </header>
+            <ul class="folha__pratos u-lista-limpa" aria-live="polite" data-folha-pratos></ul>
+            <footer class="folha__rodape">
+                <button class="folha__virar" type="button" aria-label="Capítulo anterior" data-folha-anterior>‹</button>
+                <p class="folha__pagina" data-folha-pagina></p>
+                <button class="folha__virar" type="button" aria-label="Próximo capítulo" data-folha-proxima>›</button>
+            </footer>
+            <menu class="folha__acoes u-lista-limpa">
+                <li><a class="acao" asp-action="Details" asp-route-id="@primeiro.Id" aria-label="Abrir @primeiro.Nome" data-folha-abrir>Abrir</a></li>
+                <li><a class="acao" asp-action="Edit" asp-route-id="@primeiro.Id" aria-label="Editar @primeiro.Nome" data-folha-editar>Editar</a></li>
+                <li><a class="acao acao--perigo" asp-action="Delete" asp-route-id="@primeiro.Id" aria-label="Excluir @primeiro.Nome" data-folha-excluir>Excluir</a></li>
+            </menu>
+        </article>
+    </div>
+
+    <p class="sem-resultado" data-sem-resultado hidden>Nenhum grupo com esse nome.</p>
+}

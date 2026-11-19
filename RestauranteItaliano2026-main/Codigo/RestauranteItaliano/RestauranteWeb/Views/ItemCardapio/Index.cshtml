@@ -1,0 +1,99 @@
+﻿@model RestauranteWeb.Models.ItemCardapioViewModel
+
+@{
+    ViewData["Title"] = "Itens do cardápio";
+    var gruposCardapio = ViewData["GruposCardapio"] as SelectList;
+}
+
+@section Estilos {
+    <link rel="stylesheet" href="~/lib/datatables.net/datatables.min.css">
+}
+
+<header class="titulo-pagina">
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">Itens do cardápio</h1>
+        <p class="titulo-pagina__resumo" aria-live="polite" data-resumo-itens></p>
+    </hgroup>
+    <a class="btn btn--tinta" asp-action="Create">
+        <svg class="icone" aria-hidden="true"><use href="#icone-mais"></use></svg>
+        Novo item
+    </a>
+</header>
+
+<section class="conta" aria-labelledby="conta-titulo" hidden data-conta>
+    <h2 class="visually-hidden" id="conta-titulo">Situação do cardápio hoje</h2>
+    <p class="conta__item conta__item--disponivel"><span class="conta__valor" data-conta="disponiveis"></span><span class="conta__rotulo">disponíveis hoje</span></p>
+    <p class="conta__item conta__item--falta"><span class="conta__valor" data-conta="falta"></span><span class="conta__rotulo">em falta</span></p>
+    <p class="conta__item"><span class="conta__valor" data-conta="fora"></span><span class="conta__rotulo">fora do cardápio</span></p>
+    <p class="conta__item"><span class="conta__valor" data-conta="preco"></span><span class="conta__rotulo">preço médio</span></p>
+    <span class="conta__barra" aria-hidden="true">
+        <span class="conta__barra-parte conta__barra-parte--disponivel" data-conta-barra="disponiveis"></span>
+        <span class="conta__barra-parte conta__barra-parte--falta" data-conta-barra="falta"></span>
+    </span>
+</section>
+
+<search class="ferramentas">
+    <label class="busca">
+        <svg class="icone" aria-hidden="true"><use href="#icone-busca"></use></svg>
+        <span class="visually-hidden">Buscar item pelo nome, detalhes ou grupo</span>
+        <input class="busca__campo" type="search" placeholder="Buscar prato, bebida ou grupo…" autocomplete="off" data-busca-itens>
+    </label>
+
+    <div class="vistas" role="group" aria-label="Ver os itens como">
+        <button class="vistas__opcao" type="button" aria-pressed="true" data-vista="tabela">Tabela</button>
+        <button class="vistas__opcao" type="button" aria-pressed="false" data-vista="carta">Cardápio</button>
+    </div>
+
+    <fieldset class="fichas">
+        <legend class="visually-hidden">@Html.DisplayNameFor(model => model.IdGrupoCardapio)</legend>
+        <label class="ficha-grupo">
+            <input class="ficha-grupo__campo" type="radio" name="grupo" value="" checked data-grupo-itens>
+            <span class="ficha-grupo__nome">Todos</span>
+            <span class="ficha-grupo__quantidade" data-quantidade-grupo=""></span>
+        </label>
+        @foreach (var grupo in gruposCardapio ?? Enumerable.Empty<SelectListItem>())
+        {
+            <label class="ficha-grupo">
+                <input class="ficha-grupo__campo" type="radio" name="grupo" value="@grupo.Value" data-grupo-itens>
+                <img class="ficha-grupo__gravura" src="@Url.Content(Gravuras.CaminhoDoGrupo(grupo.Text))" alt="">
+                <span class="ficha-grupo__nome">@grupo.Text</span>
+                <span class="ficha-grupo__quantidade" data-quantidade-grupo="@grupo.Value"></span>
+            </label>
+        }
+    </fieldset>
+</search>
+
+<div class="faixa-grupo" aria-live="polite" hidden data-faixa-grupo></div>
+
+<section class="carta" aria-label="Itens como aparecem no cardápio" hidden data-carta></section>
+
+@* token dos interruptores "Disponível" montados pelo DataTables *@
+@Html.AntiForgeryToken()
+
+@* rotas usadas pelo js/itens-cardapio.js *@
+<table class="tabela-itens" id="tabela-itens"
+       data-url="@Url.Action("GetDataPage")"
+       data-url-detalhes="@Url.Action("Details")"
+       data-url-editar="@Url.Action("Edit")"
+       data-url-excluir="@Url.Action("Delete")"
+       data-url-disponibilidade="@Url.Action("AlternarDisponivel")"
+       data-idioma="@Url.Content("~/lib/datatables.net/pt-BR.json")"
+       data-gravuras="@Gravuras.PalavrasChaveJson"
+       data-pasta-gravuras="@Url.Content(Gravuras.Pasta)">
+    <caption class="visually-hidden">Itens do cardápio, com busca, filtro por grupo, ordenação e paginação</caption>
+    <thead>
+        <tr>
+            <th scope="col">@Html.DisplayNameFor(model => model.Nome)</th>
+            <th scope="col">@Html.DisplayNameFor(model => model.NomeGrupoCardapio)</th>
+            <th scope="col">@Html.DisplayNameFor(model => model.Preco)</th>
+            <th scope="col">Situação</th>
+            <th scope="col"><span class="visually-hidden">Ações</span></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+@section Scripts {
+    <script src="~/lib/datatables.net/datatables.min.js"></script>
+    <script src="~/js/itens-cardapio.js" asp-append-version="true"></script>
+}

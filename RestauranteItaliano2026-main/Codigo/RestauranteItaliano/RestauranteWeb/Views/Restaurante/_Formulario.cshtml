@@ -1,0 +1,70 @@
+﻿@model RestauranteWeb.Models.RestauranteViewModel
+
+<p class="campo campo--serifa campo--obrigatorio">
+    <label class="campo__rotulo" asp-for="Nome"></label>
+    <input class="form-control" asp-for="Nome" placeholder="Ex.: Trattoria Bella Napoli" autocomplete="off" aria-describedby="Nome-ajuda">
+    <small class="campo__ajuda" id="Nome-ajuda">Como o restaurante aparece no sistema. Entre 3 e 45 caracteres.</small>
+    <span class="campo__erro text-danger" asp-validation-for="Nome"></span>
+</p>
+
+<p class="edicao__linha">
+    <span class="campo campo--obrigatorio">
+        <label class="campo__rotulo" asp-for="Cnpj"></label>
+        <input class="form-control" asp-for="Cnpj" placeholder="00.000.000/0000-00" inputmode="numeric" autocomplete="off" aria-describedby="Cnpj-ajuda">
+        <small class="campo__ajuda" id="Cnpj-ajuda">Pode digitar com ou sem pontos e barra.</small>
+        <span class="campo__erro text-danger" asp-validation-for="Cnpj"></span>
+    </span>
+    <span class="campo campo--obrigatorio">
+        <label class="campo__rotulo" asp-for="IdTipoRestaurante"></label>
+        <select class="form-select" asp-for="IdTipoRestaurante" asp-items="Model.TiposRestaurante">
+            <option value="">Selecione…</option>
+        </select>
+        <span class="campo__erro text-danger" asp-validation-for="IdTipoRestaurante"></span>
+    </span>
+</p>
+
+<p class="edicao__linha">
+    <span class="campo">
+        <label class="campo__rotulo" asp-for="Cep"></label>
+        <input class="form-control" asp-for="Cep" placeholder="00000-000" inputmode="numeric" autocomplete="postal-code">
+        <span class="campo__erro text-danger" asp-validation-for="Cep"></span>
+    </span>
+    <span class="campo">
+        <label class="campo__rotulo" asp-for="Bairro"></label>
+        <input class="form-control" asp-for="Bairro" autocomplete="off">
+        <span class="campo__erro text-danger" asp-validation-for="Bairro"></span>
+    </span>
+</p>
+
+<p class="campo">
+    <label class="campo__rotulo" asp-for="Rua"></label>
+    <input class="form-control" asp-for="Rua" placeholder="Rua, avenida e número" autocomplete="off">
+    <span class="campo__erro text-danger" asp-validation-for="Rua"></span>
+</p>
+
+<p class="edicao__linha">
+    <span class="campo">
+        <label class="campo__rotulo" asp-for="Cidade"></label>
+        <input class="form-control" asp-for="Cidade" autocomplete="off">
+        <span class="campo__erro text-danger" asp-validation-for="Cidade"></span>
+    </span>
+    <span class="campo">
+        <label class="campo__rotulo" asp-for="Estado"></label>
+        <input class="form-control" asp-for="Estado" placeholder="SE" maxlength="2" autocomplete="off">
+        <span class="campo__erro text-danger" asp-validation-for="Estado"></span>
+    </span>
+</p>
+
+<p class="edicao__linha">
+    <span class="campo">
+        <label class="campo__rotulo" asp-for="Telefone1"></label>
+        <input class="form-control" asp-for="Telefone1" placeholder="(79) 3222-1111" inputmode="tel" autocomplete="off">
+        <span class="campo__erro text-danger" asp-validation-for="Telefone1"></span>
+    </span>
+    <span class="campo">
+        <label class="campo__rotulo" asp-for="Telefone2"></label>
+        <input class="form-control" asp-for="Telefone2" placeholder="(79) 99999-9999" inputmode="tel" autocomplete="off">
+        <span class="campo__erro text-danger" asp-validation-for="Telefone2"></span>
+    </span>
+</p>
+
