@@ -1,0 +1,8 @@
+@model RestauranteWeb.Models.TipoFuncionarioViewModel
+
+<article class="cracha cracha--destaque@(ViewData["Despedida"] is true ? " cracha--despedida" : "")" aria-labelledby="ficha-nome" data-inclinar>
+    <span class="cracha__monograma" aria-hidden="true">@Monograma.DoNome(Model.Nome)</span>
+    <h2 class="cracha__nome" id="ficha-nome">@Model.Nome</h2>
+    <p class="cracha__rotulo">Equipe</p>
+    <p class="cracha__codigo">nº @(((uint?)Model.Id)?.ToString("000"))</p>
+</article>

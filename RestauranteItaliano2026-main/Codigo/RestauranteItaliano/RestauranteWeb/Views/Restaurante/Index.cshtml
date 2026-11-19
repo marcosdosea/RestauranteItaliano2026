@@ -1,0 +1,58 @@
+﻿@model IEnumerable<RestauranteWeb.Models.RestauranteViewModel>
+@{
+    ViewData["Title"] = "Restaurantes";
+    var restaurantes = Model.ToList();
+}
+
+<header class="titulo-pagina">
+    <hgroup class="titulo-pagina__texto">
+        <p class="u-rotulo">Capítulo · Configurações</p>
+        <h1 class="titulo-pagina__titulo">Restaurantes<span class="u-acento">.</span></h1>
+        @if (restaurantes.Any())
+        {
+            <p class="titulo-pagina__resumo">@restaurantes.Count @(restaurantes.Count == 1 ? "restaurante cadastrado" : "restaurantes cadastrados")</p>
+        }
+    </hgroup>
+    <a class="btn btn--tinta" asp-action="Create">
+        <svg class="icone" aria-hidden="true"><use href="#icone-mais"></use></svg>
+        Novo restaurante
+    </a>
+</header>
+
+@if (!restaurantes.Any())
+{
+    <section class="vazio" aria-labelledby="vazio-titulo">
+        <h2 class="vazio__titulo" id="vazio-titulo">Nenhum restaurante cadastrado.</h2>
+        <p class="vazio__texto">Cadastre as casas que usam a plataforma. Cada restaurante terá o seu cardápio, a sua equipe e as suas mesas.</p>
+        <p class="grupo-botoes">
+            <a class="btn btn--tinta" asp-action="Create">Cadastrar o primeiro restaurante</a>
+        </p>
+    </section>
+}
+else
+{
+    <ul class="lista-simples u-lista-limpa" aria-label="Restaurantes cadastrados">
+        @foreach (var item in restaurantes)
+        {
+            var local = string.Join(" · ", new[] { item.NomeTipoRestaurante, item.Cidade }.Where(texto => !string.IsNullOrWhiteSpace(texto)));
+            <li class="prato" id="restaurante-@item.Id">
+                <a class="prato__link" asp-action="Details" asp-route-id="@item.Id">
+                    <span class="prato__texto">
+                        <span class="prato__nome">@Html.DisplayFor(modelItem => item.Nome)</span>
+                        @if (local.Length > 0)
+                        {
+                            <span class="prato__detalhe">@local</span>
+                        }
+                    </span>
+                    <span class="u-pontos" aria-hidden="true"></span>
+                    <span class="prato__codigo">@Html.DisplayNameFor(model => model.Id) @Html.DisplayFor(modelItem => item.Id)</span>
+                </a>
+                <ul class="prato__acoes u-lista-limpa">
+                    <li><a class="prato__acao" asp-action="Edit" asp-route-id="@item.Id" aria-label="Editar @item.Nome">Editar</a></li>
+                    <li><a class="prato__acao prato__acao--perigo" asp-action="Delete" asp-route-id="@item.Id" aria-label="Excluir @item.Nome">Excluir</a></li>
+                </ul>
+            </li>
+        }
+    </ul>
+}
+

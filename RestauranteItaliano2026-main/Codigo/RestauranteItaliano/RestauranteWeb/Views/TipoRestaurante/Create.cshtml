@@ -1,0 +1,65 @@
+@model RestauranteWeb.Models.TipoRestauranteModel
+
+@{
+    ViewData["Title"] = "Novo tipo de restaurante";
+}
+
+<header class="titulo-pagina titulo-pagina--empilhado">
+    <a class="link-voltar" asp-action="Index">
+        <svg class="icone" aria-hidden="true"><use href="#icone-voltar"></use></svg>
+        Voltar para a lista
+    </a>
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">Novo tipo de restaurante</h1>
+        <p class="titulo-pagina__resumo">Os campos com asterisco são obrigatórios.</p>
+    </hgroup>
+</header>
+
+<form class="edicao" asp-action="Create" method="post" data-travar-envio data-lembrar-novo="TipoRestaurante">
+    <fieldset class="edicao__formulario">
+        <legend class="visually-hidden">Dados do tipo de restaurante</legend>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <p class="campo campo--serifa campo--obrigatorio">
+            <span class="campo__cabeca">
+                <label class="campo__rotulo" asp-for="Nome"></label>
+                <span class="campo__contador" data-contador></span>
+            </span>
+            <input class="form-control" asp-for="Nome" maxlength="50" placeholder="Ex.: Pizzaria" autocomplete="off" aria-describedby="Nome-ajuda">
+            <small class="campo__ajuda" id="Nome-ajuda">O estilo da casa, como pizzaria, churrascaria ou comida brasileira. Entre 3 e 50 caracteres.</small>
+            <span class="campo__erro text-danger" asp-validation-for="Nome"></span>
+        </p>
+
+        <menu class="grupo-botoes u-lista-limpa">
+            <li>
+                <button class="btn btn--tinta" type="submit">
+                    <svg class="icone" aria-hidden="true"><use href="#icone-confirmar"></use></svg>
+                    Salvar tipo
+                </button>
+            </li>
+            <li><a class="btn btn--contorno" asp-action="Index">Cancelar</a></li>
+        </menu>
+    </fieldset>
+
+    <aside class="previa previa--objeto" aria-labelledby="previa-titulo" data-previa-cadastro>
+        <h2 class="previa__titulo" id="previa-titulo">Como vai aparecer</h2>
+        <div class="fachada fachada--destaque" data-inclinar>
+            <span class="fachada__toldo" aria-hidden="true"></span>
+            <p class="fachada__nome"><span data-previa-nome data-previa-vazio="Nome do tipo">@(string.IsNullOrWhiteSpace(Model?.Nome) ? "Nome do tipo" : Model.Nome)</span></p>
+            <p class="fachada__rotulo">Tipo de restaurante</p>
+            <p class="fachada__codigo">nº @(Model?.Id > 0 ? ((uint?)Model.Id)?.ToString("000") : "novo")</p>
+            <span class="fachada__frente" aria-hidden="true">
+                <span class="fachada__janela"></span>
+                <span class="fachada__porta"></span>
+                <span class="fachada__janela"></span>
+            </span>
+        </div>
+        <p class="previa__nota">É assim que o tipo aparece na fachada da lista e no cadastro dos restaurantes.</p>
+    </aside>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,34 @@
+﻿@using Core.Service
+@model ErrorViewModel?
+@{
+    ViewData["Title"] = "Erro";
+    var exception = ViewData["Exception"] as Exception;
+    var mensagem = ViewData["ErrorMessage"] as string;
+    var titulo = exception is ServiceException ? "Não foi possível concluir." : "Algo deu errado.";
+}
+
+<section class="vazio" aria-labelledby="erro-titulo">
+    <img class="vazio__gravura" src="~/images/gravuras/erro.svg" alt="Gravura de um prato de espaguete virado no chão, com molho espalhado e um garfo ao lado">
+    <h1 class="vazio__titulo" id="erro-titulo">@titulo</h1>
+
+    @if (!string.IsNullOrEmpty(mensagem))
+    {
+        <p class="vazio__texto">@mensagem</p>
+    }
+    else
+    {
+        <p class="vazio__texto">
+            Não foi possível concluir o seu pedido. Tente de novo em instantes; se o erro
+            continuar, avise o responsável pelo sistema.
+        </p>
+    }
+
+    @if (Model?.ShowRequestId == true)
+    {
+        <p class="vazio__codigo">Código do erro: <code class="vazio__codigo-valor">@Model.RequestId</code></p>
+    }
+
+    <menu class="grupo-botoes u-lista-limpa">
+        <li><a class="btn btn--tinta" asp-controller="Home" asp-action="Index">Voltar ao início</a></li>
+    </menu>
+</section>

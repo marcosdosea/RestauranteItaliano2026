@@ -1,0 +1,41 @@
+@model RestauranteWeb.Models.GrupoCardapioModel
+
+@{
+    ViewData["Title"] = "Excluir grupo do cardápio";
+    ViewData["Despedida"] = true;
+}
+
+<section class="registro" aria-labelledby="titulo-excluir">
+    <h1 class="registro__titulo" id="titulo-excluir">Excluir este grupo do cardápio de vez?</h1>
+
+    <div asp-validation-summary="All" class="alerta alerta--erro" role="alert"></div>
+
+    <partial name="_Ficha" model="Model" />
+
+    <p class="alerta">
+        <svg class="icone icone--grande" aria-hidden="true"><use href="#icone-atencao"></use></svg>
+        <span>
+            <strong>Excluir não tem volta.</strong> O grupo some da lista e do cardápio. Se ele ainda tem itens do cardápio, o sistema não deixa excluir.
+        </span>
+    </p>
+
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+        <input type="hidden" asp-for="Id">
+        <input type="hidden" asp-for="Nome">
+        <menu class="grupo-botoes u-lista-limpa">
+            <li>
+                <a class="btn btn--tinta btn--voltar" asp-action="Index">
+                    <svg class="icone" aria-hidden="true"><use href="#icone-voltar"></use></svg>
+                    Manter o grupo
+                </a>
+            </li>
+            <li>
+                <button class="btn btn--perigo" type="submit">
+                    <svg class="icone" aria-hidden="true"><use href="#icone-lixeira"></use></svg>
+                    Excluir definitivamente
+                </button>
+            </li>
+            <li><a class="u-link-simples" asp-action="Edit" asp-route-id="@Model.Id">Editar em vez de excluir</a></li>
+        </menu>
+    </form>
+</section>

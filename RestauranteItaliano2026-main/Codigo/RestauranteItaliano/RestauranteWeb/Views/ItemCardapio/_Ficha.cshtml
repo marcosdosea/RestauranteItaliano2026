@@ -1,0 +1,44 @@
+@model RestauranteWeb.Models.ItemCardapioViewModel
+
+@{
+    var emFalta = Model.Ativo && !Model.Disponivel;
+}
+
+<article class="ficha" aria-labelledby="ficha-nome" data-inclinar>
+    <header class="ficha__cabeca">
+        <span class="ficha__grupo"><img class="ficha__gravura" src="@Url.Content(Gravuras.CaminhoDoGrupo(Model.NomeGrupoCardapio))" alt="">@Model.NomeGrupoCardapio</span>
+        <span class="ficha__codigo">código @Model.Id</span>
+    </header>
+    <div class="linha-carta @(emFalta ? "linha-carta--em-falta" : (!Model.Ativo ? "linha-carta--inativo" : null))">
+        <hgroup class="linha-carta__texto">
+            <h2 class="linha-carta__nome" id="ficha-nome">@Model.Nome</h2>
+            @if (!string.IsNullOrWhiteSpace(Model.Detalhes))
+            {
+                <p class="linha-carta__detalhe">@Model.Detalhes</p>
+            }
+        </hgroup>
+        <span class="u-pontos" aria-hidden="true"></span>
+        @if (Model.Preco.HasValue)
+        {
+            <data class="linha-carta__preco" value="@Model.Preco.Value.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)">@Html.DisplayFor(m => m.Preco)</data>
+        }
+        else
+        {
+            <span class="linha-carta__preco">—</span>
+        }
+    </div>
+    <dl class="ficha__dados">
+        <div class="ficha__dado">
+            <dt class="ficha__termo">@Html.DisplayNameFor(m => m.NomeRestaurante)</dt>
+            <dd class="ficha__valor">@Model.NomeRestaurante</dd>
+        </div>
+        <div class="ficha__dado">
+            <dt class="ficha__termo">@Html.DisplayNameFor(m => m.Ativo)</dt>
+            <dd class="ficha__valor">@(Model.Ativo ? "Sim" : "Não")</dd>
+        </div>
+        <div class="ficha__dado">
+            <dt class="ficha__termo">@Html.DisplayNameFor(m => m.Disponivel)</dt>
+            <dd class="ficha__valor">@(Model.Disponivel ? "Sim" : "Não, em falta")</dd>
+        </div>
+    </dl>
+</article>

@@ -1,0 +1,22 @@
+﻿@model RestauranteWeb.Models.ItemCardapioViewModel
+
+@* prévia do item, atualizada pelo js/site.js enquanto o usuário digita *@
+<aside class="previa" aria-labelledby="previa-titulo" data-previa data-inclinar data-pasta-gravuras="@Url.Content(Gravuras.Pasta)" data-gravuras="@Gravuras.PalavrasChaveJson">
+    <h2 class="previa__titulo" id="previa-titulo">Como vai aparecer</h2>
+    <p class="previa__grupo">
+        <img class="previa__gravura" src="@Url.Content(Gravuras.CaminhoDoGrupo(Model.NomeGrupoCardapio))" alt="" data-previa-gravura>
+        <span data-previa-grupo>@(Model.NomeGrupoCardapio ?? "Grupo")</span>
+    </p>
+    <p class="linha-carta" data-previa-item>
+        <span class="linha-carta__conteudo">
+            <span class="linha-carta__texto">
+                <span class="linha-carta__nome" data-previa-nome>@(string.IsNullOrWhiteSpace(Model.Nome) ? "Nome do item" : Model.Nome)</span>
+                <span class="linha-carta__detalhe" data-previa-detalhes>@(string.IsNullOrWhiteSpace(Model.Detalhes) ? "detalhes do item" : Model.Detalhes)</span>
+            </span>
+            <span class="u-pontos" aria-hidden="true"></span>
+            <span class="selo" data-previa-selo hidden>Em falta</span>
+            <span class="linha-carta__preco" data-previa-preco>R$ —</span>
+        </span>
+    </p>
+    <p class="previa__nota" aria-live="polite" data-previa-nota>É assim que o item aparece na lista e no cardápio.</p>
+</aside>

@@ -1,0 +1,9 @@
+@model RestauranteWeb.Models.FormaPagamentoViewModel
+
+<article class="recibo recibo--destaque@(ViewData["Despedida"] is true ? " recibo--despedida" : "")" aria-labelledby="ficha-nome" data-inclinar>
+    <p class="recibo__casa">Restaurante Italiano</p>
+    <p class="recibo__rotulo">pago com</p>
+    <h2 class="recibo__nome" id="ficha-nome">@Model.Nome</h2>
+    <p class="recibo__codigo">nº @(Model.Id?.ToString("000"))</p>
+    <span class="recibo__barras" aria-hidden="true"></span>
+</article>

@@ -1,0 +1,13 @@
+@model RestauranteWeb.Models.TipoRestauranteModel
+
+<article class="fachada fachada--destaque@(ViewData["Despedida"] is true ? " fachada--despedida" : "")" aria-labelledby="ficha-nome" data-inclinar>
+    <span class="fachada__toldo" aria-hidden="true"></span>
+    <h2 class="fachada__nome" id="ficha-nome">@Model.Nome</h2>
+    <p class="fachada__rotulo">Tipo de restaurante</p>
+    <p class="fachada__codigo">nº @(((uint?)Model.Id)?.ToString("000"))</p>
+    <span class="fachada__frente" aria-hidden="true">
+        <span class="fachada__janela"></span>
+        <span class="fachada__porta"></span>
+        <span class="fachada__janela"></span>
+    </span>
+</article>

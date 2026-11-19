@@ -1,0 +1,113 @@
+﻿@{
+    var controllerAtual = ViewContext.RouteData.Values["controller"]?.ToString();
+    var acaoAtual = ViewContext.RouteData.Values["action"]?.ToString();
+    var paginaInicial = controllerAtual == "Home" && acaoAtual == "Index";
+
+    // o menu mostra só os capítulos que já têm alguma tela pronta
+    var capitulos = Navegacao.Capitulos().Where(capitulo => capitulo.TemFuncaoPronta).ToList();
+    var capituloAtual = Navegacao.CapituloDo(capitulos, controllerAtual);
+
+    var mensagem = TempData["Mensagem"] as string;
+    var erro = TempData["Erro"] as string;
+}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>@ViewData["Title"] — Restaurante Italiano</title>
+    <meta name="description" content="Sistema de gestão do Restaurante Italiano: cardápio, equipe, salão, pedidos e pagamentos.">
+    <meta name="theme-color" content="#f3eada">
+    <link rel="preload" href="~/lib/instrument-serif/files/instrument-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="~/lib/instrument-sans/files/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+    @await RenderSectionAsync("Estilos", required: false)
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
+</head>
+
+<body>
+    <a class="u-pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+    <partial name="_Icones" />
+
+    <header class="cabecalho @(paginaInicial ? "cabecalho--inicial" : null)">
+        <nav class="cabecalho__barra" aria-label="Menu principal">
+            <a class="cabecalho__marca" asp-controller="Home" asp-action="Index" aria-current="@(paginaInicial ? "page" : null)">
+                <span class="cabecalho__nome">Restaurante <span class="cabecalho__nome-destaque">Italiano</span></span>
+            </a>
+
+            <ul class="capitulos u-lista-limpa">
+                @foreach (var capitulo in capitulos)
+                {
+                    var atual = capitulo == capituloAtual;
+                    <li>
+                        <a class="capitulos__link @(atual ? "capitulos__link--atual" : null)" asp-controller="@capitulo.ControllerInicial" asp-action="Index" aria-current="@(atual ? "true" : null)">
+                            <span class="capitulos__numero">@capitulo.Romano</span>@capitulo.Nome
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+
+        @if (capituloAtual != null)
+        {
+            <nav class="cabecalho__secoes" aria-label="Telas do capítulo">
+                <ul class="secoes u-lista-limpa">
+                    @foreach (var entrada in capituloAtual.Entradas.Where(entrada => entrada.Pronta))
+                    {
+                        var atual = string.Equals(entrada.Controller, controllerAtual, StringComparison.OrdinalIgnoreCase);
+                        <li>
+                            <a class="secoes__link @(atual ? "secoes__link--atual" : null)" asp-controller="@entrada.Controller" asp-action="Index" aria-current="@(atual ? "page" : null)">@entrada.Titulo</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    </header>
+
+    @if (!string.IsNullOrEmpty(mensagem) || !string.IsNullOrEmpty(erro))
+    {
+        <section class="avisos" aria-label="Avisos">
+            @if (!string.IsNullOrEmpty(mensagem))
+            {
+                <p class="aviso" role="status">
+                    <svg class="icone" aria-hidden="true"><use href="#icone-confirmar"></use></svg>
+                    <span>@mensagem</span>
+                    <button class="aviso__fechar" type="button" aria-label="Fechar aviso" data-fechar-aviso>
+                        <svg class="icone icone--pequeno" aria-hidden="true"><use href="#icone-fechar"></use></svg>
+                    </button>
+                </p>
+            }
+
+            @if (!string.IsNullOrEmpty(erro))
+            {
+                <p class="aviso aviso--erro" role="alert">
+                    <svg class="icone" aria-hidden="true"><use href="#icone-erro"></use></svg>
+                    <span>@erro</span>
+                    <button class="aviso__fechar" type="button" aria-label="Fechar aviso" data-fechar-aviso>
+                        <svg class="icone icone--pequeno" aria-hidden="true"><use href="#icone-fechar"></use></svg>
+                    </button>
+                </p>
+            }
+        </section>
+    }
+
+    <main id="conteudo" class="conteudo" tabindex="-1">
+        @RenderBody()
+    </main>
+
+    <footer class="rodape">
+        <p><small>&copy; @DateTime.Now.Year Restaurante Italiano</small></p>
+        <p class="rodape__colofao">Composto em Instrument Serif e Instrument Sans</p>
+        <a class="rodape__link" asp-controller="Home" asp-action="Privacy">Privacidade</a>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/movimento.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>
