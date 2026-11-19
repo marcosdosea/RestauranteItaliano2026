@@ -35,10 +35,10 @@ namespace RestauranteWeb
                 mensagens.SetNonPropertyValueMustBeANumberAccessor(() => "O campo deve ser um número.");
                 mensagens.SetUnknownValueIsInvalidAccessor(campo => $"O valor informado para o campo {campo} é inválido.");
             });
-            
+
             builder.Services.AddDbContext<RestauranteContext>(options =>
                 options.UseMySQL(builder.Configuration.GetConnectionString("RestauranteConnection") ?? throw new InvalidOperationException("Conexão com o banco de dados não foi possível. Favor entrar em contato com o Administrador.")));
-            
+
             // Serviços de aplicação
             builder.Services.AddTransient<ITipoRestauranteService, TipoRestauranteService>();
             builder.Services.AddTransient<ITipoFuncionario, TipoFuncionarioService>();
@@ -46,6 +46,7 @@ namespace RestauranteWeb
             builder.Services.AddTransient<IFormaPagamentoService, FormaPagamentoService>();
             builder.Services.AddTransient<IItemCardapioService, ItemCardapioService>();
             builder.Services.AddTransient<IRestauranteService, RestauranteService>();
+            builder.Services.AddTransient<IFuncionarioService, FuncionarioService>();
             builder.Services.AddTransient<IResumoService, ResumoService>();
 
             // Configuração do Mapster

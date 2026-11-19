@@ -1,0 +1,76 @@
+﻿@section Estilos {
+    <style>
+        .dt-search label {
+    margin-right: 12px;
+        }
+    </style>
+}
+@{
+    ViewData["Title"] = "Funcionários";
+}
+
+<h1>Funcionários</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Novo Funcionário</a>
+</p>
+
+<table id="tabelaFuncionarios" class="table">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Tipo de Funcionário</th>
+            <th>Restaurante</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+</table>
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#tabelaFuncionarios').DataTable({
+                processing: true,
+                serverSide: true,
+
+                pageLength: 10,
+                lengthChange: false,
+
+                ajax: {
+                    url: '@Url.Action("GetDataPage", "Funcionario")',
+                    type: 'POST'
+                },
+
+                columns: [
+                    { data: 'id' },
+                    { data: 'nome' },
+                    { data: 'cpf' },
+                    { data: 'nomeTipoFuncionario' },
+                    { data: 'nomeRestaurante' },
+                    {
+                        data: 'id',
+                        orderable: false,
+                        searchable: false,
+                        render: function (id) {
+                            return `
+                                <a href="/Funcionario/Edit/${id}">Editar</a> |
+                                <a href="/Funcionario/Details/${id}">Detalhes</a> |
+                                <a href="/Funcionario/Delete/${id}">Deletar</a>
+                            `;
+                        }
+                    }
+                ],
+
+                order: [[0, 'asc']],
+
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/2.3.2/i18n/pt-BR.json'
+                }
+            });
+        });
+    </script>
+}
