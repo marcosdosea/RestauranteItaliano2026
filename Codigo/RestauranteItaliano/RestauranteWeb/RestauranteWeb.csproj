@@ -8,9 +8,13 @@
 
   <ItemGroup>
     <Compile Remove="Mappers\**" />
+    <Compile Remove="Views\NovaPasta\**" />
     <Content Remove="Mappers\**" />
+    <Content Remove="Views\NovaPasta\**" />
     <EmbeddedResource Remove="Mappers\**" />
+    <EmbeddedResource Remove="Views\NovaPasta\**" />
     <None Remove="Mappers\**" />
+    <None Remove="Views\NovaPasta\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Service\Service.csproj" />
+    <ProjectReference Include="..\Util\Util.csproj" />
   </ItemGroup>
 
 </Project>

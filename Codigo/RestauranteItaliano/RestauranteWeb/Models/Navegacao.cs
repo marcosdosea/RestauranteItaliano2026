@@ -69,7 +69,7 @@ namespace RestauranteWeb.Models
                 }},
                 new CapituloModel { Nome = "Configurações", Ancora = "configuracoes", Entradas = new List<EntradaIndiceModel>
                 {
-                    new EntradaIndiceModel { Titulo = "Restaurantes", Descricao = "as casas que usam a plataforma", CasoDeUso = "CS05" },
+                    new EntradaIndiceModel { Titulo = "Restaurantes", Descricao = "as casas que usam a plataforma", CasoDeUso = "CS05", Controller = "Restaurante", Singular = "restaurante", Plural = "restaurantes"},
                     new EntradaIndiceModel { Titulo = "Tipos de restaurante", Descricao = "pizzarias, churrascarias, comida brasileira", CasoDeUso = "CS02", Controller = "TipoRestaurante", Singular = "tipo", Plural = "tipos" },
                     new EntradaIndiceModel { Titulo = "Formas de pagamento", Descricao = "como a conta pode ser paga", CasoDeUso = "CS01", Controller = "FormaPagamento", Singular = "forma", Plural = "formas" }
                 }}

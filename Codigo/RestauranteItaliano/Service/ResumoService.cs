@@ -48,7 +48,8 @@ namespace Service
                 QuantidadeGruposCardapio = context.Grupocardapios.Count(),
                 QuantidadeTiposFuncionario = context.Tipofuncionarios.Count(),
                 QuantidadeTiposRestaurante = context.Tiporestaurantes.Count(),
-                QuantidadeFormasPagamento = context.Formapagamentos.Count()
+                QuantidadeFormasPagamento = context.Formapagamentos.Count(),
+                QuantidadeRestaurantes = context.Restaurantes.Count()
             };
         }
     }
