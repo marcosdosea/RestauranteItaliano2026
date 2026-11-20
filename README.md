@@ -41,7 +41,18 @@ O visual do sistema, chamado **La Carta · Trattoria**, imita o cardápio impres
 - **Página inicial:** funciona como o índice de um livro. Mostra uma saudação conforme a hora do dia, atalhos para os cadastros mais usados, um resumo do cardápio (itens disponíveis e em falta e os grupos com mais itens) e os casos de uso prontos organizados em capítulos, com a quantidade de registros de cada um. Os que ainda não foram implementados aparecem numa única linha, no fim da página.
 - **Navegação por capítulos:** o menu agrupa as telas prontas em capítulos (Cardápio, Equipe e Configurações). Salão, Pedidos e Pagamentos entram no menu quando tiverem a primeira tela pronta.
 - **Avisos:** depois de salvar, editar ou excluir, aparece um aviso verde no canto da tela, que some sozinho. Erros aparecem em vermelho e ficam até serem fechados.
-- **Cardápio:** os itens ficam numa tabela com [DataTables](https://datatables.net/), seguindo a orientação do professor para páginas com muitos registros que o usuário precisa consultar ou ordenar. A busca (por nome, detalhes ou grupo), o filtro por grupo, a ordenação por coluna e a paginação são feitos no servidor. Dá para marcar um item em falta direto na tabela.
+- **Itens do cardápio:** os itens ficam numa tabela com [DataTables](https://datatables.net/), seguindo a orientação do professor para páginas com muitos registros que o usuário precisa consultar ou ordenar. A busca (por nome, detalhes ou grupo), o filtro por grupo, a ordenação por coluna e a paginação são feitos no servidor. Acima da tabela fica a conta do dia (disponíveis, em falta, fora do cardápio e preço médio), o filtro é feito por fichas com a gravura e a quantidade de cada grupo, e o trecho buscado aparece destacado. A disponibilidade de cada item muda num interruptor, sem recarregar a página, e a vista "Cardápio" mostra os itens como na carta impressa.
+
+Os cadastros com poucos campos viram objetos da trattoria, com busca, prévia ao vivo no formulário, carimbo "Novo" no cadastro recém-criado e uma versão "de despedida" na tela de exclusão:
+
+| Tela | Objeto | Interação |
+|---|---|---|
+| Grupos do cardápio | Livro do cardápio aberto: sumário à esquerda e, à direita, a página do capítulo com os pratos e preços do grupo | Fita marcadora, setas e teclado (← →) para folhear e capa que abre na primeira visita |
+| Tipos de funcionário | Quadro de crachás pendurados, com o monograma das iniciais (`Models/Monograma.cs`) | O crachá balança preso ao gancho |
+| Tipos de restaurante | Rua da trattoria, com fachadas, toldos listrados e janelas | O toldo abre e as janelas acendem |
+| Formas de pagamento | Recibos de caixa com ponta serrilhada e código de barras | O recibo se endireita e se ergue; na exclusão aparece "Cancelado" |
+
+- **Movimento:** todas as animações seguem um ritmo único, definido no `:root` do CSS (`--tempo-curto`, `--tempo-medio`, `--tempo-longo`, `--curva` e `--curva-dupla`), e animam só `transform` e `opacity`. Para quem pediu menos movimento, tudo fica parado.
 - **Erros:** um filtro global (`Filter/CustomExceptionFilter.cs`) leva qualquer erro que escape dos controllers para a tela de erro, com uma mensagem em português. Erros do MySQL são traduzidos pelo número (por exemplo, 1451: registro vinculado a outros dados).
 - **Celular:** todas as telas se adaptam a telas pequenas, e as ações ficam sempre visíveis em telas de toque.
 - **Acessibilidade e validação:** HTML semântico, navegação por teclado, atributos `aria-*` e respeito à opção de reduzir animações. As páginas passam sem erros nos validadores de [HTML](https://validator.w3.org/nu/) e de [CSS](https://jigsaw.w3.org/css-validator/) do W3C.
@@ -237,7 +248,7 @@ A solução tem três projetos de teste, no mesmo formato do projeto de referên
 
 Os testes não usam o MySQL, então rodam mesmo sem o banco instalado.
 
-Situação atual: **135 testes, todos aprovados**.
+Situação atual: **144 testes, todos aprovados**.
 
 | Arquivo | Testes | O que cobre |
 |---|---|---|
@@ -249,6 +260,7 @@ Situação atual: **135 testes, todos aprovados**.
 | `RestauranteWebTest/Controllers/HomeControllerTests.cs` | 3 | Resumo da página inicial e funcionamento com o banco fora do ar |
 | `RestauranteWebTest/Filter/CustomExceptionFilterTests.cs` | 8 | Tela de erro com a mensagem certa para erro inesperado, regra de negócio e erros do MySQL |
 | `RestauranteWebTest/Models/GravurasTests.cs` | 18 | Gravura certa para cada grupo do cardápio, pelas palavras-chave do nome |
+| `RestauranteWebTest/Models/MonogramaTests.cs` | 9 | Iniciais do crachá de cada tipo de funcionário, sem as palavras de ligação |
 | `RestauranteAPITest/Controllers/FormasPagamentoControllerTests.cs` | 9 | Todas as rotas: listagem, busca, cadastro (201), edição, exclusão, dados inválidos (400) e registro inexistente (404) |
 | `RestauranteAPITest/Controllers/ItensCardapioControllerTests.cs` | 11 | Todas as rotas, incluindo marcar em falta ou disponível |
 | `RestauranteAPITest/Filter/HttpResponseExceptionFilterTests.cs` | 4 | Resposta 400 com a mensagem da regra de negócio, status próprio de `HttpResponseException` e erros inesperados sem tratamento |

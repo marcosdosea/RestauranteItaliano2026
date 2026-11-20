@@ -44,7 +44,7 @@ public class GravurasTests
     {
         var pares = System.Text.Json.JsonSerializer.Deserialize<string[][]>(Gravuras.PalavrasChaveJson)!;
 
-        Assert.AreEqual(Gravuras.PalavrasChave.Count, pares.Length);
+        Assert.HasCount(Gravuras.PalavrasChave.Count, pares);
         Assert.AreEqual("antipast", pares[0][0]);
         Assert.AreEqual("antipasti", pares[0][1]);
         Assert.AreEqual("bevande", pares[^1][1]);
