@@ -39,14 +39,14 @@ namespace Service
 
             if (mesa == null)
             {
-                throw new ArgumentException("Mesa não encontrada.");
+                throw new ServiceException("Mesa não encontrada.");
             }
 
             var jaExisteAtendimentoAtivo = context.Atendimentos.Any(a => a.IdMesa == idMesa && a.Status == "I");
 
             if (jaExisteAtendimentoAtivo)
             {
-                throw new InvalidOperationException("Esta mesa já possui um atendimento iniciado.");
+                throw new ServiceException("Esta mesa já possui um atendimento iniciado.");
             }
             var atendimento = new Atendimento
             {
