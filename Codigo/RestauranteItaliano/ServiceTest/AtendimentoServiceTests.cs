@@ -90,7 +90,7 @@ public class AtendimentoServiceTests
     {
         var antesDeIniciar = DateTime.Now;
 
-        var idAtendimento = servico.Iniciar(1);
+        var idAtendimento = servico.Iniciar(1, 1u);
 
         var depoisDeIniciar = DateTime.Now;
 
@@ -115,9 +115,9 @@ public class AtendimentoServiceTests
     public void Iniciar_QuandoMesaNaoExiste_DeveLancarServiceException()
     {
         var excecao = Assert.ThrowsExactly<ServiceException>(
-            () => servico.Iniciar(999));
+            () => servico.Iniciar(999, 1u));
 
-        Assert.AreEqual("Mesa não encontrada.", excecao.Message);
+        Assert.AreEqual("Mesa não encontrada neste restaurante.", excecao.Message);
 
         using var leitura = new RestauranteContext(opcoes);
         Assert.AreEqual(3, leitura.Atendimentos.Count());
@@ -127,7 +127,7 @@ public class AtendimentoServiceTests
     public void Iniciar_QuandoMesaJaTemAtendimentoAtivo_DeveLancarServiceException()
     {
         var excecao = Assert.ThrowsExactly<ServiceException>(
-            () => servico.Iniciar(2));
+            () => servico.Iniciar(2, 1u));
 
         Assert.AreEqual(
             "Esta mesa já possui um atendimento iniciado.",
@@ -140,7 +140,7 @@ public class AtendimentoServiceTests
     [TestMethod]
     public void Iniciar_QuandoAtendimentoAnteriorFoiCancelado_DevePermitirNovo()
     {
-        var idAtendimento = servico.Iniciar(3);
+        var idAtendimento = servico.Iniciar(3, 1u);
 
         using var leitura = new RestauranteContext(opcoes);
         var novoAtendimento = leitura.Atendimentos
@@ -153,7 +153,7 @@ public class AtendimentoServiceTests
     [TestMethod]
     public void Iniciar_QuandoAtendimentoAnteriorFoiFinalizado_DevePermitirNovo()
     {
-        var idAtendimento = servico.Iniciar(4);
+        var idAtendimento = servico.Iniciar(4, 1u);
 
         using var leitura = new RestauranteContext(opcoes);
         var novoAtendimento = leitura.Atendimentos
@@ -167,7 +167,7 @@ public class AtendimentoServiceTests
     public void GetMapaMesas_DeveIndicarMesasLivresEOcupadas()
     {
         // ToList materializa a consulta no teste, para podermos verificar os resultados
-        var mapa = servico.GetMapaMesas().ToList();
+        var mapa = servico.GetMapaMesas(1u).ToList();
 
         var mesaLivre = mapa.Single(m => m.IdMesa == 1);
         var mesaOcupada = mapa.Single(m => m.IdMesa == 2);
