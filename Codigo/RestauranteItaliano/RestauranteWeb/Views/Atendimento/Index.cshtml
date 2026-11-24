@@ -1,0 +1,121 @@
+﻿@model RestauranteWeb.Models.AtendimentoViewModel
+
+@{
+    ViewData["Title"] = "Mapa do salão";
+}
+
+<header class="titulo-pagina">
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">Mapa do salão</h1>
+        <p class="titulo-pagina__resumo">
+            Consulte as mesas e inicie um atendimento.
+        </p>
+    </hgroup>
+</header>
+
+<form asp-action="Index"
+      method="get"
+      class="d-flex flex-column flex-md-row align-items-md-end gap-3 mb-4">
+
+    <div class="flex-grow-1">
+        <label asp-for="IdRestaurante" class="form-label">
+            Restaurante
+        </label>
+
+        <select asp-for="IdRestaurante"
+                asp-items="Model.Restaurantes"
+                class="form-select"
+                required>
+            <option value="">Selecione um restaurante</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn--tinta">
+        Ver mesas
+    </button>
+</form>
+
+@if (!Model.IdRestaurante.HasValue)
+{
+    <section class="vazio" aria-labelledby="selecione-restaurante">
+        <h2 class="vazio__titulo" id="selecione-restaurante">
+            Selecione um restaurante
+        </h2>
+        <p class="vazio__texto">
+            Escolha um restaurante para consultar as mesas do salão.
+        </p>
+    </section>
+}
+else if (Model.Mesas.Count == 0)
+{
+    <section class="vazio" aria-labelledby="nenhuma-mesa">
+        <h2 class="vazio__titulo" id="nenhuma-mesa">
+            Nenhuma mesa cadastrada
+        </h2>
+        <p class="vazio__texto">
+            Este restaurante ainda não tem mesas cadastradas.
+        </p>
+    </section>
+}
+else
+{
+    <section aria-label="Mesas do restaurante selecionado">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+            @foreach (var mesa in Model.Mesas)
+            {
+                <div class="col">
+                    <article class="card h-100">
+                        <div class="card-body">
+                            <h2 class="card-title h4" id="mesa-@mesa.IdMesa">
+                                @mesa.Identificacao
+                            </h2>
+
+                            @if (mesa.Ocupada)
+                            {
+                                <p>
+                                    <span class="badge text-bg-secondary">
+                                        Ocupada
+                                    </span>
+                                </p>
+
+                                @if (mesa.InicioAtendimento.HasValue)
+                                {
+                                    <p class="card-text">
+                                        Atendimento iniciado em
+                                        <time datetime="@(mesa.InicioAtendimento.Value.ToString("O"))">
+                                            @(mesa.InicioAtendimento.Value.ToString("dd/MM/yyyy 'às' HH:mm"))
+                                        </time>
+                                    </p>
+                                }
+                            }
+                            else
+                            {
+                                <p>
+                                    <span class="badge text-bg-success">
+                                        Livre
+                                    </span>
+                                </p>
+
+                                <form asp-action="Iniciar"
+                                      method="post"
+                                      asp-antiforgery="true">
+                                    <input type="hidden"
+                                           name="idMesa"
+                                           value="@mesa.IdMesa" />
+
+                                    <input type="hidden"
+                                           name="idRestaurante"
+                                           value="@Model.IdRestaurante.Value" />
+
+                                    <button type="submit" class="btn btn--tinta">
+                                        Iniciar atendimento
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+    </section>
+}

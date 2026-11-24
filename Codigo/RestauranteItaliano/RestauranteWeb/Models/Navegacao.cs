@@ -44,35 +44,146 @@ namespace RestauranteWeb.Models
         {
             return new List<CapituloModel>
             {
-                new CapituloModel { Nome = "Salão", Ancora = "salao", Entradas = new List<EntradaIndiceModel>
+
+
+                new CapituloModel
                 {
-                    new EntradaIndiceModel { Titulo = "Mapa do salão", Descricao = "iniciar, acompanhar e finalizar atendimentos", CasoDeUso = "CS09 · CS12" },
-                    new EntradaIndiceModel { Titulo = "Mesas", Descricao = "as mesas que o restaurante gerencia", CasoDeUso = "CS08" }
-                }},
-                new CapituloModel { Nome = "Pedidos", Ancora = "pedidos", Entradas = new List<EntradaIndiceModel>
+                    Nome = "Salão",
+                    Ancora = "salao",
+                    Entradas = new List<EntradaIndiceModel>
+                    {
+                        new EntradaIndiceModel
+                        {
+                            Titulo = "Mapa do salão",
+                            Descricao = "abrir atendimento e ver a ocupação das mesas",
+                            CasoDeUso = "CS09",
+                            Controller = "Atendimento",
+                            Singular = "atendimento",
+                            Plural = "atendimentos"
+                        },
+                        new EntradaIndiceModel
+                        {
+                        Titulo = "Mesas",
+                        Descricao = "as mesas que o restaurante gerencia",
+                        CasoDeUso = "CS08"
+                        }
+                    }
+                },
+
+                new CapituloModel
                 {
-                    new EntradaIndiceModel { Titulo = "Pedidos", Descricao = "o que cada mesa pediu, e quando", CasoDeUso = "CS10" }
-                }},
-                new CapituloModel { Nome = "Pagamentos", Ancora = "pagamentos", Entradas = new List<EntradaIndiceModel>
+                    Nome = "Pedidos",
+                    Ancora = "pedidos",
+                    Entradas = new List<EntradaIndiceModel>
+                    {
+                        new EntradaIndiceModel
+                        {
+                            Titulo = "Pedidos",
+                            Descricao = "o que cada mesa pediu, e quando",
+                            CasoDeUso = "CS10"
+                        }
+                    }
+                },
+
+                new CapituloModel
                 {
-                    new EntradaIndiceModel { Titulo = "Pagamentos", Descricao = "parciais ou totais, por atendimento", CasoDeUso = "CS11" }
-                }},
-                new CapituloModel { Nome = "Cardápio", Ancora = "cardapio", Entradas = new List<EntradaIndiceModel>
+                    Nome = "Pagamentos",
+                    Ancora = "pagamentos",
+                    Entradas = new List<EntradaIndiceModel>
+                    {
+                        new EntradaIndiceModel
+                        {
+                            Titulo = "Pagamentos",
+                            Descricao = "parciais ou totais, por atendimento",
+                            CasoDeUso = "CS11"
+                        }
+                    }
+                },
+
+                new CapituloModel
                 {
-                    new EntradaIndiceModel { Titulo = "Itens do cardápio", Descricao = "pratos e bebidas oferecidos pela casa", CasoDeUso = "CS07", Controller = "ItemCardapio", Singular = "item", Plural = "itens" },
-                    new EntradaIndiceModel { Titulo = "Grupos do cardápio", Descricao = "bebidas, entradas, petiscos, sobremesas…", CasoDeUso = "CS04", Controller = "GrupoCardapio", Singular = "grupo", Plural = "grupos" }
-                }},
-                new CapituloModel { Nome = "Equipe", Ancora = "equipe", Entradas = new List<EntradaIndiceModel>
+                    Nome = "Cardápio",
+                    Ancora = "cardapio",
+                    Entradas = new List<EntradaIndiceModel>
+                    {
+                        new EntradaIndiceModel
+                        {
+                            Titulo = "Itens do cardápio",
+                            Descricao = "pratos e bebidas oferecidos pela casa",
+                            CasoDeUso = "CS07",
+                            Controller = "ItemCardapio",
+                            Singular = "item",
+                            Plural = "itens"
+                        },
+                        new EntradaIndiceModel
+                        {
+                            Titulo = "Grupos do cardápio",
+                            Descricao = "bebidas, entradas, petiscos, sobremesas…",
+                            CasoDeUso = "CS04",
+                            Controller = "GrupoCardapio",
+                            Singular = "grupo",
+                            Plural = "grupos"
+                        }
+                    }
+                },
+                new CapituloModel
                 {
-                    new EntradaIndiceModel { Titulo = "Funcionários", Descricao = "quem trabalha em cada restaurante", CasoDeUso = "CS06" },
-                    new EntradaIndiceModel { Titulo = "Tipos de funcionário", Descricao = "garçons, cozinheiros, gerentes", CasoDeUso = "CS03", Controller = "TipoFuncionario", Singular = "tipo", Plural = "tipos" }
-                }},
-                new CapituloModel { Nome = "Configurações", Ancora = "configuracoes", Entradas = new List<EntradaIndiceModel>
+                    Nome = "Equipe",
+                    Ancora = "equipe",
+                    Entradas = new List<EntradaIndiceModel>
+                    {
+                        new EntradaIndiceModel
+                        {
+                            Titulo = "Funcionários",
+                            Descricao = "quem trabalha em cada restaurante",
+                            CasoDeUso = "CS06"
+                        },
+                        new EntradaIndiceModel
+                        {
+                            Titulo = "Tipos de funcionário",
+                            Descricao = "garçons, cozinheiros, gerentes",
+                            CasoDeUso = "CS03",
+                            Controller = "TipoFuncionario",
+                            Singular = "tipo",
+                            Plural = "tipos"
+                        }
+                    }
+                },
+                new CapituloModel
                 {
-                    new EntradaIndiceModel { Titulo = "Restaurantes", Descricao = "as casas que usam a plataforma", CasoDeUso = "CS05", Controller = "Restaurante", Singular = "restaurante", Plural = "restaurantes"},
-                    new EntradaIndiceModel { Titulo = "Tipos de restaurante", Descricao = "pizzarias, churrascarias, comida brasileira", CasoDeUso = "CS02", Controller = "TipoRestaurante", Singular = "tipo", Plural = "tipos" },
-                    new EntradaIndiceModel { Titulo = "Formas de pagamento", Descricao = "como a conta pode ser paga", CasoDeUso = "CS01", Controller = "FormaPagamento", Singular = "forma", Plural = "formas" }
-                }}
+                    Nome = "Configurações",
+                    Ancora = "configuracoes",
+                    Entradas = new List<EntradaIndiceModel>
+                    {
+                        new EntradaIndiceModel
+                        {
+                            Titulo = "Restaurantes",
+                            Descricao = "as casas que usam a plataforma",
+                            CasoDeUso = "CS05",
+                            Controller = "Restaurante",
+                            Singular = "restaurante",
+                            Plural = "restaurantes"
+                        },
+                        new EntradaIndiceModel
+                        {
+                            Titulo = "Tipos de restaurante",
+                            Descricao = "pizzarias, churrascarias, comida brasileira",
+                            CasoDeUso = "CS02",
+                            Controller = "TipoRestaurante",
+                            Singular = "tipo",
+                            Plural = "tipos"
+                        },
+                        new EntradaIndiceModel
+                        {
+                            Titulo = "Formas de pagamento",
+                            Descricao = "como a conta pode ser paga",
+                            CasoDeUso = "CS01",
+                            Controller = "FormaPagamento",
+                            Singular = "forma",
+                            Plural = "formas"
+                        }
+                    }
+                },
             };
         }
     }
