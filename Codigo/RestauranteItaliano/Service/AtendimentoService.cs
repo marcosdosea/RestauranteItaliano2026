@@ -28,7 +28,7 @@ namespace Service
                     InicioAtendimento = m.Atendimentos
                         .Where(a => a.Status == "I")
                         .OrderByDescending(a => a.DataHoraInicio)
-                        .Select(a => a.DataHoraInicio)
+                        .Select(a => (DateTime?)a.DataHoraInicio)
                         .FirstOrDefault()
                 });
         }
