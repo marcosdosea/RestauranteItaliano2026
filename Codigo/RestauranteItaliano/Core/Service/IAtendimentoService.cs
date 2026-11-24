@@ -5,8 +5,8 @@ namespace Core.Service
 {
     public interface IAtendimentoService
     {
-        IEnumerable<MesaAtendimentoDTO> GetMapaMesas();
-        uint Iniciar(int idMesa);
+        IEnumerable<MesaAtendimentoDTO> GetMapaMesas(uint idRestaurante);
+        uint Iniciar(int idMesa, uint idRestaurante);
     }
 
 }

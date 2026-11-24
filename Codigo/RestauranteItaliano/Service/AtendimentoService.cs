@@ -15,10 +15,16 @@ namespace Service
             this.context = context;
         }
 
-        public IEnumerable<MesaAtendimentoDTO> GetMapaMesas()
+        /// <summary>
+        /// Busca o mapa de mesas de um restaurante, indicando se estão ocupadas e a hora de início do atendimento, caso haja.
+        /// </summary>
+        /// <param name="idRestaurante"></param>
+        /// <returns></returns>
+        public IEnumerable<MesaAtendimentoDTO> GetMapaMesas(uint idRestaurante)
         {
             return context.Mesas
                 .AsNoTracking()
+                .Where(m => m.IdRestaurante == idRestaurante)
                 .OrderBy(m => m.Identificacao)
                 .Select(m => new MesaAtendimentoDTO
                 {
@@ -33,13 +39,20 @@ namespace Service
                 });
         }
 
-        public uint Iniciar(int idMesa)
+        /// <summary>
+        /// Inicia um atendimento em uma mesa, caso ela esteja livre. Retorna o id do atendimento criado.
+        /// </summary>
+        /// <param name="idMesa"></param>
+        /// <param name="idRestaurante"></param>
+        /// <returns></returns>
+        /// <exception cref="ServiceException"></exception>
+        public uint Iniciar(int idMesa, uint idRestaurante)
         {
-            var mesa = context.Mesas.Find(idMesa);
+            var mesa = context.Mesas.FirstOrDefault(m => m.Id == idMesa && m.IdRestaurante == idRestaurante);
 
             if (mesa == null)
             {
-                throw new ServiceException("Mesa não encontrada.");
+                throw new ServiceException("Mesa não encontrada neste restaurante.");
             }
 
             var jaExisteAtendimentoAtivo = context.Atendimentos.Any(a => a.IdMesa == idMesa && a.Status == "I");

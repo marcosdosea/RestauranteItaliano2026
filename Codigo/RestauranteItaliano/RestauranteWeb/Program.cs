@@ -47,6 +47,7 @@ namespace RestauranteWeb
             builder.Services.AddTransient<IItemCardapioService, ItemCardapioService>();
             builder.Services.AddTransient<IRestauranteService, RestauranteService>();
             builder.Services.AddTransient<IResumoService, ResumoService>();
+            builder.Services.AddTransient<IAtendimentoService, AtendimentoService>();
 
             // Configuração do Mapster
             builder.Services.AddMapster();
