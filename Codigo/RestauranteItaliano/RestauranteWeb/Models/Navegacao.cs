@@ -136,7 +136,10 @@ namespace RestauranteWeb.Models
                         {
                             Titulo = "Funcionários",
                             Descricao = "quem trabalha em cada restaurante",
-                            CasoDeUso = "CS06"
+                            CasoDeUso = "CS06",
+                            Controller = "Funcionario",
+                            Singular = "funcionário",
+                            Plural = "funcionários"
                         },
                         new EntradaIndiceModel
                         {

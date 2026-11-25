@@ -1,0 +1,169 @@
+﻿@model RestauranteWeb.Models.FuncionarioViewModel
+
+@{
+    ViewData["Title"] = "Novo funcionário";
+}
+
+<header class="titulo-pagina titulo-pagina--empilhado">
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">
+            Novo funcionário
+        </h1>
+        <p class="titulo-pagina__resumo">
+            Preencha os dados da pessoa e selecione seu restaurante e tipo.
+        </p>
+    </hgroup>
+</header>
+
+@if (TempData["Mensagem"] is string mensagem)
+{
+    <div class="alert alert-success" role="status">
+        @mensagem
+    </div>
+}
+
+<form class="edicao" asp-action="Create" method="post" data-travar-envio>
+    @Html.AntiForgeryToken()
+
+    <fieldset class="edicao__formulario">
+        <legend class="visually-hidden">
+            Dados do funcionário
+        </legend>
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <p class="campo campo--obrigatorio">
+            <label class="campo__rotulo" asp-for="Nome"></label>
+            <input class="form-control"
+                   asp-for="Nome"
+                   maxlength="45"
+                   autocomplete="name" />
+            <span class="campo__erro text-danger"
+                  asp-validation-for="Nome"></span>
+        </p>
+
+        <p class="campo campo--obrigatorio">
+            <label class="campo__rotulo" asp-for="Cpf"></label>
+            <input class="form-control"
+                   asp-for="Cpf"
+                   type="text"
+                   inputmode="numeric"
+                   maxlength="11"
+                   placeholder="Somente os 11 números" />
+            <span class="campo__erro text-danger"
+                  asp-validation-for="Cpf"></span>
+        </p>
+
+        <p class="campo campo--obrigatorio">
+            <label class="campo__rotulo" asp-for="IdRestaurante"></label>
+            <select class="form-select"
+                    asp-for="IdRestaurante"
+                    asp-items="Model.Restaurantes">
+                <option value="">Selecione um restaurante</option>
+            </select>
+            <span class="campo__erro text-danger"
+                  asp-validation-for="IdRestaurante"></span>
+        </p>
+
+        <p class="campo campo--obrigatorio">
+            <label class="campo__rotulo" asp-for="IdTipoFuncionario"></label>
+            <select class="form-select"
+                    asp-for="IdTipoFuncionario"
+                    asp-items="Model.TiposFuncionario">
+                <option value="">Selecione um tipo</option>
+            </select>
+            <span class="campo__erro text-danger"
+                  asp-validation-for="IdTipoFuncionario"></span>
+        </p>
+
+        <p class="campo">
+            <label class="campo__rotulo" asp-for="Cep"></label>
+            <input class="form-control"
+                   asp-for="Cep"
+                   type="text"
+                   inputmode="numeric"
+                   maxlength="8"
+                   placeholder="Somente os 8 números" />
+            <span class="campo__erro text-danger"
+                  asp-validation-for="Cep"></span>
+        </p>
+
+        <p class="campo">
+            <label class="campo__rotulo" asp-for="Rua"></label>
+            <input class="form-control"
+                   asp-for="Rua"
+                   maxlength="45"
+                   autocomplete="street-address" />
+            <span class="campo__erro text-danger"
+                  asp-validation-for="Rua"></span>
+        </p>
+
+        <p class="campo">
+            <label class="campo__rotulo" asp-for="Bairro"></label>
+            <input class="form-control"
+                   asp-for="Bairro"
+                   maxlength="45" />
+            <span class="campo__erro text-danger"
+                  asp-validation-for="Bairro"></span>
+        </p>
+
+        <p class="campo">
+            <label class="campo__rotulo" asp-for="Cidade"></label>
+            <input class="form-control"
+                   asp-for="Cidade"
+                   maxlength="45"
+                   autocomplete="address-level2" />
+            <span class="campo__erro text-danger"
+                  asp-validation-for="Cidade"></span>
+        </p>
+
+        <p class="campo">
+            <label class="campo__rotulo" asp-for="Estado"></label>
+            <input class="form-control"
+                   asp-for="Estado"
+                   maxlength="2"
+                   placeholder="Ex.: SE"
+                   autocomplete="address-level1" />
+            <span class="campo__erro text-danger"
+                  asp-validation-for="Estado"></span>
+        </p>
+
+        <p class="campo">
+            <label class="campo__rotulo" asp-for="Telefone1"></label>
+            <input class="form-control"
+                   asp-for="Telefone1"
+                   type="tel"
+                   inputmode="numeric"
+                   maxlength="10"
+                   placeholder="DDD e 8 números" />
+            <span class="campo__erro text-danger"
+                  asp-validation-for="Telefone1"></span>
+        </p>
+
+        <p class="campo">
+            <label class="campo__rotulo" asp-for="Telefone2"></label>
+            <input class="form-control"
+                   asp-for="Telefone2"
+                   type="tel"
+                   inputmode="numeric"
+                   maxlength="11"
+                   placeholder="DDD e 9 números" />
+            <span class="campo__erro text-danger"
+                  asp-validation-for="Telefone2"></span>
+        </p>
+
+        <menu class="grupo-botoes u-lista-limpa">
+            <li>
+                <button class="btn btn--tinta" type="submit">
+                    Salvar funcionário
+                </button>
+            </li>
+        </menu>
+    </fieldset>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -8,5 +8,6 @@
         Funcionario Get(int id);
         IEnumerable<Funcionario> GetAll();
         IEnumerable<Funcionario> GetByNome(string nome);
+        IEnumerable<Funcionario> GetGarconsPorRestaurante(uint idRestaurante);
     }
 }
