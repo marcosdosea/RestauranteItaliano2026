@@ -36,7 +36,8 @@ namespace RestauranteWeb.Controllers
                         IdMesa = m.IdMesa,
                         Identificacao = m.Identificacao,
                         Ocupada = m.Ocupada,
-                        InicioAtendimento = m.InicioAtendimento
+                        InicioAtendimento = m.InicioAtendimento,
+                        IdAtendimento = m.IdAtendimento
                     })
                     .ToList();
             }

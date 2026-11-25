@@ -3,7 +3,6 @@ using Core.Service;
 using Core.DTO;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Service
 {
     public class AtendimentoService : IAtendimentoService
@@ -16,10 +15,9 @@ namespace Service
         }
 
         /// <summary>
-        /// Busca o mapa de mesas de um restaurante, indicando se estão ocupadas e a hora de início do atendimento, caso haja.
+        /// Busca o mapa de mesas de um restaurante, indicando se estão
+        /// ocupadas e informando os dados do atendimento ativo, se houver.
         /// </summary>
-        /// <param name="idRestaurante"></param>
-        /// <returns></returns>
         public IEnumerable<MesaAtendimentoDTO> GetMapaMesas(uint idRestaurante)
         {
             return context.Mesas
@@ -30,7 +28,16 @@ namespace Service
                 {
                     IdMesa = m.Id,
                     Identificacao = m.Identificacao,
-                    Ocupada = m.Atendimentos.Any(a => a.Status == "I"),
+
+                    Ocupada = m.Atendimentos
+                        .Any(a => a.Status == "I"),
+
+                    IdAtendimento = m.Atendimentos
+                        .Where(a => a.Status == "I")
+                        .OrderByDescending(a => a.DataHoraInicio)
+                        .Select(a => (uint?)a.Id)
+                        .FirstOrDefault(),
+
                     InicioAtendimento = m.Atendimentos
                         .Where(a => a.Status == "I")
                         .OrderByDescending(a => a.DataHoraInicio)
@@ -40,27 +47,30 @@ namespace Service
         }
 
         /// <summary>
-        /// Inicia um atendimento em uma mesa, caso ela esteja livre. Retorna o id do atendimento criado.
+        /// Inicia um atendimento em uma mesa livre e retorna o ID criado.
         /// </summary>
-        /// <param name="idMesa"></param>
-        /// <param name="idRestaurante"></param>
-        /// <returns></returns>
-        /// <exception cref="ServiceException"></exception>
         public uint Iniciar(int idMesa, uint idRestaurante)
         {
-            var mesa = context.Mesas.FirstOrDefault(m => m.Id == idMesa && m.IdRestaurante == idRestaurante);
+            var mesa = context.Mesas.FirstOrDefault(m =>
+                m.Id == idMesa &&
+                m.IdRestaurante == idRestaurante);
 
             if (mesa == null)
             {
-                throw new ServiceException("Mesa não encontrada neste restaurante.");
+                throw new ServiceException(
+                    "Mesa não encontrada neste restaurante.");
             }
 
-            var jaExisteAtendimentoAtivo = context.Atendimentos.Any(a => a.IdMesa == idMesa && a.Status == "I");
+            var jaExisteAtendimentoAtivo = context.Atendimentos.Any(a =>
+                a.IdMesa == idMesa &&
+                a.Status == "I");
 
             if (jaExisteAtendimentoAtivo)
             {
-                throw new ServiceException("Esta mesa já possui um atendimento iniciado.");
+                throw new ServiceException(
+                    "Esta mesa já possui um atendimento iniciado.");
             }
+
             var atendimento = new Atendimento
             {
                 IdMesa = idMesa,
@@ -72,11 +82,11 @@ namespace Service
                 TotalDesconto = 0m,
                 Total = 0m
             };
+
             context.Atendimentos.Add(atendimento);
             context.SaveChanges();
 
             return atendimento.Id;
         }
-
     }
 }

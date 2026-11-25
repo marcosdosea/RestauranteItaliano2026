@@ -8,7 +8,7 @@
     <hgroup class="titulo-pagina__texto">
         <h1 class="titulo-pagina__titulo">Mapa do salão</h1>
         <p class="titulo-pagina__resumo">
-            Consulte as mesas e inicie um atendimento.
+            Consulte as mesas, inicie atendimentos e registre pedidos.
         </p>
     </hgroup>
 </header>
@@ -86,6 +86,17 @@ else
                                             @(mesa.InicioAtendimento.Value.ToString("dd/MM/yyyy 'às' HH:mm"))
                                         </time>
                                     </p>
+                                }
+
+                                @if (mesa.IdAtendimento.HasValue)
+                                {
+                                    <a asp-controller="Pedido"
+                                       asp-action="Create"
+                                       asp-route-idAtendimento="@mesa.IdAtendimento.Value"
+                                       asp-route-idRestaurante="@Model.IdRestaurante.Value"
+                                       class="btn btn--tinta">
+                                        Registrar pedido
+                                    </a>
                                 }
                             }
                             else

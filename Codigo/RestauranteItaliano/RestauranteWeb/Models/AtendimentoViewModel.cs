@@ -19,4 +19,5 @@ public class MesaAtendimentoViewModel
     public string Identificacao { get; set; } = "";
     public bool Ocupada { get; set; }
     public DateTime? InicioAtendimento { get; set; }
+    public uint? IdAtendimento { get; set; }
 }

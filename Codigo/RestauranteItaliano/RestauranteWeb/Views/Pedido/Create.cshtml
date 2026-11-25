@@ -1,0 +1,98 @@
+﻿@model RestauranteWeb.Models.RegistrarPedidoViewModel
+
+@{
+    ViewData["Title"] = "Registrar pedido";
+}
+
+<header class="titulo-pagina">
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">Registrar pedido</h1>
+        <p class="titulo-pagina__resumo">
+            Escolha o garçom, os itens e as quantidades.
+            Você poderá registrar outro pedido para este atendimento depois.
+        </p>
+    </hgroup>
+</header>
+
+@if (TempData["Mensagem"] != null)
+{
+    <div class="alert alert-success" role="status">
+        @TempData["Mensagem"]
+    </div>
+}
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <input asp-for="IdAtendimento" type="hidden" />
+    <input asp-for="IdRestaurante" type="hidden" />
+
+    <div class="mb-3">
+        <label asp-for="IdGarcom" class="form-label">
+            Garçom responsável
+        </label>
+
+        <select asp-for="IdGarcom"
+                asp-items="Model.Garcons"
+                class="form-select">
+            <option value="">Selecione um garçom</option>
+        </select>
+
+        <span asp-validation-for="IdGarcom" class="text-danger"></span>
+    </div>
+
+    @if (Model.Itens.Count == 0)
+    {
+        <div class="alert alert-warning">
+            Não há itens ativos e disponíveis no cardápio deste restaurante.
+        </div>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Preço</th>
+                    <th>Quantidade</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < Model.Itens.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @Model.Itens[i].Nome
+
+                            <input asp-for="Itens[i].IdItemCardapio"
+                                   type="hidden" />
+                        </td>
+                        <td>
+                            @(Model.Itens[i].Preco?.ToString("C") ?? "—")
+                        </td>
+                        <td>
+                            <input asp-for="Itens[i].Quantidade"
+                                   class="form-control"
+                                   type="number"
+                                   min="0"
+                                   step="0.01" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn--tinta">
+            Registrar pedido
+        </button>
+    }
+</form>
+
+<a asp-controller="Atendimento"
+   asp-action="Index"
+   asp-route-idRestaurante="@Model.IdRestaurante"
+   class="btn btn-outline-secondary mt-3">
+    Voltar ao mapa de mesas
+</a>

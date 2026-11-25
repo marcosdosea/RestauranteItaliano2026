@@ -10,5 +10,6 @@ namespace Core.DTO
         public string Identificacao { get; set; } = string.Empty;
         public bool Ocupada { get; set; }
         public DateTime? InicioAtendimento { get; set; }
+        public uint? IdAtendimento { get; set; }
     }
 }
