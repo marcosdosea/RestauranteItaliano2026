@@ -16,11 +16,11 @@ Além do site, uma **Web API** publica o cardápio e as formas de pagamento para
 | **CS02** – Manter Tipos de Restaurante | Cadastra os tipos de restaurante (pizzaria, churrascaria, comida brasileira…) | ✅ Concluído | [luansnta](https://github.com/luansnta) |
 | **CS03** – Manter Tipos de Funcionário | Cadastra os tipos de funcionário (garçom, cozinheiro, gerente…) | ✅ Concluído | [EduBarbosa01](https://github.com/EduBarbosa01) |
 | **CS04** – Manter Grupos do Cardápio | Cadastra os grupos do cardápio (bebidas, entradas, sobremesas…) | ✅ Concluído | [KaiDark0](https://github.com/KaiDark0) |
-| **CS05** – Manter Restaurante | Cadastra os restaurantes que usam a plataforma | ⏳ Pendente | — |
+| **CS05** – Manter Restaurante | Cadastra os restaurantes que usam a plataforma | ✅ Concluído | [luansnta](https://github.com/luansnta) |
 | **CS06** – Manter Funcionários | Cadastra os funcionários de cada restaurante | ⏳ Pendente | — |
 | **CS07** – Manter Itens do Cardápio | Cadastra os itens oferecidos pelo restaurante | ✅ Concluído | [José Matheus](https://github.com/jmatheus-dev) |
 | **CS08** – Manter Mesas do Restaurante | Cadastra as mesas gerenciadas pelo restaurante | ✅ Concluído | [KaiDark0](https://github.com/KaiDark0) |
-| **CS09** – Iniciar Atendimento | Abre o atendimento de uma mesa e registra os pedidos | ⏳ Pendente | — |
+| **CS09** – Iniciar Atendimento | Abre o atendimento de uma mesa e registra os pedidos | ✅ Concluído | [luansnta](https://github.com/luansnta) |
 | **CS10** – Manter Pedido | Registra os itens pedidos durante o atendimento | ⏳ Pendente | — |
 | **CS11** – Fazer Pagamento de um Atendimento | Registra pagamentos parciais ou totais da conta | ⏳ Pendente | — |
 | **CS12** – Finalizar o Atendimento | Encerra o atendimento depois que a conta é paga | ⏳ Pendente | — |

@@ -1,0 +1,87 @@
+﻿@model IEnumerable<RestauranteWeb.Models.FuncionarioViewModel>
+
+@{
+    ViewData["Title"] = "Funcionários";
+    var funcionarios = Model.ToList();
+}
+
+<header class="titulo-pagina">
+    <hgroup class="titulo-pagina__texto">
+        <h1 class="titulo-pagina__titulo">Funcionários</h1>
+
+        @if (funcionarios.Any())
+        {
+            <p class="titulo-pagina__resumo">
+                @funcionarios.Count
+                @(funcionarios.Count == 1
+                    ? "funcionário cadastrado"
+                    : "funcionários cadastrados")
+            </p>
+        }
+    </hgroup>
+
+    <a class="btn btn--tinta" asp-action="Create">
+        <svg class="icone" aria-hidden="true">
+            <use href="#icone-mais"></use>
+        </svg>
+        Novo funcionário
+    </a>
+</header>
+
+@if (TempData["Mensagem"] is string mensagem)
+{
+    <div class="alert alert-success" role="status">
+        @mensagem
+    </div>
+}
+
+@if (!funcionarios.Any())
+{
+    <section class="vazio" aria-labelledby="vazio-funcionarios">
+        <h2 class="vazio__titulo" id="vazio-funcionarios">
+            Nenhum funcionário cadastrado
+        </h2>
+
+        <p class="vazio__texto">
+            Cadastre uma pessoa e associe-a a um restaurante e a um tipo
+            de funcionário.
+        </p>
+
+        <a class="btn btn--tinta" asp-action="Create">
+            Cadastrar o primeiro funcionário
+        </a>
+    </section>
+}
+else
+{
+    <ul class="quadro u-lista-limpa"
+        aria-label="Funcionários cadastrados">
+        @foreach (var funcionario in funcionarios)
+        {
+            <li>
+                <article class="cracha">
+                    <span class="cracha__monograma" aria-hidden="true">
+                        @Monograma.DoNome(funcionario.Nome)
+                    </span>
+
+                    <h2 class="cracha__nome">
+                        @funcionario.Nome
+                    </h2>
+
+                    <p class="cracha__rotulo">
+                        @(funcionario.NomeTipoFuncionario ?? "Tipo não informado")
+                    </p>
+
+                    <p>
+                        Restaurante:
+                        @(funcionario.NomeRestaurante ?? "Não informado")
+                    </p>
+
+                    <p class="cracha__codigo">
+                        Código nº @funcionario.Id?.ToString("000")
+                    </p>
+                </article>
+            </li>
+        }
+    </ul>
+}
