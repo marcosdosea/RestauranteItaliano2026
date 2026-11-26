@@ -13,6 +13,12 @@ namespace Service
             this.context = context;
         }
 
+        /// <summary>
+        /// Cria um novo funcionário, caso o restaurante e o tipo de funcionário existam
+        /// </summary>
+        /// <param name="funcionario"></param>
+        /// <returns></returns>
+        /// <exception cref="ServiceException"></exception>
         public int Create(Funcionario funcionario)
         {
             if (funcionario == null)
@@ -29,6 +35,11 @@ namespace Service
             return (int)funcionario.Id;
         }
 
+        /// <summary>
+        /// Edita um funcionário, caso ele exista e o restaurante e o tipo de funcionário existam
+        /// </summary>
+        /// <param name="funcionario"></param>
+        /// <exception cref="ServiceException"></exception>
         public void Edit(Funcionario funcionario)
         {
             if (funcionario == null)
@@ -51,6 +62,11 @@ namespace Service
             context.SaveChanges();
         }
 
+        /// <summary>
+        /// Deleta um funcionário, caso ele exista e não esteja associado a nenhum pedido
+        /// </summary>
+        /// <param name="id"></param>
+        /// <exception cref="ServiceException"></exception>
         public void Delete(int id)
         {
             if (id <= 0)
@@ -80,6 +96,12 @@ namespace Service
             context.SaveChanges();
         }
 
+        /// <summary>
+        /// Busca um funcionário pelo id, caso ele exista
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="ServiceException"></exception>
         public Funcionario Get(int id)
         {
             if (id <= 0)
@@ -94,6 +116,10 @@ namespace Service
                 ?? throw new ServiceException("Funcionário não encontrado.");
         }
 
+        /// <summary>
+        /// Busca todos os funcionários, incluindo informações do restaurante e do tipo de funcionário
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Funcionario> GetAll()
         {
             return context.Funcionarios
@@ -103,6 +129,11 @@ namespace Service
                 .OrderBy(f => f.Nome);
         }
 
+        /// <summary>
+        /// Busca funcionários pelo nome, caso informado, incluindo informações do restaurante e do tipo de funcionário
+        /// </summary>
+        /// <param name="nome"></param>
+        /// <returns></returns>
         public IEnumerable<Funcionario> GetByNome(string nome)
         {
             var funcionarios = context.Funcionarios
@@ -120,6 +151,11 @@ namespace Service
                 .OrderBy(f => f.Nome);
         }
 
+        /// <summary>
+        /// Busca todos os garçons de um restaurante específico, caso o restaurante exista
+        /// </summary>
+        /// <param name="idRestaurante"></param>
+        /// <returns></returns>
         public IEnumerable<Funcionario> GetGarconsPorRestaurante(
             uint idRestaurante)
         {
@@ -131,6 +167,11 @@ namespace Service
                 .OrderBy(f => f.Nome);
         }
 
+        /// <summary>
+        /// Valida se o restaurante e o tipo de funcionário existem, caso contrário lança uma exceção
+        /// </summary>
+        /// <param name="funcionario"></param>
+        /// <exception cref="ServiceException"></exception>
         private void ValidarReferencias(Funcionario funcionario)
         {
             var restauranteExiste = context.Restaurantes
