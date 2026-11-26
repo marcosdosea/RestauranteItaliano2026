@@ -17,7 +17,7 @@ Além do site, uma **Web API** publica o cardápio e as formas de pagamento para
 | **CS03** – Manter Tipos de Funcionário | Cadastra os tipos de funcionário (garçom, cozinheiro, gerente…) | ✅ Concluído | [EduBarbosa01](https://github.com/EduBarbosa01) |
 | **CS04** – Manter Grupos do Cardápio | Cadastra os grupos do cardápio (bebidas, entradas, sobremesas…) | ✅ Concluído | [KaiDark0](https://github.com/KaiDark0) |
 | **CS05** – Manter Restaurante | Cadastra os restaurantes que usam a plataforma | ✅ Concluído | [luansnta](https://github.com/luansnta) |
-| **CS06** – Manter Funcionários | Cadastra os funcionários de cada restaurante | ⏳ Pendente | — |
+| **CS06** – Manter Funcionários | Cadastra os funcionários de cada restaurante | ✅ Concluído | [EduBarbosa01](https://github.com/EduBarbosa01) |
 | **CS07** – Manter Itens do Cardápio | Cadastra os itens oferecidos pelo restaurante | ✅ Concluído | [José Matheus](https://github.com/jmatheus-dev) |
 | **CS08** – Manter Mesas do Restaurante | Cadastra as mesas gerenciadas pelo restaurante | ✅ Concluído | [KaiDark0](https://github.com/KaiDark0) |
 | **CS09** – Iniciar Atendimento | Abre o atendimento de uma mesa e registra os pedidos | ✅ Concluído | [luansnta](https://github.com/luansnta) |
